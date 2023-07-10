@@ -10,15 +10,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $id = Auth::user()->id;
-        $user = User::find($id);
+        // $isAdmin = "";
 
-        $isAdmin = $user->isAdmin();
-        $isClient = $user->isClient();
-        $isLogistics = $user->isLogistics();
-        $isFinancial = $user->isFinancial();
-
-        // return view('dashboard.index');
-        return view('admin.index', compact('isAdmin', 'isClient', 'isLogistics', 'isFinancial'));
+        return view('dashboard.index');
+        // return view('admin.index', compact('isAdmin'));
     }
 }

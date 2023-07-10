@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,20 +26,28 @@ Route::get('/', function () {
 // Route::get('/dashboard', 'DashboardController@index')->middleware(['auth'])->name('dashboard');
 
 Route::get('/dashboard', function () {
-    $id = Auth::user()->id;
-    $user = User::find($id);
-    $isAdmin = $user->isAdmin();
-    $isClient = $user->isClient();
-    $isLogistics = $user->isLogistics();
-    $isFinancial = $user->isFinancial();
-
-    return view('admin.index', compact('isAdmin', 'isClient', 'isLogistics', 'isFinancial'));
+    return view('admin.index');
 })->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/admin/client', function () {
+    return view('admin.adm.client');
+})->middleware(['auth'])->name('admin.client');
+
+// Route::middleware(['auth', ''])->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
+
+//Admin All Route
+Route::controller(AdminController::class)->group(function () {
+    Route::get('/admin/logout', 'destroy')->name('admin.logout');
 });
 
 require __DIR__.'/auth.php';

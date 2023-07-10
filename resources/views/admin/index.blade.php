@@ -8,13 +8,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    @if ($isAdmin)
+                    @if (Auth::user()->isAdmin())
                         <h4 class="mb-sm-0">Dashboard Admin</h4>
-                    @elseif ($isClient)
+                    @elseif (Auth::user()->isClient())
                         <h4 class="mb-sm-0">Dashboard Cliente</h4>
-                    @elseif ($isLogistics)
+                    @elseif (Auth::user()->isLogistics())
                         <h4 class="mb-sm-0">Dashboard Logistico</h4>
-                    @elseif ($isFinancial)
+                    @elseif (Auth::user()->isFinancial())
                         <h4 class="mb-sm-0">Dashboard Financeiro</h4>
                     @else
                         <h4 class="mb-sm-0">Dashboard</h4>

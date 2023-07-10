@@ -14,7 +14,6 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-
                 <li>
                     <a href="calendar.html" class=" waves-effect">
                         <i class="ri-calendar-2-line"></i>
@@ -22,7 +21,134 @@
                     </a>
                 </li>
 
-                <li>
+                @if (Auth::user()->isAdmin())
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-pencil-line"></i>
+                            <span>Cadastros</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">Logistica</a>
+                                <ul class="sub-menu" aria-expanded="true">
+                                    <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
+                                    <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li>
+                                    <li><a href="layouts-compact-sidebar.html">Funcionários</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">Financeiro</a>
+                                <ul class="sub-menu" aria-expanded="true">
+                                    <li><a href="layouts-horizontal.html">Caixas</a></li>
+                                    <li><a href="layouts-horizontal.html">Serviços</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-box-open"></i>
+                            <span>Logistica</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Estoque</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Financeiro</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Fluxo de Caixa</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Invoices</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-line-chart-line"></i>
+                            <span>Relatórios</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Cargas</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Lucros</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Gastos</a></li>
+                        </ul>
+                    </li>
+                @elseif (Auth::user()->isLogistics())
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-pencil-line"></i>
+                            <span>Cadastros</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Freteiros</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Shippers</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-box-open"></i>
+                            <span>Logistica</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Warehouses</a></li>
+                            <li><a href="layouts-dark-sidebar.html">Pacotes</a></li>
+                            <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Estoque</a></li>
+                        </ul>
+                    </li>
+                @elseif (Auth::user()->isFinancial())
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-pencil-line"></i>
+                            <span>Cadastros</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li>
+                            <li><a href="layouts-horizontal.html">Caixas</a></li>
+                            <li><a href="layouts-horizontal.html">Serviços</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Categorias</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Financeiro</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
+                            <li><a href="layouts-dark-sidebar.html">Fluxo de Caixa</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>
+                        </ul>
+                    </li>
+                @elseif (Auth::user()->isClient())
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-box-open"></i>
+                            <span>Logistica</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Acompanhamento</a></li>
+                            <li><a href="layouts-dark-sidebar.html">Previsões</a></li>
+                            <li><a href="layouts-dark-sidebar.html">Disponíveis</a></li>
+                            <li><a href="layouts-dark-sidebar.html">Retirados</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="calendar.html" class=" waves-effect">
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Invoices</span>
+                        </a>
+                    </li>
+                @endif
+
+                {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="ri-mail-send-line"></i>
                         <span>Email</span>
@@ -31,9 +157,9 @@
                         <li><a href="email-inbox.html">Inbox</a></li>
                         <li><a href="email-read.html">Read Email</a></li>
                     </ul>
-                </li>
+                </li> --}}
 
-                <li>
+                {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="ri-layout-3-line"></i>
                         <span>Layouts</span>
@@ -62,9 +188,9 @@
                             </ul>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
 
-                <li class="menu-title">Pages</li>
+                {{-- <li class="menu-title">Pages</li>
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -94,7 +220,7 @@
                     </ul>
                 </li>
 
-            </ul>
+            </ul> --}}
         </div>
         <!-- Sidebar -->
     </div>

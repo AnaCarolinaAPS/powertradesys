@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClienteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,9 +36,28 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/admin/client', function () {
-    return view('admin.adm.client');
-})->middleware(['auth'])->name('admin.client');
+// Route::get('/admin/client', function () {
+//     return view('admin.adm.client');
+// })->middleware(['auth'])->name('admin.client');
+
+Route::middleware('auth')->group(function () {
+    // Rotas protegidas por autenticação aqui
+
+    // Exemplo de rota para listar todos os clientes
+    Route::get('/admin/clientes', [ClienteController::class, 'index'])->name('admin.client');
+
+    // Exemplo de rota para exibir um cliente específico
+    Route::get('/clientes/{id}', 'ClienteController@show');
+
+    // Exemplo de rota para criar um novo cliente
+    Route::post('/clientes', 'ClienteController@store');
+
+    // Exemplo de rota para atualizar um cliente
+    Route::put('/clientes/{id}', 'ClienteController@update');
+
+    // Exemplo de rota para excluir um cliente
+    Route::delete('/clientes/{id}', 'ClienteController@destroy');
+});
 
 // Route::middleware(['auth', ''])->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

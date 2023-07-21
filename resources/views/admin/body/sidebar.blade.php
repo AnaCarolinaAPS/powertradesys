@@ -9,7 +9,7 @@
                 <li class="menu-title">Menu</li>
 
                 <li>
-                    <a href="index.html" class="waves-effect">
+                    <a href="{{ route('dashboard'); }}" class="waves-effect">
                         <i class="ri-dashboard-line"></i><span class="badge rounded-pill bg-success float-end">3</span>
                         <span>Dashboard</span>
                     </a>
@@ -22,7 +22,7 @@
                 </li>
 
                 @if (Auth::user()->isAdmin())
-                    <li>
+                    {{-- <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-pencil-line"></i>
                             <span>Cadastros</span>
@@ -33,7 +33,6 @@
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
                                     <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li>
-                                    <li><a href="layouts-compact-sidebar.html">Funcionários</a></li>
                                 </ul>
                             </li>
                             <li>
@@ -43,14 +42,29 @@
                                     <li><a href="layouts-horizontal.html">Serviços</a></li>
                                 </ul>
                             </li>
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">Administração</a>
+                                <ul class="sub-menu" aria-expanded="true">
+                                    <li><a href="layouts-compact-sidebar.html">Funcionários</a></li>
+                                    <li><a href="layouts-compact-sidebar.html">Pagamentos</a></li>
+                                    <li><a href="layouts-compact-sidebar.html">Férias</a></li>
+                                </ul>
+                            </li>
                         </ul>
-                    </li>
+                    </li> --}}
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="fas fa-box-open"></i>
                             <span>Logistica</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
+                                <ul class="sub-menu" aria-expanded="true">
+                                    <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
+                                    <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li>
+                                </ul>
+                            </li>
                             <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
                             <li><a href="layouts-compact-sidebar.html">Estoque</a></li>
                         </ul>
@@ -61,8 +75,26 @@
                             <span>Financeiro</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
+                                <ul class="sub-menu" aria-expanded="true">
+                                    <li><a href="layouts-horizontal.html">Caixas</a></li>
+                                    <li><a href="layouts-horizontal.html">Serviços</a></li>
+                                </ul>
+                            </li>
                             <li><a href="layouts-dark-sidebar.html">Fluxo de Caixa</a></li>
                             <li><a href="layouts-compact-sidebar.html">Invoices</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="ri-briefcase-2-line"></i>
+                            <span>Empresa</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="layouts-dark-sidebar.html">Funcionários</a></li>
+                            <li><a href="layouts-dark-sidebar.html">Férias</a></li>
+                            <li><a href="layouts-compact-sidebar.html">Salários</a></li>
                         </ul>
                     </li>
                     <li>

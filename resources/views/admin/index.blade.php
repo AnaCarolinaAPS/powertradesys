@@ -8,17 +8,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    @if (Auth::user()->isAdmin())
+                    @role('admin')
                         <h4 class="mb-sm-0">Dashboard Admin</h4>
-                    @elseif (Auth::user()->isClient())
-                        <h4 class="mb-sm-0">Dashboard Cliente</h4>
-                    @elseif (Auth::user()->isLogistics())
-                        <h4 class="mb-sm-0">Dashboard Logistico</h4>
-                    @elseif (Auth::user()->isFinancial())
-                        <h4 class="mb-sm-0">Dashboard Financeiro</h4>
+                        <!-- Conteúdo a ser exibido se o usuário tiver a função (role) -->
                     @else
-                        <h4 class="mb-sm-0">Dashboard</h4>
-                    @endif
+                    <h4 class="mb-sm-0">Dashboard</h4>
+                        <!-- Conteúdo a ser exibido se o usuário NÃO tiver a função (role) -->
+                    @endrole
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">

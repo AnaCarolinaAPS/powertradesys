@@ -35,10 +35,10 @@
         <!-- Begin page -->
         <div id="layout-wrapper">
 
-            @include('admin.body.header')
+            @include('layouts.body.header')
 
             <!-- ========== Left Sidebar Start ========== -->
-            @include('admin.body.sidebar')
+            @include('layouts.body.sidebar')
             <!-- Left Sidebar End -->
 
             <!-- ============================================================== -->
@@ -48,7 +48,7 @@
 
                 @yield('admin')
 
-                @include('admin.body.footer')
+                @include('layouts.body.footer')
 
             </div>
             <!-- end main content-->

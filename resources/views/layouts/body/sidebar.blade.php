@@ -14,12 +14,12 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
-                <li>
+                <!-- <li>
                     <a href="calendar.html" class=" waves-effect">
                         <i class="ri-calendar-2-line"></i>
                         <span>Calendar</span>
                     </a>
-                </li>
+                </li> -->
 
                 @if (Auth::user()->isAdmin())
                     {{-- <li>

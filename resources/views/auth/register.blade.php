@@ -67,6 +67,7 @@
             <div class="form-group mb-3 row">
                 <div class="col-12">
                     <input class="form-control" id="name" type="text" placeholder="Name" name="name" :value="old('name')" required autofocus >
+                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
                 </div>
             </div>
 
@@ -79,18 +80,21 @@
             <div class="form-group mb-3 row">
                 <div class="col-12">
                     <input class="form-control" id="email" type="email" required="" placeholder="Email" name="email" :value="old('email')">
+                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
                 </div>
             </div>
 
             <div class="form-group mb-3 row">
                 <div class="col-12">
                     <input class="form-control" id="password" type="password" required="" placeholder="Password" name="password" autocomplete="new-password">
+                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
             </div>
 
             <div class="form-group mb-3 row">
                 <div class="col-12">
                     <input class="form-control" id="password_confirmation" type="password" required="" placeholder="Password Confirmation" name="password_confirmation">
+                    <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                 </div>
             </div>
 

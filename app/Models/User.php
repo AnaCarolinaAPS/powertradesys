@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -50,7 +51,13 @@ class User extends Authenticatable
 
     public function isClient()
     {
-        return $this->role === 'client';
+        // return $this->role === 'client';
+        // Verifica se o usuário tem a role de cliente
+        if ($this->role === 'cliente') {
+            // Verifica se o usuário tem um cliente associado
+            return $this->client !== null;
+        }
+        return false;
     }
 
     public function isLogistics()

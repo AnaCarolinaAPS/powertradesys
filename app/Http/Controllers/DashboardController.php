@@ -12,7 +12,16 @@ class DashboardController extends Controller
     {
         // $isAdmin = "";
 
-        return view('dashboard.index');
+        // return view('admin.index');
+        // return view('dashboard.index');
         // return view('admin.index', compact('isAdmin'));
+
+        if (auth()->user()->hasRole('admin')) {
+            return redirect()->route('admin.dashboard');
+        } elseif (auth()->user()->hasRole('client')) {
+            return redirect()->route('client.dashboard');
+        } else {
+            return redirect()->route('default.dashboard');
+        }
     }
 }

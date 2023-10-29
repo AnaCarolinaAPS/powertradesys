@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +25,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 // Route::get('/dashboard', 'DashboardController@index')->middleware(['auth'])->name('dashboard');
 
 // Route::get('/dashboard', function () {
@@ -34,6 +37,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::middleware(['role:admin'])->group(function () {
+        Route::get('/admin/dashboard', 'AdminDashboardController@index')->name('admin.dashboard');
+    });
+
+    Route::middleware(['role:client'])->group(function () {
+        Route::get('/dashboard', 'ClientDashboardController@index')->name('client.dashboard');
+    });
 });
 
 // Route::get('/admin/client', function () {
@@ -64,10 +75,6 @@ Route::middleware('auth')->group(function () {
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 //     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 // });
-
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', 'DashboardController@index')->name('admin.dashboard');
-});
 
 //Admin All Route
 Route::controller(AdminController::class)->group(function () {

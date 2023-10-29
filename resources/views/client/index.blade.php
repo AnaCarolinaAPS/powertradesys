@@ -1,4 +1,4 @@
-@extends('admin.admin_master')
+@extends('layouts.admin_master')
 
 @section('admin')
 <div class="page-content">
@@ -8,12 +8,18 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Clientes</h4>
+                    {{-- @role('admin') --}}
+                        <h4 class="mb-sm-0">Home CLIENTE</h4>
+                        <!-- Conteúdo a ser exibido se o usuário tiver a função (role) -->
+
+                    {{-- @endrole --}}
+                    {{-- <h4 class="mb-sm-0">Dashboard</h4> --}}
+                        <!-- Conteúdo a ser exibido se o usuário NÃO tiver a função (role) -->
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
-                            <li class="breadcrumb-item active">Clientes</li>
+                            <li class="breadcrumb-item"><a href="javascript: void(0);">PowerTrade</a></li>
+                            <li class="breadcrumb-item active">Home</li>
                         </ol>
                     </div>
 
@@ -22,39 +28,220 @@
         </div>
         <!-- end page title -->
 
-        @if ($usuariosNaoClientes->count() > 0)
+        <div class="row">
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Total Sales</p>
+                                <h4 class="mb-2">1452</h4>
+                                <p class="text-muted mb-0"><span class="text-success fw-bold font-size-12 me-2"><i class="ri-arrow-right-up-line me-1 align-middle"></i>9.23%</span>from previous period</p>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="ri-shopping-cart-2-line font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">New Orders</p>
+                                <h4 class="mb-2">938</h4>
+                                <p class="text-muted mb-0"><span class="text-danger fw-bold font-size-12 me-2"><i class="ri-arrow-right-down-line me-1 align-middle"></i>1.09%</span>from previous period</p>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-success rounded-3">
+                                    <i class="mdi mdi-currency-usd font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">New Users</p>
+                                <h4 class="mb-2">8246</h4>
+                                <p class="text-muted mb-0"><span class="text-success fw-bold font-size-12 me-2"><i class="ri-arrow-right-up-line me-1 align-middle"></i>16.2%</span>from previous period</p>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="ri-user-3-line font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Unique Visitors</p>
+                                <h4 class="mb-2">29670</h4>
+                                <p class="text-muted mb-0"><span class="text-success fw-bold font-size-12 me-2"><i class="ri-arrow-right-up-line me-1 align-middle"></i>11.7%</span>from previous period</p>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-success rounded-3">
+                                    <i class="mdi mdi-currency-btc font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+        </div><!-- end row -->
+
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
+                        {{-- <div class="dropdown float-end">
+                            <a href="#" class="dropdown-toggle arrow-none card-drop" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="mdi mdi-dots-vertical"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Sales Report</a>
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Export Report</a>
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Profit</a>
+                                <!-- item-->
+                                <a href="javascript:void(0);" class="dropdown-item">Action</a>
+                            </div>
+                        </div> --}}
 
-                        <h4 class="card-title mb-4">Usuários Pendentes</h4>
-                        {{-- <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
-                            <i class="fas fa-plus"></i> Novo
-                        </button> --}}
+                        <h4 class="card-title mb-4">Latest Transactions</h4>
+
                         <div class="table-responsive">
                             <table class="table table-centered mb-0 align-middle table-hover table-nowrap">
                                 <thead class="table-light">
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Nome</th>
-                                        <th>Email</th>
-                                        <th>Ações</th>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Status</th>
+                                        <th>Age</th>
+                                        <th>Start date</th>
+                                        <th style="width: 120px;">Salary</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @foreach ($usuariosNaoClientes as $usuario)
                                     <tr>
-                                        <td><h6 class="mb-0">{{ $usuario->id }}</h6></td>
-                                        <td>{{ $usuario->name }}</td>
-                                        <td>{{ $usuario->email }}</td>
+                                        <td><h6 class="mb-0">Charles Casey</h6></td>
+                                        <td>Web Developer</td>
                                         <td>
-                                            <button type="button" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
+                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Active</div>
                                         </td>
+                                        <td>
+                                            23
+                                        </td>
+                                        <td>
+                                            04 Apr, 2021
+                                        </td>
+                                        <td>$42,450</td>
                                     </tr>
-                                    @endforeach
+                                     <!-- end -->
+                                     <tr>
+                                        <td><h6 class="mb-0">Alex Adams</h6></td>
+                                        <td>Python Developer</td>
+                                        <td>
+                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i>Deactive</div>
+                                        </td>
+                                        <td>
+                                            28
+                                        </td>
+                                        <td>
+                                            01 Aug, 2021
+                                        </td>
+                                        <td>$25,060</td>
+                                    </tr>
+                                     <!-- end -->
+                                     <tr>
+                                        <td><h6 class="mb-0">Prezy Kelsey</h6></td>
+                                        <td>Senior Javascript Developer</td>
+                                        <td>
+                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Active</div>
+                                        </td>
+                                        <td>
+                                            35
+                                        </td>
+                                        <td>
+                                            15 Jun, 2021
+                                        </td>
+                                        <td>$59,350</td>
+                                    </tr>
+                                     <!-- end -->
+                                     <tr>
+                                        <td><h6 class="mb-0">Ruhi Fancher</h6></td>
+                                        <td>React Developer</td>
+                                        <td>
+                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Active</div>
+                                        </td>
+                                        <td>
+                                            25
+                                        </td>
+                                        <td>
+                                            01 March, 2021
+                                        </td>
+                                        <td>$23,700</td>
+                                    </tr>
+                                     <!-- end -->
+                                     <tr>
+                                        <td><h6 class="mb-0">Juliet Pineda</h6></td>
+                                        <td>Senior Web Designer</td>
+                                        <td>
+                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Active</div>
+                                        </td>
+                                        <td>
+                                            38
+                                        </td>
+                                        <td>
+                                            01 Jan, 2021
+                                        </td>
+                                        <td>$69,185</td>
+                                    </tr>
+                                     <!-- end -->
+                                     <tr>
+                                        <td><h6 class="mb-0">Den Simpson</h6></td>
+                                        <td>Web Designer</td>
+                                        <td>
+                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i>Deactive</div>
+                                        </td>
+                                        <td>
+                                            21
+                                        </td>
+                                        <td>
+                                            01 Sep, 2021
+                                        </td>
+                                        <td>$37,845</td>
+                                    </tr>
+                                     <!-- end -->
+                                     <tr>
+                                        <td><h6 class="mb-0">Mahek Torres</h6></td>
+                                        <td>Senior Laravel Developer</td>
+                                        <td>
+                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Active</div>
+                                        </td>
+                                        <td>
+                                            32
+                                        </td>
+                                        <td>
+                                            20 May, 2021
+                                        </td>
+                                        <td>$55,100</td>
+                                    </tr>
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
@@ -64,122 +251,7 @@
             </div>
             <!-- end col -->
         </div>
-        @endif
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-
-                        {{-- <h4 class="card-title">Default Datatable</h4>
-                        <p class="card-title-desc">DataTables has most features enabled by
-                            default, so all you need to do to use it with your own tables is to call
-                            the construction function: <code>$().DataTable();</code>.
-                        </p> --}}
-
-                        <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                        {{-- <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped" style="border-collapse: collapse; border-spacing: 0; width: 100%;"> --}}
-                            <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Nome</th>
-                                <th>Contato</th>
-                                <th>Email</th>
-                                <th>Start date</th>
-                                <th>Estado</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                                @foreach ($clientesComUsuarios as $cliente)
-                                <tr>
-                                    <td>{{ $cliente->caixa_postal }}</td>
-                                    <td>{{ $cliente->user->name }}</td>
-                                    <td>{{ $cliente->user->email }}</td>
-                                    <td>{{ $cliente->user->email }}</td>
-                                    <td>{{ $cliente->created_at }}</td>
-                                    <td>
-                                        @if ($cliente->user->status === 'active')
-                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Active</div>
-                                        @elseif ($cliente->user->status === 'inactive')
-                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i>Inactive</div>
-                                        @else
-                                            <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-danger align-middle me-2"></i>Desactive</div>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div> <!-- end col -->
-        </div> <!-- end row -->
         <!-- end row -->
-    </div>
-    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="myLargeModalLabel">Novo Cliente</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-						<input type="hidden" class="form-control" id="nombrelista" name="nombrelista" placeholder="Nombre Factura" maxlength="80">
-						<input type="hidden" class="form-control" id="documento" name="documento" placeholder="CI 9.999.999" maxlength="40">
-						<div class="col-md-2">
-							<div class="form-group">
-								<label for="nacionalidad">Nacionalidad</label>
-								<select class="form-control" id="nacionalidad" name="nacionalidad">
-									<option value="BRA" selected>BR</option>
-									<option value="PGY">PY</option>
-									<option value="ARG">AG</option>
-									<option value="EUA">US</option>
-								</select>
-							</div>
-						</div>
-                        <div class="col-md-2">
-							<div class="form-group">
-								<label for="codigo">Código</label>
-								<input type="text" class="form-control" id="codigo" name="codigo" placeholder="000XX" maxlength="5" required>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="nombre">Usuário</label>
-								<select class="form-control" id="usuario" name="usuario">
-									<option value="1">xxx (EMAIL)</option>
-									<option value="0">yyy (EMAIL)</option>
-									<option value="2">zzz (EMAIL)</option>
-								</select>
-							</div>
-						</div>
-                        <div class="col-md-2">
-							<div class="form-group">
-								<label for="codigo">Data Ingresso</label>
-								<input type="text" class="form-control" id="codigo" name="codigo" placeholder="00/00/0000" maxlength="10" required>
-							</div>
-						</div>
-                        {{-- <div class="col-md-2">
-							<div class="form-group">
-								<label for="estado">Estado</label>
-								<select class="form-control" id="estado" name="estado">
-									<option value="1">Activo</option>
-									<option value="0">Inactivo</option>
-									<option value="2">Casual</option>
-								</select>
-							</div>
-						</div> --}}
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="descripcion">Observaciones</label>
-								<textarea class="form-control" rows="2" id="observaciones" name="observaciones" maxlength="140"></textarea>
-							</div>
-						</div>
-					</div> <!-- row -->
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
     </div>
 
 </div>

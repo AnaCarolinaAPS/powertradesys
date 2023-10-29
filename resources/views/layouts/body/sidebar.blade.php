@@ -8,20 +8,35 @@
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title">Menu</li>
 
-                <li>
+                {{-- <li>
                     <a href="{{ route('dashboard'); }}" class="waves-effect">
                         <i class="ri-dashboard-line"></i><span class="badge rounded-pill bg-success float-end">3</span>
                         <span>Dashboard</span>
                     </a>
-                </li>
+                </li> --}}
                 <!-- <li>
                     <a href="calendar.html" class=" waves-effect">
                         <i class="ri-calendar-2-line"></i>
                         <span>Calendar</span>
                     </a>
                 </li> -->
+                @role('guest')
+                    <li>
+                        <a href="{{ route('dashboard'); }}" class="waves-effect">
+                            <i class="ri-dashboard-line"></i><span class="badge rounded-pill bg-success float-end">3</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                @endrole
 
-                @if (Auth::user()->isAdmin())
+                @role('admin')
+                    <li>
+                        <a href="{{ route('dashboard'); }}" class="waves-effect">
+                            <i class="ri-dashboard-line"></i><span class="badge rounded-pill bg-success float-end">3</span>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                {{-- @if (Auth::user()->isAdmin()) --}}
                     {{-- <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-pencil-line"></i>
@@ -109,7 +124,7 @@
                             <li><a href="layouts-compact-sidebar.html">Gastos</a></li>
                         </ul>
                     </li>
-                @elseif (Auth::user()->isLogistics())
+                {{-- @elseif (Auth::user()->isLogistics()) --}}
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-pencil-line"></i>
@@ -133,7 +148,7 @@
                             <li><a href="layouts-compact-sidebar.html">Estoque</a></li>
                         </ul>
                     </li>
-                @elseif (Auth::user()->isFinancial())
+                {{-- @elseif (Auth::user()->isFinancial()) --}}
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-pencil-line"></i>
@@ -159,7 +174,9 @@
                             <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>
                         </ul>
                     </li>
-                @elseif (Auth::user()->isClient())
+                @endrole
+                @role('client')
+                {{-- @elseif (Auth::user()->isClient()) --}}
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="fas fa-box-open"></i>
@@ -178,8 +195,8 @@
                             <span>Invoices</span>
                         </a>
                     </li>
-                @endif
-
+                {{-- @endif --}}
+                @endrole
                 {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="ri-mail-send-line"></i>

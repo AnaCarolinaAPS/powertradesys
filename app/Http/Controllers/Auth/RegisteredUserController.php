@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -43,6 +44,12 @@ class RegisteredUserController extends Controller
         ]);
 
         event(new Registered($user));
+
+        // Encontre a função (role) que você deseja associar ao usuário
+        $role = Role::findByName('guest'); // Substitua 'editor' pelo nome da função desejada
+
+        // Associe a função ao usuário
+        $user->assignRole($role);
 
         Auth::login($user);
 

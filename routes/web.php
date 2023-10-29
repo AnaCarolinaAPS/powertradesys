@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
@@ -39,11 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/dashboard', 'AdminDashboardController@index')->name('admin.dashboard');
+        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     });
 
     Route::middleware(['role:client'])->group(function () {
-        Route::get('/dashboard', 'ClientDashboardController@index')->name('client.dashboard');
+        Route::get('/home', [ClientDashboardController::class, 'index'])->name('client.dashboard');
     });
 });
 

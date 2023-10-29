@@ -21,7 +21,7 @@ class DashboardController extends Controller
         } elseif (auth()->user()->hasRole('client')) {
             return redirect()->route('client.dashboard');
         } else {
-            return redirect()->route('default.dashboard');
+            return view('dashboard');
         }
     }
 }

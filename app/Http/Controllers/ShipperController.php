@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Shipper;
 use Illuminate\Http\Request;
+use Toastr;
 
 class ShipperController extends Controller
 {
@@ -29,20 +30,33 @@ class ShipperController extends Controller
      */
     public function store(Request $request)
     {
-        // Validação dos dados do formulário
-        $request->validate([
-            'name' => 'required|string|max:255',
-            // Adicione outras regras de validação conforme necessário
-        ]);
+        try {
+            // Validação dos dados do formulário
+            $request->validate([
+                'name' => 'required|string|max:255|unique:shippers',
+                // Adicione outras regras de validação conforme necessário
+            ]);
 
-        // Criação de um novo Shipper no banco de dados
-        Shipper::create([
-            'name' => $request->input('name'),
-            // Adicione outros campos conforme necessário
-        ]);
+            // Criação de um novo Shipper no banco de dados
+            Shipper::create([
+                'name' => $request->input('name'),
+                // Adicione outros campos conforme necessário
+            ]);
 
-        // Redirecionamento após a criação bem-sucedida
-        return redirect()->route('shippers.index')->with('success', 'Shipper criado com sucesso!');
+            // Exibir toastr de sucesso
+            return redirect()->route('shippers.index')->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Shipper criado com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->route('shippers.index')->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao criar o Shipper: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 
     /**

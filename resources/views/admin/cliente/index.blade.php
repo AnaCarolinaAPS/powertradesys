@@ -128,7 +128,7 @@
                     <h5 class="modal-title" id="myLargeModalLabel">Novo Cliente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="form-horizontal mt-3" method="POST" action="{{ route('admin.client.new') }}">
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('clientes.store') }}">
                     @csrf
                     <div class="modal-body">
                         {{-- ADICIONAR MAIS TARDE O CONTATO POR TELEFONE + NOME COMPLETO TIPO DE DOCUMENTO E NRO DE DOCUMENTO --}}

@@ -43,7 +43,7 @@
                             <span>Cadastros</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
+                            <li><a href="{{ route('clientes.index'); }}">Clientes</a></li>
                             <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li>
                         </ul>
                     </li>

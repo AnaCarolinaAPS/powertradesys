@@ -6,13 +6,6 @@
 <div class="page-content">
     <div class="container-fluid">
 
-        <div class="row">
-            @if(session('success'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('success') }}
-                </div>
-            @endif
-        </div>
         <!-- start page title -->
         <div class="row">
             <div class="col-12">
@@ -97,4 +90,10 @@
 
 </div>
 <!-- End Page-content -->
+{{-- <script>
+    @if(Session::has('toastr'))
+        var toastrData = {!! json_encode(Session::get('toastr')) !!};
+        toastr[toastrData.type](toastrData.message, toastrData.title);
+    @endif
+</script> --}}
 @endsection

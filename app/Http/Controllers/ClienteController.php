@@ -36,36 +36,41 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        // Valide os dados do formulário, se necessário
-        $request->validate([
-            'caixa_postal' => 'required|string|max:6',
-            // Outras regras de validação para outros campos
-        ]);
+        try {
+            // Valide os dados do formulário, se necessário
+            $request->validate([
+                'caixa_postal' => 'required|string|max:6|unique:clientes',
+                // Outras regras de validação para outros campos
+            ]);
 
-        // Crie o cliente
-        Cliente::create([
-            'caixa_postal' => $request->input('caixa_postal'),
-            'user_id' => $request->input('user_id'),
-            // Outros campos
-        ]);
+            // Crie o cliente
+            Cliente::create([
+                'caixa_postal' => $request->input('caixa_postal'),
+                'user_id' => $request->input('user_id'),
+                // Outros campos
+            ]);
 
-        $usuario = User::find($request->input('user_id'));
-        // Remova a role 'guest' (ou a role que deseja remover)
-        $usuario->removeRole('guest');
+            $usuario = User::find($request->input('user_id'));
+            // Remova a role 'guest' (ou a role que deseja remover)
+            $usuario->removeRole('guest');
 
-        // Atribua a role 'client'
-        $usuario->assignRole('client');
+            // Atribua a role 'client'
+            $usuario->assignRole('client');
 
-        // Redirecione ou faça o que for necessário após criar o cliente
-        // return redirect('/alguma-rota');
-        // $usuariosNaoClientes = User::whereHas('roles', function ($query) {
-        //     $query->where('name', 'guest');
-        // })->get();
-        // $clientesComUsuarios = Cliente::with('user')->get();
-        // return view('admin.cliente.index', compact('usuariosNaoClientes', 'clientesComUsuarios'));
-
-        // Carrega a view com os detalhes do cliente
-        return back()->with('success', 'Cliente criado com sucesso!');
+            // Exibir toastr de sucesso
+            return redirect()->route('clientes.index')->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Cliente criado com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->route('clientes.index')->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao criar o Cliente: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 
     /**

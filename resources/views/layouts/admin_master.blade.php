@@ -20,6 +20,9 @@
         <!-- Responsive datatable examples -->
         <link href="{{ asset('backend/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css') }}" rel="stylesheet" type="text/css" />
 
+        {{-- TOASTR --}}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
         <!-- Bootstrap Css -->
         <link href="{{ asset('backend/assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
         <!-- Icons Css -->
@@ -95,8 +98,22 @@
         <!-- Datatable init js -->
         <script src="{{ asset('backend/assets/js/pages/datatables.init.js') }}"></script>
 
+        <!-- TOAST -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
         <!-- App js -->
         <script src="{{ asset('backend/assets/js/app.js') }}"></script>
+
+        <!-- Adicione o script JavaScript para exibir os toasts -->
+        <script>
+            @if(Session::has('toastr'))
+                var toastrData = {!! json_encode(Session::get('toastr')) !!};
+                // Defina a opção showMethod como 'slideDown'
+                toastr.options.showMethod = 'slideDown';
+                toastr.options.progressBar = true;
+                toastr[toastrData.type](toastrData.message, toastrData.title);
+            @endif
+        </script>
     </body>
 
 </html>

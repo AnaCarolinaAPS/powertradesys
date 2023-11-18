@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ShipperController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,6 +43,17 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['role:admin'])->group(function () {
         Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
+        // Shippers CRUD
+        Route::prefix('/shippers')->group(function () {
+            Route::get('/', [ShipperController::class, 'index'])->name('shippers.index');
+            // Route::get('/create', [ShipperController::class, 'create'])->name('shippers.create');
+            Route::post('/', [ShipperController::class, 'store'])->name('shippers.store');
+            // Route::get('/{shipper}', [ShipperController::class, 'show'])->name('shippers.show');
+            // Route::get('/{shipper}/edit', [ShipperController::class, 'edit'])->name('shippers.edit');
+            // Route::put('/{shipper}', [ShipperController::class, 'update'])->name('shippers.update');
+            // Route::delete('/{shipper}', [ShipperController::class, 'destroy'])->name('shippers.destroy');
+        });
     });
 
     Route::middleware(['role:client'])->group(function () {
@@ -60,10 +72,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/clientes', [ClienteController::class, 'index'])->name('admin.client');
 
     // Exemplo de rota para exibir um cliente específico
-    Route::get('/clientes/{id}', 'ClienteController@show');
+    Route::get('/admin/clientes/{id}', [ClienteController::class, 'show'])->name('admin.client.show');
 
     // Exemplo de rota para criar um novo cliente
-    Route::post('/clientes', 'ClienteController@store');
+    Route::post('/clientes', [ClienteController::class, 'store'])->name('admin.client.new');
 
     // Exemplo de rota para atualizar um cliente
     Route::put('/clientes/{id}', 'ClienteController@update');

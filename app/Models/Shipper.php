@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class Shipper extends Model
 {
     use HasFactory;
 
@@ -15,12 +15,6 @@ class Cliente extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'caixa_postal',
-        'user_id',
+        'name',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

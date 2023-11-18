@@ -1,4 +1,5 @@
-@extends('admin.admin_master')
+@extends('layouts.admin_master')
+@section('titulo', 'Adm Clientes | PowerTrade.Py')
 
 @section('admin')
 <div class="page-content">
@@ -39,7 +40,7 @@
                                         <th>ID</th>
                                         <th>Nome</th>
                                         <th>Email</th>
-                                        <th>Ações</th>
+                                        <th>Data Ingresso</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -48,11 +49,12 @@
                                         <td><h6 class="mb-0">{{ $usuario->id }}</h6></td>
                                         <td>{{ $usuario->name }}</td>
                                         <td>{{ $usuario->email }}</td>
-                                        <td>
+                                        <td>{{ \Carbon\Carbon::parse($usuario->created_at)->format('d/m/Y H:i') }}</td>
+                                        {{-- <td>
                                             <button type="button" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
                                                 <i class="fas fa-plus"></i>
                                             </button>
-                                        </td>
+                                        </td> --}}
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -70,12 +72,14 @@
                 <div class="card">
                     <div class="card-body">
 
-                        {{-- <h4 class="card-title">Default Datatable</h4>
-                        <p class="card-title-desc">DataTables has most features enabled by
-                            default, so all you need to do to use it with your own tables is to call
-                            the construction function: <code>$().DataTable();</code>.
-                        </p> --}}
-
+                        <h4 class="card-title">Clientes Verificados</h4>
+                        <p class="card-title-desc">
+                            @if($usuariosNaoClientes->count()>0)
+                                <button type="button" class="btn btn-success waves-effect waves-light" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
+                                    <i class="fas fa-plus"></i> Nuevo
+                                </button>
+                            @endif
+                        </p>
                         <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         {{-- <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped" style="border-collapse: collapse; border-spacing: 0; width: 100%;"> --}}
                             <thead>
@@ -96,7 +100,8 @@
                                     <td>{{ $cliente->user->name }}</td>
                                     <td>{{ $cliente->user->email }}</td>
                                     <td>{{ $cliente->user->email }}</td>
-                                    <td>{{ $cliente->created_at }}</td>
+                                    {{-- <td>{{ $cliente->created_at }}</td> --}}
+                                    <td>{{ \Carbon\Carbon::parse($cliente->created_at)->format('d/m/Y H:i') }}</td>
                                     <td>
                                         @if ($cliente->user->status === 'active')
                                             <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Active</div>
@@ -123,61 +128,45 @@
                     <h5 class="modal-title" id="myLargeModalLabel">Novo Cliente</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-						<input type="hidden" class="form-control" id="nombrelista" name="nombrelista" placeholder="Nombre Factura" maxlength="80">
-						<input type="hidden" class="form-control" id="documento" name="documento" placeholder="CI 9.999.999" maxlength="40">
-						<div class="col-md-2">
-							<div class="form-group">
-								<label for="nacionalidad">Nacionalidad</label>
-								<select class="form-control" id="nacionalidad" name="nacionalidad">
-									<option value="BRA" selected>BR</option>
-									<option value="PGY">PY</option>
-									<option value="ARG">AG</option>
-									<option value="EUA">US</option>
-								</select>
-							</div>
-						</div>
-                        <div class="col-md-2">
-							<div class="form-group">
-								<label for="codigo">Código</label>
-								<input type="text" class="form-control" id="codigo" name="codigo" placeholder="000XX" maxlength="5" required>
-							</div>
-						</div>
-						<div class="col-md-6">
-							<div class="form-group">
-								<label for="nombre">Usuário</label>
-								<select class="form-control" id="usuario" name="usuario">
-									<option value="1">xxx (EMAIL)</option>
-									<option value="0">yyy (EMAIL)</option>
-									<option value="2">zzz (EMAIL)</option>
-								</select>
-							</div>
-						</div>
-                        <div class="col-md-2">
-							<div class="form-group">
-								<label for="codigo">Data Ingresso</label>
-								<input type="text" class="form-control" id="codigo" name="codigo" placeholder="00/00/0000" maxlength="10" required>
-							</div>
-						</div>
-                        {{-- <div class="col-md-2">
-							<div class="form-group">
-								<label for="estado">Estado</label>
-								<select class="form-control" id="estado" name="estado">
-									<option value="1">Activo</option>
-									<option value="0">Inactivo</option>
-									<option value="2">Casual</option>
-								</select>
-							</div>
-						</div> --}}
-						<div class="col-md-12">
-							<div class="form-group">
-								<label for="descripcion">Observaciones</label>
-								<textarea class="form-control" rows="2" id="observaciones" name="observaciones" maxlength="140"></textarea>
-							</div>
-						</div>
-					</div> <!-- row -->
-                </div>
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('admin.client.new') }}">
+                    @csrf
+                    <div class="modal-body">
+                        {{-- ADICIONAR MAIS TARDE O CONTATO POR TELEFONE + NOME COMPLETO TIPO DE DOCUMENTO E NRO DE DOCUMENTO --}}
+                        {{-- <input type="hidden" class="form-control" id="nombrelista" name="nombrelista" placeholder="Nombre Factura" maxlength="80">
+                        <input type="hidden" class="form-control" id="documento" name="documento" placeholder="CI 9.999.999" maxlength="40"> --}}
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="codigo">Caixa Postal</label>
+                                    <input type="text" class="form-control" id="caixa_postal" name="caixa_postal" placeholder="000XXX" maxlength="6" required>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="nombre">Usuário</label>
+                                    <select class="form-control" id="user_id" name="user_id">
+                                        @foreach ($usuariosNaoClientes as $usuario)
+                                            <option value="{{ $usuario->id }}"> {{ $usuario->id }} {{ $usuario->name }} ({{ $usuario->email }})</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="descripcion">Observaciones</label>
+                                    <textarea class="form-control" rows="2" id="observaciones" name="observaciones" maxlength="140"></textarea>
+                                </div>
+                            </div>
+                        </div> --}}
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">Adicionar</button>
+                    </div>
+                </form>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>

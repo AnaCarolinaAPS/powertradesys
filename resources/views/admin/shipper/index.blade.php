@@ -42,7 +42,7 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_shippers as $shipper)
-                                    <tr>
+                                    <tr data-href="{{ route('shippers.show', ['shipper' => $shipper->id]) }}">
                                         <td><h6 class="mb-0">{{ $shipper->id }}</h6></td>
                                         <td>{{ $shipper->name }}</td>
                                         <td>{{ \Carbon\Carbon::parse($shipper->created_at)->format('d/m/Y H:i') }}</td>
@@ -90,10 +90,16 @@
 
 </div>
 <!-- End Page-content -->
-{{-- <script>
-    @if(Session::has('toastr'))
-        var toastrData = {!! json_encode(Session::get('toastr')) !!};
-        toastr[toastrData.type](toastrData.message, toastrData.title);
-    @endif
-</script> --}}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var tableRows = document.querySelectorAll('tbody tr[data-href]');
+
+        tableRows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+</script>
 @endsection

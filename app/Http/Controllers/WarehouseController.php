@@ -2,19 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Shipper;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
-use Toastr;
+use App\Models\Shipper;
 
-class ShipperController extends Controller
+class WarehouseController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $all_items = Warehouse::all();
         $all_shippers = Shipper::all();
-        return view('admin.shipper.index', compact('all_shippers'));
+        return view('admin.warehouse.index', compact('all_items', 'all_shippers'));
     }
 
     /**
@@ -33,27 +34,31 @@ class ShipperController extends Controller
         try {
             // Validação dos dados do formulário
             $request->validate([
-                'name' => 'required|string|max:255|unique:shippers',
+                'wr' => 'required|string|max:255|unique:warehouses',
+                'data' => 'required|date|before_or_equal:today',
+                'shipper_id' => 'exists:shippers,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Criação de um novo Shipper no banco de dados
-            Shipper::create([
-                'name' => $request->input('name'),
+            Warehouse::create([
+                'wr' => $request->input('wr'),
+                'data' => $request->input('data'),
+                'shipper_id' => $request->input('shipper_id'),
                 // Adicione outros campos conforme necessário
             ]);
 
             // Exibir toastr de sucesso
-            return redirect()->route('shippers.index')->with('toastr', [
+            return redirect()->route('warehouses.index')->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Shipper criado com sucesso!',
+                'message' => 'Warehouse criada com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de Erro
-            return redirect()->route('shippers.index')->with('toastr', [
+            return redirect()->route('warehouses.index')->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao criar o Shipper: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao criar a Warehouse: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }
@@ -66,15 +71,16 @@ class ShipperController extends Controller
     {
         try {
             // Buscar o shipper pelo ID
-            $shipper = Shipper::findOrFail($id);
+            $warehouse = Warehouse::findOrFail($id);
+            $all_shippers = Shipper::all();
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.shipper.show', compact('shipper'));
+            return view('admin.warehouse.show', compact('warehouse', 'all_shippers'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
-            return redirect()->route('shippers.index')->with('toastr', [
+            return redirect()->route('warehouses.index')->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao exibir os detalhes do Shipper: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao exibir os detalhes da Warehouse: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }
@@ -83,7 +89,7 @@ class ShipperController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Shipper $shipper)
+    public function edit(Warehouse $shipper)
     {
         //
     }
@@ -91,32 +97,34 @@ class ShipperController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Shipper $shipper)
+    public function update(Request $request, Warehouse $warehouse)
     {
         try {
             // Validação dos dados do formulário
             $request->validate([
-                'name' => 'required|string|max:255|unique:shippers',
+                'data' => 'required|date|before_or_equal:today',
+                'shipper_id' => 'exists:shippers,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Atualizar os dados do Shipper
-            $shipper->update([
-                'name' => $request->input('name'),
+            $warehouse->update([
+                'data' => $request->input('data'),
+                'shipper_id' => $request->input('shipper_id'),
                 // Adicione outros campos conforme necessário
             ]);
 
             // Exibir toastr de sucesso
-            return redirect()->route('shippers.show', ['shipper' => $shipper->id])->with('toastr', [
+            return redirect()->route('warehouses.show', ['warehouse' => $warehouse->id])->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Shipper atualizado com sucesso!',
+                'message' => 'Warehouse atualizada com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de Erro
-            return redirect()->route('shippers.show', ['shipper' => $shipper->id])->with('toastr', [
+            return redirect()->route('warehouses.show', ['warehouse' => $warehouse->id])->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao atualizar o Shipper: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao atualizar a Warehouse: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }
@@ -125,32 +133,32 @@ class ShipperController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Shipper $shipper)
+    public function destroy(Warehouse $warehouse)
     {
         // Verificar se o Shipper possui Warehouses
-        if ($shipper->warehouses()->exists()) {
-            return redirect()->back()->with('toastr', [
-                'type'    => 'error',
-                'message' => 'Não é possível excluir o Shipper, pois ele possui Warehouses associadas.',
-                'title'   => 'Erro',
-            ]);
-        }
+        // if ($shipper->warehouses()->exists()) {
+        //     return redirect()->back()->with('toastr', [
+        //         'type'    => 'error',
+        //         'message' => 'Não é possível excluir a Warehouse, pois ele possui Warehouses associadas.',
+        //         'title'   => 'Erro',
+        //     ]);
+        // }
 
         try {
             // Excluir o Shipper do banco de dados
-            $shipper->delete();
+            $warehouse->delete();
 
             // Redirecionar após a exclusão bem-sucedida
-            return redirect()->route('shippers.index')->with('toastr', [
+            return redirect()->route('warehouses.index')->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Shipper excluído com sucesso!',
+                'message' => 'Warehouse excluída com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de erro se ocorrer uma exceção
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao atualizar o Shipper: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao atualizar a Warehouse: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

@@ -63,7 +63,7 @@
                                 </ul>
                             </li>
                             <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Warehouses</a></li>
+                            <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
                             <li><a href="layouts-dark-sidebar.html">Pacotes</a></li>
                             <li><a href="layouts-compact-sidebar.html">Estoque</a></li>
                         </ul>

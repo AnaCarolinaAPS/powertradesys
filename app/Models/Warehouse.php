@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Shipper extends Model
+class Warehouse extends Model
 {
     use HasFactory;
 
@@ -15,11 +15,14 @@ class Shipper extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'wr',
+        'data',
+        'shipper_id',
     ];
 
-    public function warehouses()
+
+    public function shipper()
     {
-        return $this->hasMany(Warehouse::class);
+        return $this->belongsTo(Shipper::class);
     }
 }

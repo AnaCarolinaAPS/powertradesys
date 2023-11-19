@@ -47,7 +47,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="shipper_id">Shipper</label>
-                                        <select class="form-control" id="shipper_id" name="shipper_id">
+                                        <select class="selectpicker form-control" data-live-search="true" id="shipper_id" name="shipper_id">
                                             @foreach ($all_shippers as $shipper)
                                             <option value="{{ $shipper->id }}" {{ $warehouse->shipper->id == $shipper->id ? 'selected' : '' }}>
                                                 {{ $shipper->name }}

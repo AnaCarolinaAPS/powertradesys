@@ -85,9 +85,9 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="shipper_id">Shipper</label>
-                                    <select class="form-control" id="shipper_id" name="shipper_id">
+                                    <select class="selectpicker form-control" data-live-search="true" id="shipper_id" name="shipper_id">
                                         @foreach ($all_shippers as $shipper)
-                                            <option value="{{ $shipper->id }}"> {{ $shipper->id }} {{ $shipper->name }} </option>
+                                            <option value="{{ $shipper->id }}"> {{ $shipper->name }} </option>
                                         @endforeach
                                     </select>
                                 </div>

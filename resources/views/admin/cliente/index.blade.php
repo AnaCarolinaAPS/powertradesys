@@ -144,9 +144,9 @@
                             <div class="col-md-9">
                                 <div class="form-group">
                                     <label for="nombre">Usuário</label>
-                                    <select class="form-control" id="user_id" name="user_id">
+                                    <select class="selectpicker form-control" data-live-search="true" id="user_id" name="user_id">
                                         @foreach ($usuariosNaoClientes as $usuario)
-                                            <option value="{{ $usuario->id }}"> {{ $usuario->id }} {{ $usuario->name }} ({{ $usuario->email }})</option>
+                                            <option value="{{ $usuario->id }}"> {{ $usuario->name }} ({{ $usuario->email }})</option>
                                         @endforeach
                                     </select>
                                 </div>

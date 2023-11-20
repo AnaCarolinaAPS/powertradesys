@@ -79,9 +79,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/admin/pacotes')->group(function () {
             // Route::get('/', [WarehouseController::class, 'index'])->name('pacotes.index');
             Route::post('/', [PacoteController::class, 'store'])->name('pacotes.store');
-            // Route::get('/{pacotes}', [WarehouseController::class, 'show'])->name('pacotes.show');
-            // Route::put('/{pacotes}', [WarehouseController::class, 'update'])->name('pacotes.update');
-            // Route::delete('/{pacotes}', [WarehouseController::class, 'destroy'])->name('pacotes.destroy');
+            Route::get('/{pacotes}', [PacoteController::class, 'show'])->name('pacotes.show');
+            Route::put('/{pacotes}', [PacoteController::class, 'update'])->name('pacotes.update');
+            Route::delete('/{pacotes}', [PacoteController::class, 'destroy'])->name('pacotes.destroy');
         });
     });
 

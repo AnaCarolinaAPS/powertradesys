@@ -70,4 +70,86 @@ class PacoteController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $pacote = Pacote::find($id);
+        return response()->json($pacote);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Pacote $pacote)
+    {
+        try {
+            // Validação dos dados do formulário
+            $request->validate([
+                'rastreio' => 'required|string|max:255',
+                'qtd' => 'required|numeric',
+                // 'warehouse_id' => 'required|exists:warehouses,id',
+                'cliente_id' => 'nullable|exists:clientes,id',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            $pacote = Pacote::find($request->input('id'));
+            // Atualizar os dados do Shipper
+            $pacote->update([
+                'rastreio' => $request->input('rastreio'),
+                'qtd' => $request->input('qtd'),
+                // 'warehouse_id' => $request->input('warehouse_id'),
+                'cliente_id' => $request->input('cliente_id'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pacote atualizado com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar o Pacote: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    // public function destroy(Pacote $pacote)
+    public function destroy($id)
+    {
+        // Verificar se o Shipper possui Warehouses
+        // if ($shipper->warehouses()->exists()) {
+        //     return redirect()->back()->with('toastr', [
+        //         'type'    => 'error',
+        //         'message' => 'Não é possível excluir o Shipper, pois ele possui Warehouses associadas.',
+        //         'title'   => 'Erro',
+        //     ]);
+        // }
+
+        try {
+            $pacote = Pacote::find($id);
+            // Excluir o Shipper do banco de dados
+            $pacote->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pacote excluído com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir o Pacote: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
 }

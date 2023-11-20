@@ -150,7 +150,7 @@ class ShipperController extends Controller
             // Exibir toastr de erro se ocorrer uma exceção
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao atualizar o Shipper: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao excluir o Shipper: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

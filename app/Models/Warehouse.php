@@ -25,4 +25,9 @@ class Warehouse extends Model
     {
         return $this->belongsTo(Shipper::class);
     }
+
+    public function pacotes()
+    {
+        return $this->hasMany(Pacote::class);
+    }
 }

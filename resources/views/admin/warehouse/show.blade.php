@@ -15,7 +15,7 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
-                            <li class="breadcrumb-item"><a href="{{ route('shippers.index'); }}">Warehouses</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
                             <li class="breadcrumb-item active">WR-{{ $warehouse->wr;}}</li>
                         </ol>
                     </div>
@@ -77,6 +77,42 @@
             </div>
             <!-- end col -->
         </div>
+        <!-- end page title -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Pacotes</h4>
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
+                            <i class="fas fa-plus"></i> Novo
+                        </button>
+                        <div class="table-responsive">
+                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Rastreio</th>
+                                        <th>Cliente</th>
+                                        <th>Qtd</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($warehouse->pacotes as $pacote)
+                                    <tr data-href="{{-- route('warehouses.show', ['warehouse' => $warehouse->id]); }}--}}">
+                                        <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
+                                        <td>{{ '('.$pacote->cliente->caixa_postal.')' }}</td>
+                                        <td>{{ $pacote->qtd }}</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
         <!-- end row -->
         <!-- Modal de Confirmação -->
         <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
@@ -101,6 +137,53 @@
                 </div>
             </div>
         </div>
+    </div>
+
+
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalWarehouse" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Novo Pacote</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('pacotes.store') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Campo hidden para armazenar o id da Warehouse -->
+                        <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="rastreio">Rastreio</label>
+                                    <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cliente_id">Cliente</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id">
+                                        @foreach ($all_clientes as $cliente)
+                                            <option value="{{ $cliente->id }}"> {{ $cliente->caixa_postal }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="qtd">Qtd</label>
+                                    <input class="form-control" type="number" value="1" id="qtd" name="qtd">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light">Adicionar</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
     </div>
 </div>
 <!-- End Page-content -->

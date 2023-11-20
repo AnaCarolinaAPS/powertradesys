@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Cliente extends Model
+class Pacote extends Model
 {
     use HasFactory;
 
@@ -15,17 +15,19 @@ class Cliente extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'caixa_postal',
-        'user_id',
+        'rastreio',
+        'qtd',
+        'warehouse_id',
+        'cliente_id',
     ];
 
-    public function user()
+    public function warehouse()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Warehouse::class);
     }
 
-    public function pacotes()
+    public function cliente()
     {
-        return $this->hasMany(Pacote::class);
+        return $this->belongsTo(Cliente::class);
     }
 }

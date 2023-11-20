@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PacoteController;
 use App\Http\Controllers\ShipperController;
 use App\Http\Controllers\WarehouseController;
 use Illuminate\Support\Facades\Route;
@@ -72,6 +73,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
             Route::put('/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');
             Route::delete('/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
+        });
+
+        // Warehouses CRUD
+        Route::prefix('/admin/pacotes')->group(function () {
+            // Route::get('/', [WarehouseController::class, 'index'])->name('pacotes.index');
+            Route::post('/', [PacoteController::class, 'store'])->name('pacotes.store');
+            // Route::get('/{pacotes}', [WarehouseController::class, 'show'])->name('pacotes.show');
+            // Route::put('/{pacotes}', [WarehouseController::class, 'update'])->name('pacotes.update');
+            // Route::delete('/{pacotes}', [WarehouseController::class, 'destroy'])->name('pacotes.destroy');
         });
     });
 

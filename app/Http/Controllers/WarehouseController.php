@@ -47,7 +47,7 @@ class WarehouseController extends Controller
             ]);
 
             // Criação de um novo Shipper no banco de dados
-            Warehouse::create([
+            $warehouse = Warehouse::create([
                 'wr' => $request->input('wr'),
                 'data' => $request->input('data'),
                 'shipper_id' => $request->input('shipper_id'),
@@ -55,7 +55,7 @@ class WarehouseController extends Controller
             ]);
 
             // Exibir toastr de sucesso
-            return redirect()->route('warehouses.index')->with('toastr', [
+            return redirect()->route('warehouses.show', ['warehouse' => $warehouse->id])->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Warehouse criada com sucesso!',
                 'title'   => 'Sucesso',
@@ -148,7 +148,7 @@ class WarehouseController extends Controller
                 'message' => 'Não é possível excluir a Warehouse, pois ele possui pacotes associados.',
                 'title'   => 'Erro',
             ]);
-        } 
+        }
 
         try {
             // Excluir o Shipper do banco de dados

@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\PacoteController;
 use App\Http\Controllers\ShipperController;
 use App\Http\Controllers\WarehouseController;
@@ -77,11 +78,20 @@ Route::middleware('auth')->group(function () {
 
         // Warehouses CRUD
         Route::prefix('/admin/pacotes')->group(function () {
-            // Route::get('/', [WarehouseController::class, 'index'])->name('pacotes.index');
+            // Route::get('/', [PacoteController::class, 'index'])->name('pacotes.index');
             Route::post('/', [PacoteController::class, 'store'])->name('pacotes.store');
             Route::get('/{pacotes}', [PacoteController::class, 'show'])->name('pacotes.show');
             Route::put('/{pacotes}', [PacoteController::class, 'update'])->name('pacotes.update');
             Route::delete('/{pacotes}', [PacoteController::class, 'destroy'])->name('pacotes.destroy');
+        });
+
+        // Fornecedores CRUD
+        Route::prefix('/admin/fornecedores')->group(function () {
+            Route::get('/', [FornecedorController::class, 'index'])->name('fornecedores.index');
+            Route::post('/', [FornecedorController::class, 'store'])->name('fornecedores.store');
+            Route::get('/{fornecedor}', [FornecedorController::class, 'show'])->name('fornecedores.show');
+            Route::put('/{fornecedor}', [FornecedorController::class, 'update'])->name('fornecedores.update');
+            Route::delete('/{fornecedor}', [FornecedorController::class, 'destroy'])->name('fornecedores.destroy');
         });
     });
 

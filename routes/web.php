@@ -8,8 +8,10 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\PacoteController;
+use App\Http\Controllers\ServicosFornecedorController;
 use App\Http\Controllers\ShipperController;
 use App\Http\Controllers\WarehouseController;
+use App\Models\ServicosFornecedor;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -92,6 +94,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{fornecedor}', [FornecedorController::class, 'show'])->name('fornecedores.show');
             Route::put('/{fornecedor}', [FornecedorController::class, 'update'])->name('fornecedores.update');
             Route::delete('/{fornecedor}', [FornecedorController::class, 'destroy'])->name('fornecedores.destroy');
+        });
+
+        // Serviços Fornecedores CRUD
+        Route::prefix('/admin/servicosfornecedores')->group(function () {
+            // Route::get('/', [ServicosFornecedorController::class, 'index'])->name('servicos_fornecedores.index');
+            Route::post('/', [ServicosFornecedorController::class, 'store'])->name('servicos_fornecedores.store');
+            // Route::get('/{servico}', [ServicosFornecedorController::class, 'show'])->name('servicos_fornecedores.show');
+            // Route::put('/{servico}', [ServicosFornecedorController::class, 'update'])->name('servicos_fornecedores.update');
+            // Route::delete('/{servico}', [ServicosFornecedorController::class, 'destroy'])->name('servicos_fornecedores.destroy');
         });
     });
 

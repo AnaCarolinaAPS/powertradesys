@@ -133,13 +133,13 @@ class CargaController extends Controller
      */
     public function destroy(Carga $carga)
     {
-        // if ($warehouse->pacotes()->count() > 0) {
-        //     return redirect()->back()->with('toastr', [
-        //         'type'    => 'error',
-        //         'message' => 'Não é possível excluir a Warehouse, pois ele possui pacotes associados.',
-        //         'title'   => 'Erro',
-        //     ]);
-        // }
+        if ($carga->pacotes()->count() > 0) {
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Não é possível excluir a Carga, pois ele possui pacotes associados.',
+                'title'   => 'Erro',
+            ]);
+        }
 
         try {
             // Excluir o Shipper do banco de dados

@@ -63,6 +63,44 @@
             <!-- end col -->
         </div>
         <!-- end page title -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Pacotes</h4>
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddPacote">
+                            <i class="fas fa-plus"></i> Add Pacote
+                        </button>
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddWarehouse">
+                            <i class="fas fa-plus"></i> Add Warehouse
+                        </button>
+                        <div class="table-responsive">
+                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Rastreio</th>
+                                        <th>Cliente</th>
+                                        <th>Qtd</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($carga->pacotes as $pacote)
+                                    <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
+                                        <td>{{ '('.$pacote->cliente->caixa_postal.')' }}</td>
+                                        <td>{{ $pacote->qtd }}</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
 
         <!-- Modal de Confirmação -->
         <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
@@ -86,6 +124,73 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalAddPacote" aria-hidden="true" style="display: none;" id="ModalAddPacote">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Adicionar Pacotes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('pacotes.atualizarCarga') }}" id="formNovoPacote">
+                        @csrf
+                        <div class="modal-body">
+                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <input type="hidden" name="carga_id" value="{{ $carga->id }}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="cliente_id">Pacote</label>
+                                        <select class="selectpicker form-control" multiple data-live-search="true" id="pacote_id" name="pacote_id[]" required>
+                                            @foreach ($all_pacotes as $pacote)
+                                                <option value="{{ $pacote->id }}"> {{ $pacote->rastreio }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovoPacote">Adicionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalAddWarehouse" aria-hidden="true" style="display: none;" id="ModalAddWarehouse">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Adicionar Pacotes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('pacotes.atualizarCargaWR') }}" id="formNovoPacoteWR">
+                        @csrf
+                        <div class="modal-body">
+                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <input type="hidden" name="carga_id" value="{{ $carga->id }}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="warehouse_id">Warehouse</label>
+                                        <select class="selectpicker form-control" multiple data-live-search="true" id="warehouse_id" name="warehouse_id[]" required>
+                                            @foreach ($all_warehouses as $warehouse)
+                                                <option value="{{ $warehouse->id }}"> WR-{{ $warehouse->wr }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovoPacoteWR">Adicionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
         </div>
     </div> 
 </div>

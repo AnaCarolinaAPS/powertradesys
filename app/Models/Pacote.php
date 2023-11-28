@@ -30,4 +30,9 @@ class Pacote extends Model
     {
         return $this->belongsTo(Cliente::class);
     }
+
+    public function carga()
+    {
+        return $this->belongsTo(Carga::class);
+    }
 }

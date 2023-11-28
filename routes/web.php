@@ -79,13 +79,15 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
         });
 
-        // Warehouses CRUD
+        // Pacotes CRUD
         Route::prefix('/admin/pacotes')->group(function () {
             // Route::get('/', [PacoteController::class, 'index'])->name('pacotes.index');
             Route::post('/', [PacoteController::class, 'store'])->name('pacotes.store');
             Route::get('/{pacotes}', [PacoteController::class, 'show'])->name('pacotes.show');
             Route::put('/{pacotes}', [PacoteController::class, 'update'])->name('pacotes.update');
             Route::delete('/{pacotes}', [PacoteController::class, 'destroy'])->name('pacotes.destroy');
+            Route::post('/atualizar-carga', [PacoteController::class, 'atualizarCarga'])->name('pacotes.atualizarCarga');
+            Route::post('/atualizar-carga-wr', [PacoteController::class, 'atualizarCargaWR'])->name('pacotes.atualizarCargaWR');
         });
 
         // Fornecedores CRUD

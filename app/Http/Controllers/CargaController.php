@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Carga;
-use App\Models\Cliente;
+use App\Models\Pacote;
+use App\Models\Warehouse;
+use Illuminate\Support\Facades\DB;
 
 class CargaController extends Controller
 {
@@ -13,11 +15,11 @@ class CargaController extends Controller
      */
     public function index()
     {
-        $all_items = Carga::all();
-        // $all_items = Warehouse::select('warehouses.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
-        //             ->leftJoin('pacotes', 'warehouses.id', '=', 'pacotes.warehouse_id')
-        //             ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.shipper_id', 'warehouses.created_at', 'warehouses.updated_at')
-        //             ->get();
+        // $all_items = Carga::all();
+        $all_items = Carga::select('cargas.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
+                    ->leftJoin('pacotes', 'cargas.id', '=', 'pacotes.carga_id')
+                    ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.created_at', 'cargas.updated_at')
+                    ->get();
         // $all_shippers = Shipper::all();
         return view('admin.carga.index', compact('all_items'));
     }
@@ -64,11 +66,14 @@ class CargaController extends Controller
         try {
             // Buscar o shipper pelo ID
             $carga = Carga::findOrFail($id);
-            // $all_shippers = Shipper::all();
-            $all_clientes = Cliente::all();
+            // $all_pacotes = Pacote::all();
+            $all_pacotes = Pacote::whereNull('carga_id')->get();
+            $all_warehouses = Warehouse::whereHas('pacotes', function ($query) {
+                $query->whereNull('carga_id');
+            })->get();
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.carga.show', compact('carga', 'all_clientes'));
+            return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('cargas.index')->with('toastr', [

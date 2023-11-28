@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pacote;
+use App\Models\Warehouse;
 use Illuminate\Http\Request;
 
 class PacoteController extends Controller
@@ -151,5 +152,69 @@ class PacoteController extends Controller
                 'title'   => 'Erro',
             ]);
         }
+    }
+
+    public function atualizarCarga(Request $request){
+        try {
+            // IDs dos pacotes selecionados
+            $pacotesSelecionados = $request->input('pacote_id');
+
+            // Lógica para atualizar os pacotes com o código da carga
+            foreach ($pacotesSelecionados as $pacoteId) {
+                $pacote = Pacote::findOrFail($pacoteId);
+                if ($pacote) {
+                    // Atualizar o código da carga para cada pacote
+                    $pacote->carga_id = $request->input('carga_id');
+                    $pacote->save();
+                }
+            }
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pacotes adicionados com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao adicionar os Pacotes: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        } 
+    }
+
+    public function atualizarCargaWR(Request $request){
+        try {
+            // IDs dos pacotes selecionados
+            $warehousesSelecionados = $request->input('warehouse_id');          
+
+            // Lógica para atualizar os pacotes com o código da carga
+            foreach ($warehousesSelecionados as $warehouseId) {
+                $warehouse = Warehouse::findOrFail($warehouseId);
+                $pacotesSemCarga = $warehouse->pacotes()->whereNull('carga_id')->get();
+                foreach ($pacotesSemCarga as $pacoteId) {
+                    $pacote = Pacote::findOrFail($pacoteId->id);
+                    if ($pacote) {
+                        // Atualizar o código da carga para cada pacote
+                        $pacote->carga_id = $request->input('carga_id');
+                        $pacote->save();
+                    }
+                }
+            }
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pacotes adicionados com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao adicionar os Pacotes: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        } 
     }
 }

@@ -18,4 +18,9 @@ class Carga extends Model
         'data_enviada',
         'data_recebida',
     ];
+
+    public function pacotes()
+    {
+        return $this->hasMany(Pacote::class);
+    }
 }

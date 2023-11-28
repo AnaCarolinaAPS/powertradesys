@@ -100,9 +100,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/admin/servicosfornecedores')->group(function () {
             // Route::get('/', [ServicosFornecedorController::class, 'index'])->name('servicos_fornecedores.index');
             Route::post('/', [ServicosFornecedorController::class, 'store'])->name('servicos_fornecedores.store');
-            // Route::get('/{servico}', [ServicosFornecedorController::class, 'show'])->name('servicos_fornecedores.show');
-            // Route::put('/{servico}', [ServicosFornecedorController::class, 'update'])->name('servicos_fornecedores.update');
-            // Route::delete('/{servico}', [ServicosFornecedorController::class, 'destroy'])->name('servicos_fornecedores.destroy');
+            Route::get('/{servico}', [ServicosFornecedorController::class, 'show'])->name('servicos_fornecedores.show');
+            Route::put('/{servico}', [ServicosFornecedorController::class, 'update'])->name('servicos_fornecedores.update');
+            Route::delete('/{servico}', [ServicosFornecedorController::class, 'destroy'])->name('servicos_fornecedores.destroy');
         });
     });
 

@@ -77,7 +77,7 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($fornecedor->servicos as $servico)
-                                    <tr class="abrirModal" data-servico-id="{{ $servico->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    <tr class="abrirModal" data-item-id="{{ $servico->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($servico->data_inicio)->format('d/m/Y') }}</h6></td>
                                         <td>
                                             @if ($servico->data_fim)
@@ -161,9 +161,9 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
-        {{--
+
         <!-- Modal de Exclusao Pacotes -->
-        <div class="modal fade" id="confirmDelPctModal" tabindex="-1" role="dialog" aria-labelledby="confirmDelPctModal" aria-hidden="true">
+        <div class="modal fade" id="confirmDelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -171,100 +171,97 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Tem certeza que deseja excluir este Pacote?</p>
+                        <p>Tem certeza que deseja excluir este Serviço?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
                         <!-- Adicionar o botão de exclusão no modal -->
-                        <form method="post" action="" id="formDeletePctModal">
+                        <form method="post" action="" id="formDeleteModal">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger waves-effect waves-light" form="formDeletePctModal">Excluir</button>
+                            <button type="submit" class="btn btn-danger waves-effect waves-light" form="formDeleteModal">Excluir</button>
                         </form>
                     </div>
                 </div>
             </div>
-        </div>
+        </div> 
 
-        <!-- Detalhes dos Pacotes -->
-        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalDetalhePacotes" aria-hidden="true" style="display: none;" id="detalhesModal">
+        <!-- Detalhes dos Itens -->
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="tituloModalPacote">Pacote</h5>
+                        <h5 class="modal-title" id="tituloModal">Serviço</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form class="form-horizontal mt-3" method="POST" id="formAtualizacaoPacote" action="">
+                    <form class="form-horizontal mt-3" method="POST" id="formAtualizacao" action="">
                         @csrf
                         @method('PUT') <!-- Método HTTP para update -->
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id da Warehouse -->
                             <input type="hidden" name="id" value="" id="dId">
-                            <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
+                            <!-- <input type="hidden" name="warehouse_id" value="{{ $fornecedor->id }}"> -->
                             <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="rastreio">Rastreio</label>
-                                        <input type="text" class="form-control" id="dRastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
-                                    </div>
-                                </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="cliente_id">Cliente</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="dCliente_id" name="cliente_id">
-                                            @foreach ($all_clientes as $cliente)
-                                                <option value="{{ $cliente->id }}"> {{ $cliente->caixa_postal }} </option>
-                                            @endforeach
-                                        </select>
+                                        <label for="descricao">Descrição do Serviço</label>
+                                        <input type="text" class="form-control" id="dDescricao" name="descricao" placeholder="Descrição do Serviço" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="qtd">Qtd</label>
-                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                        <label for="data_inicio">Data Inicio</label>
+                                        <input class="form-control" type="date" id="dData_inicio" name="data_inicio">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="data_fim">Data Fim</label>
+                                        <input class="form-control" type="date" id="dData_fim" name="data_fim">
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <!-- Botão de Exclusão -->
-                            <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelPctModal">
+                            <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelModal">
                                 Excluir
                             </button>
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
-                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacaoPacote">Atualizar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacao">Atualizar</button>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
-        </div> --}}
+        </div>
     </div>
 
 </div>
 
-{{-- <script>
+<script>
     // JavaScript para abrir o modal ao clicar na linha da tabela
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {
-            const pacoteId = event.currentTarget.dataset.pacoteId;
-            const url = "{{ route('pacotes.show', ':id') }}".replace(':id', pacoteId);
+            const itemId = event.currentTarget.dataset.itemId;
+            const url = "{{ route('servicos_fornecedores.show', ':id') }}".replace(':id', itemId);
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
 
-                    document.getElementById('tituloModalPacote').innerText = data.rastreio;
+                    document.getElementById('tituloModal').innerText = data.descricao;
                     document.getElementById('dId').value = data.id;
-                    document.getElementById('dRastreio').value = data.rastreio;
-                    document.getElementById('dCliente_id').value = data.cliente_id;
-                    document.getElementById('dQtd').value = data.qtd;
-                    $('.selectpicker').selectpicker('refresh');
+                    document.getElementById('dDescricao').value = data.descricao;
+                    document.getElementById('dData_inicio').value = data.data_inicio;
+                    document.getElementById('dData_fim').value = data.data_fim;
+                    // document.getElementById('dQtd').value = data.qtd;
+                    // $('.selectpicker').selectpicker('refresh');
 
-                    var form = document.getElementById('formAtualizacaoPacote');
-                    var novaAction = "{{ route('pacotes.update', ['pacotes' => ':id']) }}".replace(':id', data.id);
+                    var form = document.getElementById('formAtualizacao');
+                    var novaAction = "{{ route('servicos_fornecedores.update', ['servico' => ':id']) }}".replace(':id', data.id);
                     form.setAttribute('action', novaAction);
 
-                    var form2 = document.getElementById('formDeletePctModal');
-                    var novaAction2 = "{{ route('pacotes.destroy', ['pacotes' => ':id']) }}".replace(':id', data.id);
+                    var form2 = document.getElementById('formDeleteModal');
+                    var novaAction2 = "{{ route('servicos_fornecedores.destroy', ['servico' => ':id']) }}".replace(':id', data.id);
                     form2.setAttribute('action', novaAction2);
                     // console.error('Erro:', data);
                     // Preencha o conteúdo do modal com os dados do pacote recebido
@@ -273,6 +270,6 @@
                 .catch(error => console.error('Erro:', error));
         });
     });
-</script> --}}
+</script>
 <!-- End Page-content -->
 @endsection

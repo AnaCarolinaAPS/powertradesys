@@ -62,7 +62,7 @@
                                     <li><a href="layouts-compact-sidebar.html">Freteiros</a></li>
                                 </ul>
                             </li>
-                            <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
+                            <li><a href="{{ route('cargas.index'); }}">Cargas</a></li>
                             <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
                             <li><a href="layouts-dark-sidebar.html">Pacotes</a></li>
                             <li><a href="layouts-compact-sidebar.html">Estoque</a></li>

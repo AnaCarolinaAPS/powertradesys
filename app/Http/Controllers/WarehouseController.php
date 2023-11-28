@@ -164,7 +164,7 @@ class WarehouseController extends Controller
             // Exibir toastr de erro se ocorrer uma exceção
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao atualizar a Warehouse: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao excluir a Warehouse: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

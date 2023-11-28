@@ -11,6 +11,7 @@ use App\Http\Controllers\PacoteController;
 use App\Http\Controllers\ServicosFornecedorController;
 use App\Http\Controllers\ShipperController;
 use App\Http\Controllers\WarehouseController;
+use App\Http\Controllers\CargaController;
 use App\Models\ServicosFornecedor;
 use Illuminate\Support\Facades\Route;
 
@@ -103,6 +104,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{servico}', [ServicosFornecedorController::class, 'show'])->name('servicos_fornecedores.show');
             Route::put('/{servico}', [ServicosFornecedorController::class, 'update'])->name('servicos_fornecedores.update');
             Route::delete('/{servico}', [ServicosFornecedorController::class, 'destroy'])->name('servicos_fornecedores.destroy');
+        });
+
+        // Serviços Cargas CRUD
+        Route::prefix('/admin/cargas')->group(function () {
+            Route::get('/', [CargaController::class, 'index'])->name('cargas.index');
+            Route::post('/', [CargaController::class, 'store'])->name('cargas.store');
+            Route::get('/{carga}', [CargaController::class, 'show'])->name('cargas.show');
+            Route::put('/{carga}', [CargaController::class, 'update'])->name('cargas.update');
+            Route::delete('/{carga}', [CargaController::class, 'destroy'])->name('cargas.destroy');
         });
     });
 

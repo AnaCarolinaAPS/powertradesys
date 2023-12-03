@@ -25,12 +25,14 @@ class FornecedorController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'nome' => 'required|string|max:255|unique:fornecedors',
+                'tipo' => 'required|in:warehouse,despachante,transporte'
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Criação de um novo Shipper no banco de dados
             $fornecedor = Fornecedor::create([
                 'nome' => $request->input('nome'),
+                'tipo' => $request->input('tipo'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -80,12 +82,14 @@ class FornecedorController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'nome' => 'required|string|max:255|unique:fornecedors',
+                'tipo' => 'required|in:warehouse,despachante,transporte'
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Atualizar os dados do Shipper
             $fornecedor->update([
                 'nome' => $request->input('nome'),
+                'tipo' => $request->input('tipo'),
                 // Adicione outros campos conforme necessário
             ]);
 

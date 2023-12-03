@@ -46,7 +46,7 @@
                                         <td>{{ \Carbon\Carbon::parse($carga->data_enviada)->format('d/m/Y') }}</td>
                                         <td>
                                             @if ($carga->data_recebida)
-                                                {{ \Carbon\Carbon::parse($servico->data_recebida)->format('d/m/Y') }}
+                                                {{ \Carbon\Carbon::parse($carga->data_recebida)->format('d/m/Y') }}
                                             @else
                                                 Aguardando
                                             @endif
@@ -83,7 +83,7 @@
                                     <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_enviada" name="data_enviada">
                                 </div>
                             </div>
-                            
+
                             <!-- <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="data">Data</label>

@@ -20,7 +20,6 @@ class Warehouse extends Model
         'shipper_id',
     ];
 
-
     public function shipper()
     {
         return $this->belongsTo(Shipper::class);

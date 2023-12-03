@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('fornecedors', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
+            $table->enum('tipo', ['warehouse', 'despachante', 'transporte'])->default('warehouse');
             $table->timestamps();
         });
     }

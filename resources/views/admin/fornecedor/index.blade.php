@@ -36,6 +36,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Nome</th>
+                                        <th>Tipo</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -43,6 +44,7 @@
                                     {{-- <tr> --}}
                                     <tr data-href="{{ route('fornecedores.show', ['fornecedor' => $fornecedor->id]) }}">
                                         <td>{{ $fornecedor->nome }}</td>
+                                        <td>{{ $fornecedor->tipo }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -67,10 +69,20 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-9">
                                 <div class="form-group">
                                     <label for="wr">Nome</label>
                                     <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Fornecedor" maxlength="255" required>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="shipper_id">Tipo</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="tipo" name="tipo">
+                                        <option value="warehouse"> Warehouse </option>
+                                        <option value="despachante"> Despachante </option>
+                                        <option value="transporte"> transporte </option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

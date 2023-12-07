@@ -6,13 +6,12 @@ use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\FornecedorController;
 use App\Http\Controllers\PacoteController;
-use App\Http\Controllers\ServicosFornecedorController;
 use App\Http\Controllers\ShipperController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\CargaController;
-use App\Models\ServicosFornecedor;
+use App\Http\Controllers\DespachanteController;
+use App\Http\Controllers\ServicosDespachanteController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -90,22 +89,22 @@ Route::middleware('auth')->group(function () {
             Route::post('/atualizar-carga-wr', [PacoteController::class, 'atualizarCargaWR'])->name('pacotes.atualizarCargaWR');
         });
 
-        // Fornecedores CRUD
-        Route::prefix('/admin/fornecedores')->group(function () {
-            Route::get('/', [FornecedorController::class, 'index'])->name('fornecedores.index');
-            Route::post('/', [FornecedorController::class, 'store'])->name('fornecedores.store');
-            Route::get('/{fornecedor}', [FornecedorController::class, 'show'])->name('fornecedores.show');
-            Route::put('/{fornecedor}', [FornecedorController::class, 'update'])->name('fornecedores.update');
-            Route::delete('/{fornecedor}', [FornecedorController::class, 'destroy'])->name('fornecedores.destroy');
+        // Despachantes CRUD
+        Route::prefix('/admin/despachantes')->group(function () {
+            Route::get('/', [DespachanteController::class, 'index'])->name('despachantes.index');
+            Route::post('/', [DespachanteController::class, 'store'])->name('despachantes.store');
+            Route::get('/{despachante}', [DespachanteController::class, 'show'])->name('despachantes.show');
+            Route::put('/{despachante}', [DespachanteController::class, 'update'])->name('despachantes.update');
+            Route::delete('/{despachante}', [DespachanteController::class, 'destroy'])->name('despachantes.destroy');
         });
 
-        // Serviços Fornecedores CRUD
-        Route::prefix('/admin/servicosfornecedores')->group(function () {
-            // Route::get('/', [ServicosFornecedorController::class, 'index'])->name('servicos_fornecedores.index');
-            Route::post('/', [ServicosFornecedorController::class, 'store'])->name('servicos_fornecedores.store');
-            Route::get('/{servico}', [ServicosFornecedorController::class, 'show'])->name('servicos_fornecedores.show');
-            Route::put('/{servico}', [ServicosFornecedorController::class, 'update'])->name('servicos_fornecedores.update');
-            Route::delete('/{servico}', [ServicosFornecedorController::class, 'destroy'])->name('servicos_fornecedores.destroy');
+        // Serviços Despachantes CRUD
+        Route::prefix('/admin/servicosdespachantes')->group(function () {
+            // Route::get('/', [ServicosDespachanteController::class, 'index'])->name('servicos_despachantes.index');
+            Route::post('/', [ServicosDespachanteController::class, 'store'])->name('servicos_despachantes.store');
+            Route::get('/{servico}', [ServicosDespachanteController::class, 'show'])->name('servicos_despachantes.show');
+            Route::put('/{servico}', [ServicosDespachanteController::class, 'update'])->name('servicos_despachantes.update');
+            Route::delete('/{servico}', [ServicosDespachanteController::class, 'destroy'])->name('servicos_despachantes.destroy');
         });
 
         // Serviços Cargas CRUD

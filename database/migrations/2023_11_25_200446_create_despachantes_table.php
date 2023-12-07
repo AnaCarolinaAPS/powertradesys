@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fornecedors', function (Blueprint $table) {
+        Schema::create('despachantes', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->enum('tipo', ['warehouse', 'despachante', 'transporte'])->default('warehouse');
+            $table->string('contato')->nullable();
             $table->timestamps();
         });
     }
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fornecedors');
+        Schema::dropIfExists('despachantes');
     }
 };

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Fornecedor extends Model
+class Despachante extends Model
 {
     use HasFactory;
 
@@ -16,11 +16,11 @@ class Fornecedor extends Model
      */
     protected $fillable = [
         'nome',
-        'tipo',
+        'contato',
     ];
 
     public function servicos()
     {
-        return $this->hasMany(ServicosFornecedor::class);
+        return $this->hasMany(ServicosDespachante::class);
     }
 }

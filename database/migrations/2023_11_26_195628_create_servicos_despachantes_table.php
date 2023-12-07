@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('servicos_fornecedors', function (Blueprint $table) {
+        Schema::create('servicos_despachantes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('fornecedor_id');
-            $table->foreign('fornecedor_id')->references('id')->on('fornecedors');
+            $table->unsignedBigInteger('despachante_id');
+            $table->foreign('despachante_id')->references('id')->on('despachantes');
             // $table->enum('tipo', ['aereo', 'maritimo', 'compra', 'outros'])->default('aereo');
             $table->string('descricao');
             // $table->decimal('preco', 10, 2)->nullable();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('servicos_fornecedors');
+        Schema::dropIfExists('servicos_despachantes');
     }
 };

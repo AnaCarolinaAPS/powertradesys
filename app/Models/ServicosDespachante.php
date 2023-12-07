@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ServicosFornecedor extends Model
+class ServicosDespachante extends Model
 {
     use HasFactory;
 
@@ -18,11 +18,11 @@ class ServicosFornecedor extends Model
         'descricao',
         'data_inicio',
         'data_fim',
-        'fornecedor_id',
+        'despachante_id',
     ];
 
-    public function fornecedor()
+    public function despachante()
     {
-        return $this->belongsTo(Fornecedor::class);
+        return $this->belongsTo(Despachante::class);
     }
 }

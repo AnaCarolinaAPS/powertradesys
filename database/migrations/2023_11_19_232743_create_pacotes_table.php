@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('rastreio');
             $table->string('qtd');
+            $table->decimal('peso_aprox', 8, 1);
+            $table->decimal('peso', 8, 1)->nullable();
             $table->foreignId('warehouse_id')->constrained();
             $table->foreignId('cliente_id')->nullable()->constrained();
             $table->timestamps();

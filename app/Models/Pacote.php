@@ -17,6 +17,8 @@ class Pacote extends Model
     protected $fillable = [
         'rastreio',
         'qtd',
+        'peso_aprox',
+        'peso',
         'warehouse_id',
         'cliente_id',
     ];

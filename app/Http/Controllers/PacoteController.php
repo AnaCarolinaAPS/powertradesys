@@ -26,6 +26,7 @@ class PacoteController extends Controller
             $request->validate([
                 'rastreio' => 'required|string|max:255',
                 'qtd' => 'required|numeric',
+                'peso_aprox' => 'required|numeric',
                 'warehouse_id' => 'required|exists:warehouses,id',
                 'cliente_id' => 'nullable|exists:clientes,id',
                 // Adicione outras regras de validação conforme necessário
@@ -40,6 +41,7 @@ class PacoteController extends Controller
             Pacote::create([
                 'rastreio' => $request->input('rastreio'),
                 'qtd' => $request->input('qtd'),
+                'peso_aprox' => $request->input('peso_aprox'),
                 'warehouse_id' => $request->input('warehouse_id'),
                 'cliente_id' => $request->input('cliente_id'),
                 // Adicione outros campos conforme necessário
@@ -181,13 +183,13 @@ class PacoteController extends Controller
                 'message' => 'Ocorreu um erro ao adicionar os Pacotes: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
-        } 
+        }
     }
 
     public function atualizarCargaWR(Request $request){
         try {
             // IDs dos pacotes selecionados
-            $warehousesSelecionados = $request->input('warehouse_id');          
+            $warehousesSelecionados = $request->input('warehouse_id');
 
             // Lógica para atualizar os pacotes com o código da carga
             foreach ($warehousesSelecionados as $warehouseId) {
@@ -215,6 +217,6 @@ class PacoteController extends Controller
                 'message' => 'Ocorreu um erro ao adicionar os Pacotes: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
-        } 
+        }
     }
 }

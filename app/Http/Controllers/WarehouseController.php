@@ -81,8 +81,25 @@ class WarehouseController extends Controller
             $all_shippers = Shipper::all();
             $all_clientes = Cliente::all();
 
+            $totais = DB::table('pacotes')
+                    ->select('warehouse_id', DB::raw('COALESCE(SUM(qtd), 0) as total_pacotes, COALESCE(SUM(peso_aprox), 0) as total_aproximado, COALESCE(SUM(peso), 0) as total_real'))
+                    ->where('warehouse_id', $id)
+                    ->groupBy('pacotes.warehouse_id')
+                    ->first();
+
+            $resumo = DB::table('pacotes')
+                    ->select('clientes.id', 'clientes.caixa_postal',
+                            DB::raw('COALESCE(SUM(pacotes.qtd), 0) as total_pacotes'),
+                            DB::raw('COALESCE(SUM(pacotes.peso_aprox), 0) as total_aproximado'),
+                            DB::raw('COALESCE(SUM(pacotes.peso), 0) as total_real'))
+                    ->leftJoin('clientes', 'clientes.id', '=', 'pacotes.cliente_id')
+                    ->where('pacotes.warehouse_id', $id)
+                    ->groupBy('clientes.id', 'clientes.caixa_postal')
+                    ->get();
+
+
             // Retornar a view com os detalhes do shipper
-            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes'));
+            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes', 'totais', 'resumo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('warehouses.index')->with('toastr', [

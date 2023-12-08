@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Warehouses</h4>
+                    <h4 class="mb-sm-0">Warehouse Receipt</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
@@ -24,16 +24,16 @@
         </div>
         <!-- end page title -->
         <div class="row">
-            <div class="col-xl-12">
+            <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Detalhes</h4>
+                        <h4 class="card-title mb-4">WR-{{ $warehouse->wr;}}</h4>
 
                         <form class="form-horizontal mt-3" method="POST" action="{{ route('warehouses.update', ['warehouse' => $warehouse->id]) }}" id="formWarehouse">
                             @csrf
                             @method('PUT') <!-- Método HTTP para update -->
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="wr">Nro. Warehouse Receipt</label>
                                         <div class="input-group mb-3">
@@ -44,7 +44,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="shipper_id">Embarcador</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="shipper_id" name="shipper_id">
+                                            @foreach ($all_shippers as $shipper)
+                                            <option value="{{ $shipper->id }}" {{ $warehouse->shipper->id == $shipper->id ? 'selected' : '' }}>
+                                                {{ $shipper->name }}
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="shipper_id">Shipper</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="shipper_id" name="shipper_id">
@@ -56,7 +70,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="data">Data</label>
                                         <input class="form-control" type="date" value="{{  $warehouse->data; }}" id="data" name="data">
@@ -76,6 +90,33 @@
                 </div><!-- end card -->
             </div>
             <!-- end col -->
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Totais</h4>
+                        <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Qtd</th>
+                                    <th>Aprox</th>
+                                    <th>Recebido</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                @foreach ($resumo as $cli_totais)
+                                <tr>
+                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.')' }}<h6></td>
+                                    <td>{{ $cli_totais->total_pacotes }}</td>
+                                    <td>{{ $cli_totais->total_aproximado }}</td>
+                                    <td>{{ $cli_totais->total_real }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
         </div>
         <!-- end page title -->
         <div class="row">
@@ -83,9 +124,13 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Pacotes</h4>
-                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
-                            <i class="fas fa-plus"></i> Novo
-                        </button>
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
+                                    <i class="fas fa-plus"></i> Novo
+                                </button>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -94,6 +139,8 @@
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
                                         <th>Qtd</th>
+                                        <th>Peso Aprox</th>
+                                        <th>Peso Recebido</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -102,11 +149,28 @@
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.')' }}</td>
                                         <td>{{ $pacote->qtd }}</td>
+                                        <td>{{ $pacote->peso_aprox }}</td>
+                                        @if ($pacote->peso > 0)
+                                            <td>{{ $pacote->peso }}</td>
+                                        @else
+                                            <td>Aguardando</td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
+                        </div>
+                        <div class="row text-center">
+                            <div class="col">
+                                <p><h6 class="mb-0">Total Recebido: {{ $totais->total_real ?? '0'}} kgs</h6></p>
+                            </div>
+                            <div class="col">
+                                <p><h6 class="mb-0">Quantidade Total: {{$totais->total_pacotes ?? '0'}} cxs</h6></p>
+                            </div>
+                            <div class="col">
+                                <p><h6 class="mb-0">Total Previsto: {{$totais->total_aproximado ?? '0'}} kgs</h6></p>
+                            </div>
                         </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
@@ -158,7 +222,7 @@
                                         <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="cliente_id">Cliente</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id">
@@ -172,6 +236,12 @@
                                     <div class="form-group">
                                         <label for="qtd">Qtd</label>
                                         <input class="form-control" type="number" value="1" id="qtd" name="qtd">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="peso_aprox">Peso Aprox.</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="peso_aprox" name="peso_aprox">
                                     </div>
                                 </div>
                             </div>
@@ -260,9 +330,9 @@
                     </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
-        </div>        
+        </div>
     </div>
-    
+
 </div>
 
 <script>

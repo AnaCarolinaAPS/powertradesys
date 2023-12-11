@@ -12,6 +12,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\CargaController;
 use App\Http\Controllers\DespachanteController;
 use App\Http\Controllers\ServicosDespachanteController;
+use App\Http\Controllers\EmbarcadorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -114,6 +115,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{carga}', [CargaController::class, 'show'])->name('cargas.show');
             Route::put('/{carga}', [CargaController::class, 'update'])->name('cargas.update');
             Route::delete('/{carga}', [CargaController::class, 'destroy'])->name('cargas.destroy');
+        });
+
+        // Despachantes CRUD
+        Route::prefix('/admin/embarcadores')->group(function () {
+            Route::get('/', [EmbarcadorController::class, 'index'])->name('embarcadores.index');
+            Route::post('/', [EmbarcadorController::class, 'store'])->name('embarcadores.store');
+            Route::get('/{embarcador}', [EmbarcadorController::class, 'show'])->name('embarcadores.show');
+            Route::put('/{embarcador}', [EmbarcadorController::class, 'update'])->name('embarcadores.update');
+            Route::delete('/{embarcador}', [EmbarcadorController::class, 'destroy'])->name('embarcadores.destroy');
         });
     });
 

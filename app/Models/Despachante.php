@@ -23,4 +23,9 @@ class Despachante extends Model
     {
         return $this->hasMany(ServicosDespachante::class);
     }
+
+    public function cargas()
+    {
+        return $this->hasMany(Carga::class);
+    }
 }

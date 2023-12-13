@@ -17,10 +17,22 @@ class Carga extends Model
     protected $fillable = [
         'data_enviada',
         'data_recebida',
+        'despachante_id',
+        'embarcador_id',
     ];
 
     public function pacotes()
     {
         return $this->hasMany(Pacote::class);
+    }
+
+    public function despachante()
+    {
+        return $this->belongsTo(Despachante::class);
+    }
+
+    public function embarcador()
+    {
+        return $this->belongsTo(Embarcador::class);
     }
 }

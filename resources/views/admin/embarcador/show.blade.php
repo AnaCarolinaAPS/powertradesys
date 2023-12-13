@@ -82,7 +82,7 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                {{--  @foreach ($despachante->servicos as $servico)
+                                {{--  @foreach ($embarcador->servicos as $servico)
                                     <tr class="abrirModal" data-item-id="{{ $servico->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($servico->data_inicio)->format('d/m/Y') }}</h6></td>
                                         <td>

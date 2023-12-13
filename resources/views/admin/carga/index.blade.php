@@ -36,7 +36,7 @@
                                     <tr>
                                         <th>Data Enviada</th>
                                         <th>Data Recebida</th>
-                                        <th>Fornecedor(es)</th>
+                                        <th>Embarcador</th>
                                         <th>Qtd. Pacotes</th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -51,7 +51,7 @@
                                                 Aguardando
                                             @endif
                                         </td>
-                                        <td>Blah</td>
+                                        <td>{{ $carga->embarcador->nome; }}</td>
                                         <td>{{ $carga->quantidade_de_pacotes }}</td>
                                     </tr>
                                     @endforeach
@@ -77,12 +77,33 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                        <div class="col-md-3">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="data">Data Envio</label>
                                     <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_enviada" name="data_enviada">
                                 </div>
                             </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="embarcador_id">Embarcador</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id">
+                                        @foreach ($all_embarcadores as $embarcador)
+                                            <option value="{{ $embarcador->id }}"> {{ $embarcador->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            {{--
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label for="despachante_id">Despachante</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="despachante_id" name="despachante_id">
+                                        @foreach ($all_despachantes as $despachante)
+                                            <option value="{{ $despachante->id }}"> {{ $despachante->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div> --}}
 
                             <!-- <div class="col-md-3">
                                 <div class="form-group">

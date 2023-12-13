@@ -18,4 +18,9 @@ class Embarcador extends Model
         'nome',
         'contato',
     ];
+
+    public function cargas()
+    {
+        return $this->hasMany(Carga::class);
+    }
 }

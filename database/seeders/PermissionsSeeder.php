@@ -26,6 +26,7 @@ class PermissionsSeeder extends Seeder
 
         // Associe a função ao usuário
         $user->assignRole($role);
+        $user->removeRole('guest');
         // $role->givePermissionTo(Permission::findByName('editar clientes'));
     }
 }

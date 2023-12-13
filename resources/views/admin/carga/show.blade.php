@@ -25,25 +25,57 @@
         </div>
         <!-- end page title -->
         <div class="row">
-            <div class="col-xl-12">
+            <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Detalhes</h4>
+                        <!-- <h4 class="card-title mb-4">Detalhes</h4> -->
 
                         <form class="form-horizontal mt-3" method="POST" action="{{ route('cargas.update', ['carga' => $carga->id]) }}" id="formWarehouse">
                             @csrf
                             @method('PUT') <!-- Método HTTP para update -->
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="data_enviada">Data Enviada</label>
                                         <input class="form-control" type="date" value="{{  $carga->data_enviada; }}" id="data_enviada" name="data_enviada">
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="embarcador_id">Embarcador</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
+                                            @foreach ($all_embarcadores as $embarcador)
+                                                <option value="{{ $embarcador->id }}" {{ $carga->embarcador->id == $embarcador->id ? 'selected' : '' }}> {{ $embarcador->nome }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <!-- Fazer um botão para "receber a carga" que adicione a Data Recebida e a Transportadora -->
+                                {{--
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="data_recebida">Data Recebida</label>
                                         <input class="form-control" type="date" value="{{  $carga->data_recebida; }}" id="data_recebida" name="data_recebida">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="transporte_id">Transporte</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="transporte_id" name="transporte_id">
+                                            <option value="" {{ is_null($carga->despachante) ? 'selected' : '' }}>Nenhum Despachante</option>
+                                            @foreach ($all_despachantes as $despachante)
+                                                <option value="{{ $despachante->id }}" {{ optional($carga->despachante)->id == $despachante->id ? 'selected' : '' }}> {{ $despachante->nome }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                --}}
+                            </div>
+                            <div class="row">
+                            <div class="col">
+                                    <div class="form-group">
+                                        <label for="observacoes">Observações</label>
+                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -57,6 +89,35 @@
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
                             </div>
                         </form>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+           
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- <h4 class="card-title mb-4">Totais</h4> -->
+                        <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Qtd</th>
+                                    <th>Aprox</th>
+                                    <th>Recebido</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                @foreach ($resumo as $cli_totais)
+                                <tr>
+                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.')' }}<h6></td>
+                                    <td>{{ $cli_totais->total_pacotes }}</td>
+                                    <td>{{ $cli_totais->total_aproximado }}</td>
+                                    <td>{{ $cli_totais->total_real }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -82,6 +143,8 @@
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
                                         <th>Qtd</th>
+                                        <th>Peso Aprox</th>
+                                        <th>Peso Recebido</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -90,6 +153,12 @@
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.')' }}</td>
                                         <td>{{ $pacote->qtd }}</td>
+                                        <td>{{ $pacote->peso_aprox }}</td>
+                                        @if ($pacote->peso > 0)
+                                            <td>{{ $pacote->peso }}</td>
+                                        @else
+                                            <td>Aguardando</td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                      <!-- end -->

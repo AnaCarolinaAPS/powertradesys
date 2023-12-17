@@ -89,20 +89,43 @@ class PacoteController extends Controller
             $request->validate([
                 'rastreio' => 'required|string|max:255',
                 'qtd' => 'required|numeric',
-                // 'warehouse_id' => 'required|exists:warehouses,id',
+                'peso_aprox' => 'nullable|numeric',
+                'peso' => 'nullable|numeric',
                 'cliente_id' => 'nullable|exists:clientes,id',
+                // 'warehouse_id' => 'required|exists:warehouses,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             $pacote = Pacote::find($request->input('id'));
-            // Atualizar os dados do Shipper
-            $pacote->update([
-                'rastreio' => $request->input('rastreio'),
-                'qtd' => $request->input('qtd'),
-                // 'warehouse_id' => $request->input('warehouse_id'),
-                'cliente_id' => $request->input('cliente_id'),
-                // Adicione outros campos conforme necessário
-            ]);
+            // Atualizar os dados do Pacote
+
+            //Atualização vem da Warehouse
+            if ($request->input('peso_aprox')) {
+                $pacote->update([
+                    'rastreio' => $request->input('rastreio'),
+                    'qtd' => $request->input('qtd'),
+                    'peso_aprox' => $request->input('peso_aprox'),
+                    'cliente_id' => $request->input('cliente_id'),
+                    // Adicione outros campos conforme necessário
+                ]);
+
+            //Atualização vem da Carga
+            } else if ($request->input('peso')) {
+                $pacote->update([
+                    'rastreio' => $request->input('rastreio'),
+                    'qtd' => $request->input('qtd'),
+                    'peso' => $request->input('peso'),
+                    'cliente_id' => $request->input('cliente_id'),
+                    // Adicione outros campos conforme necessário
+                ]);
+            } else {
+                // Exibir toastr de Erro
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'error',
+                    'message' => 'Ocorreu um erro ao atualizar o Pacote.',
+                    'title'   => 'Erro',
+                ]);
+            }
 
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [
@@ -215,6 +238,33 @@ class PacoteController extends Controller
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
                 'message' => 'Ocorreu um erro ao adicionar os Pacotes: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    public function excluirPctCarga($id){
+        try {
+
+            $pacote = Pacote::find($id);
+
+            $pacote->update([
+                'peso' => null,
+                'carga_id' => null,
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pacotes excluídos com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir os Pacote: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

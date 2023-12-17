@@ -21,7 +21,7 @@ class PacoteFactory extends Factory
         $clienteId = \App\Models\Cliente::pluck('id')->random();
         return [
             'rastreio' => $this->faker->unique()->text(10),
-            'qtd' => $this->faker->randomNumber(1),
+            'qtd' => $this->faker->boolean(20) ? 1 : $this->faker->randomNumber(1, 1),
             'peso_aprox' => $this->faker->randomFloat(1, 1, 10),
             'peso' => 0,
             'warehouse_id' => $warehouseId,

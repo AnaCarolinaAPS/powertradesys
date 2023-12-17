@@ -88,6 +88,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{pacotes}', [PacoteController::class, 'destroy'])->name('pacotes.destroy');
             Route::post('/atualizar-carga', [PacoteController::class, 'atualizarCarga'])->name('pacotes.atualizarCarga');
             Route::post('/atualizar-carga-wr', [PacoteController::class, 'atualizarCargaWR'])->name('pacotes.atualizarCargaWR');
+            Route::post('/{pacotes}', [PacoteController::class, 'excluirPctCarga'])->name('pacotes.excluirPctCarga');
         });
 
         // Despachantes CRUD

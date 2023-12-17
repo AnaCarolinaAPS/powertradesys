@@ -317,12 +317,27 @@
                                         <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="peso_aprox">Peso Aprox.</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" name="peso_aprox">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="peso">Peso</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <!-- Botão de Exclusão -->
                             <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelPctModal">
                                 Excluir
+                            </button>
+                            <button type="button" class="btn btn-info ml-auto" id="cargaBotao">
+                                Carga
                             </button>
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
                             <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacaoPacote">Atualizar</button>
@@ -350,6 +365,8 @@
                     document.getElementById('dRastreio').value = data.rastreio;
                     document.getElementById('dCliente_id').value = data.cliente_id;
                     document.getElementById('dQtd').value = data.qtd;
+                    document.getElementById('dPesoAprox').value = data.peso_aprox;
+                    document.getElementById('dPeso').value = data.peso;
                     $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacaoPacote');
@@ -359,6 +376,20 @@
                     var form2 = document.getElementById('formDeletePctModal');
                     var novaAction2 = "{{ route('pacotes.destroy', ['pacotes' => ':id']) }}".replace(':id', data.id);
                     form2.setAttribute('action', novaAction2);
+
+                    if (data.carga_id  !== null) {
+                        // Se carga_id estiver presente, mostrar o botão e atribuir o link adequado
+                        var link = "{{ route('cargas.show', ['carga' => ':cargaId']) }}";
+                        link = link.replace(':cargaId', data.carga_id);
+                        // $('#cargaBotao').show().attr('href', link);
+                        $('#cargaBotao').show().on('click', function () {
+                            window.location.href = link;
+                        });
+                        console.error('Erro:', data.carga_id);
+                    } else {
+                        // Se carga_id não estiver presente, esconder o botão
+                        $('#cargaBotao').hide();
+                    }
                     // console.error('Erro:', data);
                     // Preencha o conteúdo do modal com os dados do pacote recebido
                     // Exemplo: document.getElementById('modalTitle').innerText = data.titulo;

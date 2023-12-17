@@ -21,6 +21,7 @@ class Pacote extends Model
         'peso',
         'warehouse_id',
         'cliente_id',
+        'carga_id',
     ];
 
     public function warehouse()

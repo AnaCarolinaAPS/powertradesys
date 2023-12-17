@@ -8,6 +8,7 @@ use App\Models\Pacote;
 use App\Models\Warehouse;
 use App\Models\Despachante;
 use App\Models\Embarcador;
+use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
 
 class CargaController extends Controller
@@ -79,6 +80,13 @@ class CargaController extends Controller
             $all_warehouses = Warehouse::whereHas('pacotes', function ($query) {
                 $query->whereNull('carga_id');
             })->get();
+            $all_clientes = Cliente::all();
+
+            $totais = DB::table('pacotes')
+                    ->select('carga_id', DB::raw('COALESCE(SUM(qtd), 0) as total_pacotes, COALESCE(SUM(peso_aprox), 0) as total_aproximado, COALESCE(SUM(peso), 0) as total_real'))
+                    ->where('carga_id', $id)
+                    ->groupBy('pacotes.carga_id')
+                    ->first();
 
             $resumo = DB::table('pacotes')
                     ->select('clientes.id', 'clientes.caixa_postal',
@@ -91,7 +99,7 @@ class CargaController extends Controller
                     ->get();
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'resumo'));
+            return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'all_clientes','resumo', 'totais'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('cargas.index')->with('toastr', [

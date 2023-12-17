@@ -42,6 +42,17 @@
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
+                                        <label for="status">Status</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
+                                            <option value="0"> Em Destino </option>
+                                            <option value="0"> Aduana </option>
+                                            <option value="0"> Recebido </option>
+                                            <option value="0"> Liberado </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
                                         <label for="embarcador_id">Embarcador</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
                                             @foreach ($all_embarcadores as $embarcador)
@@ -50,8 +61,9 @@
                                         </select>
                                     </div>
                                 </div>
-                                <!-- Fazer um botão para "receber a carga" que adicione a Data Recebida e a Transportadora -->
-                                {{--
+                            </div>
+                            {{-- @if ($carga->data_recebida) --}}
+                            <div class="row mt-2">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="data_recebida">Data Recebida</label>
@@ -60,30 +72,42 @@
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="transporte_id">Transporte</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="transporte_id" name="transporte_id">
-                                            <option value="" {{ is_null($carga->despachante) ? 'selected' : '' }}>Nenhum Despachante</option>
+                                        <label for="embarcador_id">Despachante</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="despachante_id" name="despachante_id">
                                             @foreach ($all_despachantes as $despachante)
-                                                <option value="{{ $despachante->id }}" {{ optional($carga->despachante)->id == $despachante->id ? 'selected' : '' }}> {{ $despachante->nome }} </option>
+                                                <option value="{{ $despachante->id }}" {{ $carga->despachante->id == $despachante->id ? 'selected' : '' }}> {{ $despachante->nome }} </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
-                                --}}
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="embarcador_id">Transportadora</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
+                                            @foreach ($all_embarcadores as $embarcador)
+                                                <option value="{{ $embarcador->id }}" {{ optional($carga->embarcador->id == $embarcador->id) ? 'selected' : '' }}> {{ $embarcador->nome }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
+                            {{-- @endif --}}
                             <div class="row">
-                            <div class="col">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="observacoes">Observações</label>
                                         <textarea name="observacoes" id="observacoes" class="form-control" rows="5"></textarea>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="modal-footer">
                                 <!-- Botão de Exclusão -->
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir
+                                </button>
+                                <button type="button" class="btn btn-info ml-auto" data-bs-toggle="modal" data-bs-target="#receberModal">
+                                    Receber
                                 </button>
                                 <a href="{{ route('cargas.index'); }}" class="btn btn-light waves-effect">Voltar</a>
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
@@ -93,7 +117,7 @@
                 </div><!-- end card -->
             </div>
             <!-- end col -->
-           
+
             <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
@@ -170,6 +194,58 @@
             </div>
             <!-- end col -->
         </div>
+
+        {{-- <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="receberModal" aria-hidden="true" style="display: none;" id="receberModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Receber Carga</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('pacotes.atualizarCarga') }}" id="formNovoPacote">
+                        @csrf
+                        <div class="modal-body">
+                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <input type="hidden" name="carga_id" value="{{ $carga->id }}">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="data">Data Envio</label>
+                                    <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_enviada" name="data_enviada">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="cliente_id">Despachante</label>
+                                        <select class="selectpicker form-control" multiple data-live-search="true" id="pacote_id" name="pacote_id[]" required>
+                                            @foreach ($all_embarcadores as $embarcador)
+                                                <option value="{{ $embarcador->id }}"> {{ $embarcador->nome }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="cliente_id">Transportadora</label>
+                                        <select class="selectpicker form-control" multiple data-live-search="true" id="pacote_id" name="pacote_id[]" required>
+                                            @foreach ($all_pacotes as $pacote)
+                                                <option value="{{ $pacote->id }}"> {{ $pacote->rastreio }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovoPacote">Adicionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div> --}}
 
         <!-- Modal de Confirmação -->
         <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
@@ -261,7 +337,7 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
-    </div> 
+    </div>
 </div>
 
 <script>

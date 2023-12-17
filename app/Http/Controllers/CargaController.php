@@ -37,7 +37,7 @@ class CargaController extends Controller
             $request->validate([
                 'data_enviada' => 'required|date',
                 'embarcador_id' => 'required|exists:embarcadors,id',
-                // 'despachante_id' => 'exists:despachantes,id',
+                'despachante_id' => 'exists:despachantes,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -45,7 +45,7 @@ class CargaController extends Controller
             $carga = Carga::create([
                 'data_enviada' => $request->input('data_enviada'),
                 'embarcador_id' => $request->input('embarcador_id'),
-                // 'despachante_id' => $request->input('despachante_id'),
+                'despachante_id' => $request->input('despachante_id'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -112,6 +112,7 @@ class CargaController extends Controller
             $request->validate([
                 'data_enviada' => 'required|date',
                 'data_recebida' => 'nullable|date',
+                'despachante_id' => 'exists:despachantes,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -121,14 +122,16 @@ class CargaController extends Controller
                 $carga->update([
                     'data_enviada' => $request->input('data_enviada'),
                     'data_recebida' => $request->input('data_recebida'),
+                    'despachante_id' => $request->input('despachante_id'),
                     // Adicione outros campos conforme necessário
                 ]);
             } else {
                 $carga->update([
                     'data_enviada' => $request->input('data_enviada'),
+                    'despachante_id' => $request->input('despachante_id'),
                     // Adicione outros campos conforme necessário
                 ]);
-            }       
+            }
 
             // Exibir toastr de sucesso
             return redirect()->route('cargas.show', ['carga' => $carga->id])->with('toastr', [
@@ -151,15 +154,12 @@ class CargaController extends Controller
      */
     public function destroy(Carga $carga)
     {
-        if ($carga->pacotes()->count() > 0) {
-            return redirect()->back()->with('toastr', [
-                'type'    => 'error',
-                'message' => 'Não é possível excluir a Carga, pois ele possui pacotes associados.',
-                'title'   => 'Erro',
-            ]);
-        }
-
         try {
+
+            if ($carga->pacotes()->count() > 0) {
+                // Desassociar os pacotes da carga e definir carga_id como null
+                $carga->pacotes()->update(['carga_id' => null]);
+            }
             // Excluir o Shipper do banco de dados
             $carga->delete();
 

@@ -93,8 +93,7 @@
                                     </select>
                                 </div>
                             </div>
-                            {{--
-                            <div class="col-md-5">
+                            <div class="col-md">
                                 <div class="form-group">
                                     <label for="despachante_id">Despachante</label>
                                     <select class="selectpicker form-control" data-live-search="true" id="despachante_id" name="despachante_id">
@@ -103,7 +102,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div> --}}
+                            </div>
 
                             <!-- <div class="col-md-3">
                                 <div class="form-group">

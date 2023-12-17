@@ -94,7 +94,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Totais</h4>
-                        <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <table id="datatable-totals" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead class="table-light">
                                 <tr>
                                     <th>Cliente</th>

@@ -94,7 +94,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="observacoes">Observações</label>
-                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5"></textarea>
+                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5">{{$carga->observacoes}}</textarea>
                                     </div>
                                 </div>
                             </div>

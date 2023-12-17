@@ -72,7 +72,7 @@
                     @csrf
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-group">
                                     <label for="wr">Nro. Warehouse Receipt</label>
                                     {{-- <input type="text" class="form-control" id="wr" name="wr" placeholder="00000" maxlength="6" required> --}}
@@ -84,7 +84,17 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="embarcador_id">Embarcador</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" >
+                                        @foreach ($all_embarcadors as $embarcador)
+                                            <option value="{{ $embarcador->id }}"> {{ $embarcador->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
                                 <div class="form-group">
                                     <label for="shipper_id">Shipper</label>
                                     <select class="selectpicker form-control" data-live-search="true" id="shipper_id" name="shipper_id">
@@ -94,7 +104,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-group">
                                     <label for="data">Data</label>
                                     <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data" name="data">

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('wr');
             $table->date('data');
+            $table->text('observacoes')->nullable();
             // Adicione a chave estrangeira para a tabela shippers
             $table->unsignedBigInteger('shipper_id');
             $table->foreign('shipper_id')->references('id')->on('shippers')->onDelete('cascade');

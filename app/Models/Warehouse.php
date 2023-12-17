@@ -17,7 +17,9 @@ class Warehouse extends Model
     protected $fillable = [
         'wr',
         'data',
+        'observacoes',
         'shipper_id',
+        'embarcador_id',
     ];
 
     public function shipper()
@@ -28,5 +30,10 @@ class Warehouse extends Model
     public function pacotes()
     {
         return $this->hasMany(Pacote::class);
+    }
+
+    public function embarcador()
+    {
+        return $this->belongsTo(Embarcador::class);
     }
 }

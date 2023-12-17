@@ -21,7 +21,7 @@ class CargaController extends Controller
         // $all_items = Carga::all();
         $all_items = Carga::select('cargas.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
                     ->leftJoin('pacotes', 'cargas.id', '=', 'pacotes.carga_id')
-                    ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.created_at', 'cargas.updated_at', 'cargas.despachante_id', 'cargas.embarcador_id')
+                    ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.observacoes', 'cargas.created_at', 'cargas.updated_at', 'cargas.despachante_id', 'cargas.embarcador_id')
                     ->get();
         $all_despachantes = Despachante::all();
         $all_embarcadores = Embarcador::all();
@@ -76,8 +76,12 @@ class CargaController extends Controller
             $carga = Carga::findOrFail($id);
             $all_despachantes = Despachante::all();
             $all_embarcadores = Embarcador::all();
-            $all_pacotes = Pacote::whereNull('carga_id')->get();
-            $all_warehouses = Warehouse::whereHas('pacotes', function ($query) {
+            $embarcador_id = $carga->embarcador_id;
+            $all_pacotes = Pacote::whereNull('carga_id')->whereHas('warehouse', function ($query) use ($embarcador_id) {
+                $query->where('embarcador_id', $embarcador_id);
+            })->get();
+            $all_warehouses = Warehouse::where('embarcador_id', $carga->embarcador_id)
+            ->whereHas('pacotes', function ($query) {
                 $query->whereNull('carga_id');
             })->get();
             $all_clientes = Cliente::all();
@@ -131,12 +135,14 @@ class CargaController extends Controller
                     'data_enviada' => $request->input('data_enviada'),
                     'data_recebida' => $request->input('data_recebida'),
                     'despachante_id' => $request->input('despachante_id'),
+                    'observacoes' => $request->input('observacoes'),
                     // Adicione outros campos conforme necessário
                 ]);
             } else {
                 $carga->update([
                     'data_enviada' => $request->input('data_enviada'),
                     'despachante_id' => $request->input('despachante_id'),
+                    'observacoes' => $request->input('observacoes'),
                     // Adicione outros campos conforme necessário
                 ]);
             }

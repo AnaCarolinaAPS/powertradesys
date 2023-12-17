@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\Embarcador;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\Shipper;
@@ -18,10 +19,11 @@ class WarehouseController extends Controller
         // $all_items = Warehouse::all();
         $all_items = Warehouse::select('warehouses.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
                     ->leftJoin('pacotes', 'warehouses.id', '=', 'pacotes.warehouse_id')
-                    ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.shipper_id', 'warehouses.created_at', 'warehouses.updated_at')
+                    ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.observacoes', 'warehouses.shipper_id', 'warehouses.embarcador_id', 'warehouses.created_at', 'warehouses.updated_at')
                     ->get();
         $all_shippers = Shipper::all();
-        return view('admin.warehouse.index', compact('all_items', 'all_shippers'));
+        $all_embarcadors = Embarcador::all();
+        return view('admin.warehouse.index', compact('all_items', 'all_shippers', 'all_embarcadors'));
     }
 
     /**
@@ -42,7 +44,8 @@ class WarehouseController extends Controller
             $request->validate([
                 'wr' => 'required|string|max:255|unique:warehouses',
                 'data' => 'required|date|before_or_equal:today',
-                'shipper_id' => 'exists:shippers,id',
+                'shipper_id' => 'required|exists:shippers,id',
+                'embarcador_id' => 'required|exists:embarcadors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -51,6 +54,7 @@ class WarehouseController extends Controller
                 'wr' => $request->input('wr'),
                 'data' => $request->input('data'),
                 'shipper_id' => $request->input('shipper_id'),
+                'embarcador_id' => $request->input('embarcador_id'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -80,6 +84,7 @@ class WarehouseController extends Controller
             $warehouse = Warehouse::findOrFail($id);
             $all_shippers = Shipper::all();
             $all_clientes = Cliente::all();
+            $all_embarcadors = Embarcador::all();
 
             $totais = DB::table('pacotes')
                     ->select('warehouse_id', DB::raw('COALESCE(SUM(qtd), 0) as total_pacotes, COALESCE(SUM(peso_aprox), 0) as total_aproximado, COALESCE(SUM(peso), 0) as total_real'))
@@ -99,7 +104,7 @@ class WarehouseController extends Controller
 
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes', 'totais', 'resumo'));
+            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes', 'all_embarcadors', 'totais', 'resumo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('warehouses.index')->with('toastr', [
@@ -127,7 +132,7 @@ class WarehouseController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'data' => 'required|date|before_or_equal:today',
-                'shipper_id' => 'exists:shippers,id',
+                'shipper_id' => 'required|exists:shippers,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -135,6 +140,7 @@ class WarehouseController extends Controller
             $warehouse->update([
                 'data' => $request->input('data'),
                 'shipper_id' => $request->input('shipper_id'),
+                'observacoes' => $request->input('observacoes'),
                 // Adicione outros campos conforme necessário
             ]);
 

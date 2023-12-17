@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('data_enviada');
             $table->date('data_recebida')->nullable();
+            $table->text('observacoes')->nullable();
             // $table->unsignedBigInteger('fornecedor_id');
             // $table->foreign('fornecedor_id')->references('id')->on('fornecedors')->onDelete('cascade');
             $table->timestamps();

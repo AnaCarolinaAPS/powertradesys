@@ -17,6 +17,7 @@ class Carga extends Model
     protected $fillable = [
         'data_enviada',
         'data_recebida',
+        'observacoes',
         'despachante_id',
         'embarcador_id',
     ];

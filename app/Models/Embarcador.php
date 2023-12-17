@@ -23,4 +23,9 @@ class Embarcador extends Model
     {
         return $this->hasMany(Carga::class);
     }
+
+    public function warehouses()
+    {
+        return $this->hasMany(Warehouse::class);
+    }
 }

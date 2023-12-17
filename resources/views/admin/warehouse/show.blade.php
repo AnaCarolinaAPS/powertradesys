@@ -51,14 +51,14 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row mt-2">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="shipper_id">Embarcador</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="shipper_id" name="shipper_id">
-                                            @foreach ($all_shippers as $shipper)
-                                            <option value="{{ $shipper->id }}" {{ $warehouse->shipper->id == $shipper->id ? 'selected' : '' }}>
-                                                {{ $shipper->name }}
+                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" disabled>
+                                            @foreach ($all_embarcadors as $embarcador)
+                                            <option value="{{ $embarcador->id }}" {{ $warehouse->embarcador->id == $embarcador->id ? 'selected' : '' }}>
+                                                {{ $embarcador->nome }}
                                             </option>
                                             @endforeach
                                         </select>
@@ -74,6 +74,14 @@
                                             </option>
                                             @endforeach
                                         </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="observacoes">Observações</label>
+                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5">{{$warehouse->observacoes}}</textarea>
                                     </div>
                                 </div>
                             </div>

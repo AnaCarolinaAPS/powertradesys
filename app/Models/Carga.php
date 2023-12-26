@@ -36,4 +36,9 @@ class Carga extends Model
     {
         return $this->belongsTo(Embarcador::class);
     }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }

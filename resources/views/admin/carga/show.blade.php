@@ -32,21 +32,10 @@
                             @csrf
                             @method('PUT') <!-- Método HTTP para update -->
                             <div class="row">
-                                <div class="col">
+                                <div class="col-4">
                                     <div class="form-group">
                                         <label for="data_enviada">Data Enviada</label>
                                         <input class="form-control" type="date" value="{{  $carga->data_enviada; }}" id="data_enviada" name="data_enviada">
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="status">Status</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
-                                            <option value="0"> Em Destino </option>
-                                            <option value="0"> Aduana </option>
-                                            <option value="0"> Recebido </option>
-                                            <option value="0"> Liberado </option>
-                                        </select>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -60,12 +49,16 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- @if ($carga->data_recebida) --}}
                             <div class="row mt-2">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="data_recebida">Data Recebida</label>
-                                        <input class="form-control" type="date" value="{{  $carga->data_recebida; }}" id="data_recebida" name="data_recebida">
+                                        <label for="status">Tipo Serviço</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="" name="" disabled>
+                                            <option value="0"> Em Destino </option>
+                                            <option value="0"> Aduana </option>
+                                            <option value="0"> Recebido </option>
+                                            <option value="0"> Liberado </option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -76,6 +69,14 @@
                                                 <option value="{{ $despachante->id }}" {{ $carga->despachante->id == $despachante->id ? 'selected' : '' }}> {{ $despachante->nome }} </option>
                                             @endforeach
                                         </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-4">
+                                    <div class="form-group">
+                                        <label for="data_recebida">Data Recebida</label>
+                                        <input class="form-control" type="date" value="{{  $carga->data_recebida; }}" id="data_recebida" name="data_recebida">
                                     </div>
                                 </div>
                                 <div class="col">
@@ -89,8 +90,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {{-- @endif --}}
-                            <div class="row">
+                            <div class="row mt-2">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="observacoes">Observações</label>
@@ -100,13 +100,13 @@
                             </div>
 
                             <div class="modal-footer">
+                                <button type="button" class="btn btn-info me-auto" data-bs-toggle="modal" data-bs-target="#receberModal">
+                                    Status
+                                </button> 
                                 <!-- Botão de Exclusão -->
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir
                                 </button>
-                                {{-- <button type="button" class="btn btn-info ml-auto" data-bs-toggle="modal" data-bs-target="#receberModal">
-                                    Receber
-                                </button> --}}
                                 <a href="{{ route('cargas.index'); }}" class="btn btn-light waves-effect">Voltar</a>
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
                             </div>
@@ -132,7 +132,7 @@
                             <tbody>
                                 @foreach ($resumo as $cli_totais)
                                 <tr>
-                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.')' }}<h6></td>
+                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.') '.$cli_totais->user_name }}<h6></td>
                                     <td>{{ $cli_totais->total_pacotes }}</td>
                                     <td>{{ $cli_totais->total_aproximado }}</td>
                                     <td>{{ $cli_totais->total_real }}</td>
@@ -173,7 +173,7 @@
                                     @foreach ($carga->pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
-                                        <td>{{ '('.$pacote->cliente->caixa_postal.')' }}</td>
+                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->user->name }}</td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso_aprox }}</td>
                                         @if ($pacote->peso > 0)

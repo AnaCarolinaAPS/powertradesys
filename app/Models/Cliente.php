@@ -28,4 +28,9 @@ class Cliente extends Model
     {
         return $this->hasMany(Pacote::class);
     }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
+    }
 }

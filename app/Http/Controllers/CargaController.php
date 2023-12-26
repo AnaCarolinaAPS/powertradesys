@@ -93,14 +93,15 @@ class CargaController extends Controller
                     ->first();
 
             $resumo = DB::table('pacotes')
-                    ->select('clientes.id', 'clientes.caixa_postal',
+                    ->select('clientes.id', 'clientes.caixa_postal', 'users.name as user_name',
                             DB::raw('COALESCE(SUM(pacotes.qtd), 0) as total_pacotes'),
                             DB::raw('COALESCE(SUM(pacotes.peso_aprox), 0) as total_aproximado'),
                             DB::raw('COALESCE(SUM(pacotes.peso), 0) as total_real'))
-                    ->leftJoin('clientes', 'clientes.id', '=', 'pacotes.cliente_id')
-                    ->where('pacotes.carga_id', $id)
-                    ->groupBy('clientes.id', 'clientes.caixa_postal')
-                    ->get();
+                            ->leftJoin('clientes', 'clientes.id', '=', 'pacotes.cliente_id')
+                            ->leftJoin('users', 'users.id', '=', 'clientes.user_id') // Junção com a tabela de usuários
+                            ->where('pacotes.carga_id', $id)
+                            ->groupBy('clientes.id', 'clientes.caixa_postal', 'users.name')
+                            ->get();
 
             // Retornar a view com os detalhes do shipper
             return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'all_clientes','resumo', 'totais'));

@@ -28,7 +28,7 @@
                     <div class="card-body">
                         <!-- <h4 class="card-title mb-4">Detalhes</h4> -->
 
-                        <form class="form-horizontal mt-3" method="POST" action="{{ route('cargas.update', ['carga' => $carga->id]) }}" id="formWarehouse">
+                        <form class="form-horizontal mt-1" method="POST" action="{{ route('cargas.update', ['carga' => $carga->id]) }}" id="formWarehouse">
                             @csrf
                             @method('PUT') <!-- Método HTTP para update -->
                             <div class="row">

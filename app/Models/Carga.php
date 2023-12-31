@@ -20,6 +20,7 @@ class Carga extends Model
         'observacoes',
         'despachante_id',
         'embarcador_id',
+        'fatura_carga_id',
     ];
 
     public function pacotes()
@@ -40,5 +41,15 @@ class Carga extends Model
     public function invoices()
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function clientes()
+    {
+        return $this->hasManyThrough(Cliente::class, Pacote::class, 'carga_id', 'id', 'id', 'cliente_id');
+    }
+
+    public function faturaCarga()
+    {
+        return $this->belongsTo(Embarcador::class);
     }
 }

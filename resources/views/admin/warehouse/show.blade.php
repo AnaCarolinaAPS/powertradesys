@@ -210,7 +210,6 @@
             </div>
         </div>
 
-
         <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNovoPacote" aria-hidden="true" style="display: none;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">

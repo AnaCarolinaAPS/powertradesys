@@ -85,7 +85,7 @@
                                 </ul>
                             </li>
                             <li><a href="layouts-dark-sidebar.html">Fluxo de Caixa</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Invoices/Cargas</a></li>
+                            <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
                             <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
                             <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>
                         </ul>

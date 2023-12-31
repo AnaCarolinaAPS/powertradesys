@@ -11,10 +11,8 @@ class Invoice extends Model
 
     protected $fillable = [
         'data',
-        'numero',
-        'status',
         'cliente_id',
-        'carga_id',
+        'fatura_cargas_id',
     ];
 
     public function cliente()
@@ -22,8 +20,14 @@ class Invoice extends Model
         return $this->belongsTo(Cliente::class);
     }
 
-    public function carga()
+    public function fatura_carga()
     {
-        return $this->belongsTo(Carga::class);
+        return $this->belongsTo(FaturaCarga::class);
     }
+
+    public function invoicePacotes()
+    {
+        return $this->hasMany(InvoicePacote::class);
+    }
+
 }

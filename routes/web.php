@@ -13,6 +13,8 @@ use App\Http\Controllers\CargaController;
 use App\Http\Controllers\DespachanteController;
 use App\Http\Controllers\ServicosDespachanteController;
 use App\Http\Controllers\EmbarcadorController;
+use App\Http\Controllers\FaturaCargaController;
+use App\Http\Controllers\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -125,6 +127,25 @@ Route::middleware('auth')->group(function () {
             Route::get('/{embarcador}', [EmbarcadorController::class, 'show'])->name('embarcadores.show');
             Route::put('/{embarcador}', [EmbarcadorController::class, 'update'])->name('embarcadores.update');
             Route::delete('/{embarcador}', [EmbarcadorController::class, 'destroy'])->name('embarcadores.destroy');
+        });
+
+        // INVOICES CRUD
+        Route::prefix('/admin/faturacarga')->group(function () {
+            Route::get('/', [FaturaCargaController::class, 'index'])->name('faturacargas.index');
+            Route::post('/', [FaturaCargaController::class, 'store'])->name('faturacargas.store');
+            Route::get('/{faturacarga}', [FaturaCargaController::class, 'show'])->name('faturacargas.show');
+            // Route::put('/{invoice}', [EmbarcadorController::class, 'update'])->name('invoices.update');
+            // Route::delete('/{invoice}', [EmbarcadorController::class, 'destroy'])->name('invoices.destroy');
+        });
+
+        // INVOICES CRUD
+        Route::prefix('/admin/invoices')->group(function () {
+            // Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index');
+            Route::post('/', [InvoiceController::class, 'store'])->name('invoices.store');
+            Route::get('/criar-invoices/{faturaCarga}', [InvoiceController::class, 'criarInvoices'])->name('invoices.criar');
+            Route::get('/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+            Route::put('/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
+            // Route::delete('/{invoice}', [EmbarcadorController::class, 'destroy'])->name('invoices.destroy');
         });
     });
 

@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
             $table->date('data');
-            $table->string('numero'); //ver uma forma de criar uma numeração padrão para a carga (como ocorre em warehouse)
-            $table->enum('status', ['pendente', 'pagada'])->default('pendente');
-            $table->unsignedBigInteger('carga_id');
-            $table->foreign('carga_id')->references('id')->on('cargas')->onDelete('cascade');
+            // $table->string('numero'); //ver uma forma de criar uma numeração padrão para a carga (como ocorre em warehouse)
+            // $table->enum('status', ['pendente', 'pagada'])->default('pendente');
             $table->unsignedBigInteger('cliente_id');
             $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
             $table->timestamps();

@@ -93,15 +93,6 @@ class FaturaCargaController extends Controller
             // Buscar o shipper pelo ID
             $faturacarga = FaturaCarga::findOrFail($id);
             $all_clientes = Cliente::all();
-            // $all_invoices = Invoice::withSum('invoicePacotes:peso', 'peso')
-            //                 ->where('fatura_cargas_id', $id)
-            //                 ->get();
-
-            // $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-            //                 ->select('invoices.*', DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'))
-            //                 ->where('fatura_cargas_id', $id)
-            //                 ->groupBy('invoices.id','cliente_id', 'data', 'fatura_cargas_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
-            //                 ->get();
 
             $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
                             ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')

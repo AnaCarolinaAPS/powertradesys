@@ -23,7 +23,7 @@
         </div>
         <!-- end page title -->
         <div class="row">
-            <div class="col-xl-6">
+            <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <!-- <h4 class="card-title mb-4">Detalhes</h4> -->
@@ -32,7 +32,7 @@
                             @csrf
                             @method('PUT') <!-- Método HTTP para update -->
                             <div class="row">
-                                <div class="col-4">
+                                <div class="col-3">
                                     <div class="form-group">
                                         <label for="data_enviada">Data Enviada</label>
                                         <input class="form-control" type="date" value="{{  $carga->data_enviada; }}" id="data_enviada" name="data_enviada">
@@ -48,19 +48,6 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="status">Tipo Serviço</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="" name="" disabled>
-                                            <option value="0"> Em Destino </option>
-                                            <option value="0"> Aduana </option>
-                                            <option value="0"> Recebido </option>
-                                            <option value="0"> Liberado </option>
-                                        </select>
-                                    </div>
-                                </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="embarcador_id">Despachante</label>
@@ -72,33 +59,58 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col-4">
-                                    <div class="form-group">
-                                        <label for="data_recebida">Data Recebida</label>
-                                        <input class="form-control" type="date" value="{{  $carga->data_recebida; }}" id="data_recebida" name="data_recebida">
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="embarcador_id">Transportadora</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
-                                            @foreach ($all_embarcadores as $embarcador)
-                                                <option value="{{ $embarcador->id }}" {{ optional($carga->embarcador->id == $embarcador->id) ? 'selected' : '' }}> {{ $embarcador->nome }} </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="observacoes">Observações</label>
-                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5">{{$carga->observacoes}}</textarea>
-                                    </div>
-                                </div>
-                            </div>
 
+                            <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accordionFlushExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-headingOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                        Detalhes da Carga
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col-3">
+                                                    <div class="form-group">
+                                                        <label for="data_recebida">Data Recebida</label>
+                                                        <input class="form-control" type="date" value="{{  $carga->data_recebida; }}" id="data_recebida" name="data_recebida">
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="status">Tipo Serviço</label>
+                                                        <select class="selectpicker form-control" data-live-search="true" id="" name="" disabled>
+                                                            <option value="0"> Em Destino </option>
+                                                            <option value="0"> Aduana </option>
+                                                            <option value="0"> Recebido </option>
+                                                            <option value="0"> Liberado </option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="embarcador_id">Transportadora</label>
+                                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
+                                                            @foreach ($all_embarcadores as $embarcador)
+                                                                <option value="{{ $embarcador->id }}" {{ optional($carga->embarcador->id == $embarcador->id) ? 'selected' : '' }}> {{ $embarcador->nome }} </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="observacoes">Observações</label>
+                                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5">{{$carga->observacoes}}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-info me-auto" data-bs-toggle="modal" data-bs-target="#receberModal">
                                     Status
@@ -111,35 +123,6 @@
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
                             </div>
                         </form>
-                    </div><!-- end card -->
-                </div><!-- end card -->
-            </div>
-            <!-- end col -->
-
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body">
-                        <!-- <h4 class="card-title mb-4">Totais</h4> -->
-                        <table id="datatable-totals" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Cliente</th>
-                                    <th>Qtd</th>
-                                    <th>Aprox</th>
-                                    <th>Recebido</th>
-                                </tr>
-                            </thead><!-- end thead -->
-                            <tbody>
-                                @foreach ($resumo as $cli_totais)
-                                <tr>
-                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.') '.$cli_totais->user_name }}<h6></td>
-                                    <td>{{ $cli_totais->total_pacotes }}</td>
-                                    <td>{{ $cli_totais->total_aproximado }}</td>
-                                    <td>{{ $cli_totais->total_real }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody><!-- end tbody -->
-                        </table> <!-- end table -->
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -198,6 +181,37 @@
                                 <p><h6 class="mb-0">Total Previsto: {{$totais->total_aproximado ?? '0'}} kgs</h6></p>
                             </div>
                         </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Totais</h4>
+                        <table id="datatable-totals" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Qtd</th>
+                                    <th>Aprox</th>
+                                    <th>Recebido</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                @foreach ($resumo as $cli_totais)
+                                <tr>
+                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.') '.$cli_totais->user_name }}<h6></td>
+                                    <td>{{ $cli_totais->total_pacotes }}</td>
+                                    <td>{{ $cli_totais->total_aproximado }}</td>
+                                    <td>{{ $cli_totais->total_real }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -354,21 +368,20 @@
                         <h5 class="modal-title" id="tituloModalPacote">Pacote</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form class="form-horizontal mt-3" method="POST" id="formAtualizacaoPacote" action="">
+                    <form class="form-horizontal" method="POST" id="formAtualizacaoPacote" action="">
                         @csrf
                         @method('PUT') <!-- Método HTTP para update -->
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id da Warehouse -->
                             <input type="hidden" name="id" value="" id="dId">
-                            {{-- <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}"> --}}
-                            <div class="row">
-                                <div class="col-md-4">
+                            <div class="row mt-1">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="rastreio">Rastreio</label>
                                         <input type="text" class="form-control" id="dRastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="cliente_id">Cliente</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="dCliente_id" name="cliente_id">
@@ -378,22 +391,88 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="peso">Peso</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" name="peso">
+                                    </div>
+                                </div>
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="qtd">Qtd</label>
                                         <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="peso_aprox">Peso Aprox.</label>
                                         <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="peso">Peso</label>
-                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" name="peso">
+                            </div>
+
+                            <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accordionFlushExample">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-headingOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                        Volume do Pacote
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Altura</label>
+                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Largura</label>
+                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Profundidade</label>
+                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Volume</label>
+                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accordionObs">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-headingObs">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                        Descrição
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingObs" data-bs-parent="#accordionObs">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Observações</label>
+                                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -494,6 +573,7 @@
                     });
                         // console.error('Erro:', data.carga_id);
 
+                    document.getElementById('dPeso').focus();
                     // console.error('Erro:', data);
                     // Preencha o conteúdo do modal com os dados do pacote recebido
                     // Exemplo: document.getElementById('modalTitle').innerText = data.titulo;

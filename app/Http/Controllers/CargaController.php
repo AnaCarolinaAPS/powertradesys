@@ -21,7 +21,7 @@ class CargaController extends Controller
         // $all_items = Carga::all();
         $all_items = Carga::select('cargas.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
                     ->leftJoin('pacotes', 'cargas.id', '=', 'pacotes.carga_id')
-                    ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.observacoes', 'cargas.created_at', 'cargas.updated_at', 'cargas.despachante_id', 'cargas.embarcador_id')
+                    ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.observacoes', 'cargas.created_at', 'cargas.updated_at', 'cargas.despachante_id', 'cargas.embarcador_id', 'cargas.fatura_carga_id')
                     ->get();
         $all_despachantes = Despachante::all();
         $all_embarcadores = Embarcador::all();

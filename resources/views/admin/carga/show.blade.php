@@ -64,11 +64,11 @@
                             <div class="accordion accordion-flush mt-2" id="accordionFlushExample">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="flush-headingOne">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseDetalhes" aria-expanded="false" aria-controls="flush-collapseDetalhes">
                                         Detalhes da Carga
                                     </button>
                                     </h2>
-                                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                    <div id="flush-collapseDetalhes" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionDetalhes">
                                         <div class="accordion-body">
                                             <div class="row">
                                                 <div class="col-3">
@@ -110,11 +110,11 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>                            
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-info me-auto" data-bs-toggle="modal" data-bs-target="#receberModal">
                                     Status
-                                </button> 
+                                </button>
                                 <!-- Botão de Exclusão -->
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir
@@ -391,24 +391,16 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="peso">Peso</label>
                                         <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" name="peso">
                                     </div>
                                 </div>
-                                <div class="col">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="qtd">Qtd</label>
                                         <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="peso_aprox">Peso Aprox.</label>
-                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -427,25 +419,25 @@
                                                 <div class="col">
                                                     <div class="form-group">
                                                         <label for="qtd">Altura</label>
-                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                        <input class="form-control" type="number" value="0" id="dAltura" name="altura" >
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-group">
                                                         <label for="qtd">Largura</label>
-                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                        <input class="form-control" type="number" value="0" id="dLargura" name="largura" >
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-group">
                                                         <label for="qtd">Profundidade</label>
-                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                        <input class="form-control" type="number" value="0" id="dProfundidade" name="profundidade" >
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-group">
                                                         <label for="qtd">Volume</label>
-                                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                                        <input class="form-control" type="number" value="0" step="0.1" id="dVolume" name="volume"  readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -459,7 +451,7 @@
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="flush-headingObs">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
-                                        Descrição
+                                        Mais Detalhes
                                     </button>
                                     </h2>
                                     <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingObs" data-bs-parent="#accordionObs">
@@ -467,8 +459,16 @@
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="form-group">
+                                                        <label for="peso_aprox">Peso Aprox.</label>
+                                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col">
+                                                    <div class="form-group">
                                                         <label for="qtd">Observações</label>
-                                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5"></textarea>
+                                                        <textarea name="observacoes" id="dObservacoes" class="form-control" rows="5"></textarea>
                                                     </div>
                                                 </div>
                                             </div>
@@ -540,6 +540,32 @@
     //     })
     // });
 
+    // Função para calcular o volume e atualizar o campo correspondente
+    function calcularVolume() {
+        // Obtenha os valores dos campos de entrada
+        var comprimento = parseFloat(document.getElementById('dProfundidade').value) || 0;
+        var largura = parseFloat(document.getElementById('dLargura').value) || 0;
+        var altura = parseFloat(document.getElementById('dAltura').value) || 0;
+
+        // Calcule o volume (assumindo que é um cubo, ajuste conforme necessário)
+        var volume = comprimento * largura * altura;
+
+        if (volume != 0) {
+            volume = volume/6000;
+        }
+
+        // Atualize o campo de saída com o resultado formatado
+        document.getElementById('dVolume').value = volume.toFixed(1); // Ajuste o número de casas decimais conforme necessário
+    }
+
+    // Adicione eventos de input aos campos de entrada para chamar a função calcularVolume
+    document.getElementById('dProfundidade').addEventListener('input', calcularVolume);
+    document.getElementById('dLargura').addEventListener('input', calcularVolume);
+    document.getElementById('dAltura').addEventListener('input', calcularVolume);
+
+    // Chame a função inicialmente para garantir que o volume seja calculado quando a página carregar
+    calcularVolume();
+
     // JavaScript para abrir o modal ao clicar na linha da tabela
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {
@@ -549,13 +575,39 @@
                 .then(response => response.json())
                 .then(data => {
 
-                    document.getElementById('tituloModalPacote').innerText = data.rastreio;
+                    document.getElementById('tituloModalPacote').innerText = data.rastreio + " - Peso Origem: " + data.peso_aprox + " kgs" ;
                     document.getElementById('dId').value = data.id;
                     document.getElementById('dRastreio').value = data.rastreio;
                     document.getElementById('dCliente_id').value = data.cliente_id;
                     document.getElementById('dQtd').value = data.qtd;
                     document.getElementById('dPesoAprox').value = data.peso_aprox;
-                    document.getElementById('dPeso').value = data.peso;
+                    if (data.peso == null) {
+                        document.getElementById('dPeso').value = 0;
+                    } else {
+                        document.getElementById('dPeso').value = data.peso;
+                    }
+                    if (data.altura == null) {
+                        document.getElementById('dAltura').value = 0;
+                    } else {
+                        document.getElementById('dAltura').value = data.altura;
+                    }
+                    if (data.largura == null) {
+                        document.getElementById('dLargura').value = 0;
+                    } else {
+                        document.getElementById('dLargura').value = data.largura;
+                    }
+                    if (data.profundidade == null) {
+                        document.getElementById('dProfundidade').value = 0;
+                    } else {
+                        document.getElementById('dProfundidade').value = data.profundidade;
+                    }
+                    if (data.volume == null) {
+                        document.getElementById('dVolume').value = 0;
+                    } else {
+                        document.getElementById('dVolume').value = data.volume;
+                    }
+                    document.getElementById('dObservacoes').value = data.observacoes;
+
                     $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacaoPacote');

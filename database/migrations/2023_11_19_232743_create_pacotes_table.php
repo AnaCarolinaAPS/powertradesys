@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('pacotes', function (Blueprint $table) {
             $table->id();
             $table->string('rastreio');
-            $table->string('qtd');
+            $table->integer('qtd');
             $table->decimal('peso_aprox', 8, 1);
             $table->decimal('peso', 8, 1)->nullable();
             $table->foreignId('warehouse_id')->constrained();

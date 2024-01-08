@@ -29,13 +29,14 @@ class PacoteController extends Controller
                 'peso_aprox' => 'required|numeric',
                 'warehouse_id' => 'required|exists:warehouses,id',
                 'cliente_id' => 'nullable|exists:clientes,id',
+                'observacoes' => 'nullable|string',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Verificar se existe um rastreio igual na mesma warehouse
             $rastreioDuplicado = Pacote::where('warehouse_id', '=', $request->input('warehouse_id'))
-            ->where('rastreio', '=', $request->input('rastreio'))
-            ->exists();
+                                ->where('rastreio', '=', $request->input('rastreio'))
+                                ->exists();
 
             // Criação de um novo Shipper no banco de dados
             Pacote::create([
@@ -44,6 +45,7 @@ class PacoteController extends Controller
                 'peso_aprox' => $request->input('peso_aprox'),
                 'warehouse_id' => $request->input('warehouse_id'),
                 'cliente_id' => $request->input('cliente_id'),
+                'observacoes' => $request->input('observacoes'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -92,6 +94,11 @@ class PacoteController extends Controller
                 'peso_aprox' => 'nullable|numeric',
                 'peso' => 'nullable|numeric',
                 'cliente_id' => 'nullable|exists:clientes,id',
+                'observacoes' => 'nullable|string',
+                'altura' => 'nullable|numeric',
+                'largura' => 'nullable|numeric',
+                'profundidade' => 'nullable|numeric',
+                'volume' => 'nullable|numeric',
                 // 'warehouse_id' => 'required|exists:warehouses,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
@@ -106,6 +113,7 @@ class PacoteController extends Controller
                     'qtd' => $request->input('qtd'),
                     'peso_aprox' => $request->input('peso_aprox'),
                     'cliente_id' => $request->input('cliente_id'),
+                    'observacoes' => $request->input('observacoes'),
                     // Adicione outros campos conforme necessário
                 ]);
 
@@ -116,6 +124,11 @@ class PacoteController extends Controller
                     'qtd' => $request->input('qtd'),
                     'peso' => $request->input('peso'),
                     'cliente_id' => $request->input('cliente_id'),
+                    'observacoes' => $request->input('observacoes'),
+                    'altura' => $request->input('altura'),
+                    'largura' => $request->input('largura'),
+                    'profundidade' => $request->input('profundidade'),
+                    'volume' => $request->input('volume'),
                     // Adicione outros campos conforme necessário
                 ]);
             } else {
@@ -251,13 +264,17 @@ class PacoteController extends Controller
             $pacote->update([
                 'peso' => null,
                 'carga_id' => null,
+                'altura' => null,
+                'largura' => null,
+                'profundidade' => null,
+                'volume' => null,
                 // Adicione outros campos conforme necessário
             ]);
 
             // Redirecionar após a exclusão bem-sucedida
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Pacotes excluídos com sucesso!',
+                'message' => 'Pacote excluído com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {

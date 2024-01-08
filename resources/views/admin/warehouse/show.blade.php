@@ -252,6 +252,28 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accordionObs">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-headingObs">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                        Observações
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingObs" data-bs-parent="#accordionObs">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        {{-- <label for="qtd">Observações</label> --}}
+                                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
@@ -302,13 +324,13 @@
                             <input type="hidden" name="id" value="" id="dId">
                             <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="rastreio">Rastreio</label>
                                         <input type="text" class="form-control" id="dRastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="cliente_id">Cliente</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="dCliente_id" name="cliente_id">
@@ -330,10 +352,72 @@
                                         <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" name="peso_aprox">
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="peso">Peso</label>
-                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" readonly>
+                            </div>
+                            <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accordionOutros">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-headingObs">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                                        + Detalhes do Pacote
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingObs" data-bs-parent="#accordionOutros">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="peso">Peso Recebido</label>
+                                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Altura</label>
+                                                        <input class="form-control" type="number" value="0" id="dAltura" name="altura" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Largura</label>
+                                                        <input class="form-control" type="number" value="0" id="dLargura" name="largura" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Profundidade</label>
+                                                        <input class="form-control" type="number" value="0" id="dProfundidade" name="profundidade" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="qtd">Volume</label>
+                                                        <input class="form-control" type="number" value="0" step="0.1" id="dVolume" name="volume" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accordionObs">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-headingObs">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                        Observações
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingObs" data-bs-parent="#accordionObs">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        {{-- <label for="qtd">Observações</label> --}}
+                                                        <textarea name="observacoes" id="dObservacoes" class="form-control" rows="5"></textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -373,8 +457,36 @@
                     document.getElementById('dCliente_id').value = data.cliente_id;
                     document.getElementById('dQtd').value = data.qtd;
                     document.getElementById('dPesoAprox').value = data.peso_aprox;
-                    document.getElementById('dPeso').value = data.peso;
+                    // document.getElementById('dPeso').value = data.peso;
+                    if (data.peso == null) {
+                        document.getElementById('dPeso').value = 0;
+                    } else {
+                        document.getElementById('dPeso').value = data.peso;
+                    }
+                    if (data.altura == null) {
+                        document.getElementById('dAltura').value = 0;
+                    } else {
+                        document.getElementById('dAltura').value = data.altura;
+                    }
+                    if (data.largura == null) {
+                        document.getElementById('dLargura').value = 0;
+                    } else {
+                        document.getElementById('dLargura').value = data.largura;
+                    }
+                    if (data.profundidade == null) {
+                        document.getElementById('dProfundidade').value = 0;
+                    } else {
+                        document.getElementById('dProfundidade').value = data.profundidade;
+                    }
+                    if (data.volume == null) {
+                        document.getElementById('dVolume').value = 0;
+                    } else {
+                        document.getElementById('dVolume').value = data.volume;
+                    }
+                    document.getElementById('dObservacoes').value = data.observacoes;
+
                     $('.selectpicker').selectpicker('refresh');
+
 
                     var form = document.getElementById('formAtualizacaoPacote');
                     var novaAction = "{{ route('pacotes.update', ['pacotes' => ':id']) }}".replace(':id', data.id);

@@ -606,7 +606,11 @@
                     } else {
                         document.getElementById('dVolume').value = data.volume;
                     }
-                    document.getElementById('dObservacoes').value = data.observacoes;
+                    if (data.observacoes == null) {
+                        document.getElementById('dObservacoes').value = "";
+                    } else {
+                        document.getElementById('dProfundidade').value = data.observacoes;
+                    }
 
                     $('.selectpicker').selectpicker('refresh');
 

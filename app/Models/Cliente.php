@@ -16,6 +16,7 @@ class Cliente extends Model
      */
     protected $fillable = [
         'caixa_postal',
+        'apelido',
         'user_id',
     ];
 

@@ -93,13 +93,13 @@ class WarehouseController extends Controller
                     ->first();
 
             $resumo = DB::table('pacotes')
-                    ->select('clientes.id', 'clientes.caixa_postal',
+                    ->select('clientes.id', 'clientes.caixa_postal', 'clientes.apelido',
                             DB::raw('COALESCE(SUM(pacotes.qtd), 0) as total_pacotes'),
                             DB::raw('COALESCE(SUM(pacotes.peso_aprox), 0) as total_aproximado'),
                             DB::raw('COALESCE(SUM(pacotes.peso), 0) as total_real'))
                     ->leftJoin('clientes', 'clientes.id', '=', 'pacotes.cliente_id')
                     ->where('pacotes.warehouse_id', $id)
-                    ->groupBy('clientes.id', 'clientes.caixa_postal')
+                    ->groupBy('clientes.id', 'clientes.caixa_postal', 'clientes.apelido')
                     ->get();
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pacote;
 use App\Models\Warehouse;
+use App\Models\Cliente;
 use Illuminate\Http\Request;
 
 class PacoteController extends Controller
@@ -13,7 +14,9 @@ class PacoteController extends Controller
      */
     public function index()
     {
-        //
+        $all_items = Pacote::all();
+        $all_clientes = Cliente::all();
+        return view('admin.pacote.index', compact('all_items', 'all_clientes'));
     }
 
     /**

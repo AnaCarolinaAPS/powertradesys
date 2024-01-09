@@ -156,7 +156,7 @@
                                     @foreach ($carga->pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
-                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->user->name }}</td>
+                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso_aprox }}</td>
                                         @if ($pacote->peso > 0)
@@ -204,7 +204,7 @@
                             <tbody>
                                 @foreach ($resumo as $cli_totais)
                                 <tr>
-                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.') '.$cli_totais->user_name }}<h6></td>
+                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.') '.$cli_totais->apelido }}<h6></td>
                                     <td>{{ $cli_totais->total_pacotes }}</td>
                                     <td>{{ $cli_totais->total_aproximado }}</td>
                                     <td>{{ $cli_totais->total_real }}</td>
@@ -386,7 +386,7 @@
                                         <label for="cliente_id">Cliente</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="dCliente_id" name="cliente_id">
                                             @foreach ($all_clientes as $cliente)
-                                                <option value="{{ $cliente->id }}"> {{ $cliente->caixa_postal }} </option>
+                                                <option value="{{ $cliente->id }}"> {{ '('. $cliente->caixa_postal.') '.$cliente->apelido }} </option>
                                             @endforeach
                                         </select>
                                     </div>

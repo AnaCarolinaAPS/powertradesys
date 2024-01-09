@@ -83,7 +83,7 @@ Route::middleware('auth')->group(function () {
 
         // Pacotes CRUD
         Route::prefix('/admin/pacotes')->group(function () {
-            // Route::get('/', [PacoteController::class, 'index'])->name('pacotes.index');
+            Route::get('/', [PacoteController::class, 'index'])->name('pacotes.index');
             Route::post('/', [PacoteController::class, 'store'])->name('pacotes.store');
             Route::get('/{pacotes}', [PacoteController::class, 'show'])->name('pacotes.show');
             Route::put('/{pacotes}', [PacoteController::class, 'update'])->name('pacotes.update');

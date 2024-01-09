@@ -132,16 +132,21 @@
                     @csrf
                     <div class="modal-body">
                         {{-- ADICIONAR MAIS TARDE O CONTATO POR TELEFONE + NOME COMPLETO TIPO DE DOCUMENTO E NRO DE DOCUMENTO --}}
-                        {{-- <input type="hidden" class="form-control" id="nombrelista" name="nombrelista" placeholder="Nombre Factura" maxlength="80">
                         <input type="hidden" class="form-control" id="documento" name="documento" placeholder="CI 9.999.999" maxlength="40"> --}}
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col">
                                 <div class="form-group">
                                     <label for="codigo">Caixa Postal</label>
                                     <input type="text" class="form-control" id="caixa_postal" name="caixa_postal" placeholder="000XXX" maxlength="6" required>
                                 </div>
                             </div>
-                            <div class="col-md-9">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="apelido">Apelido</label>
+                                    <input type="text" class="form-control" id="apelido" name="apelido" placeholder="Apelido">
+                                </div>
+                            </div>
+                            <div class="col">
                                 <div class="form-group">
                                     <label for="nombre">Usuário</label>
                                     <select class="selectpicker form-control" data-live-search="true" id="user_id" name="user_id">
@@ -156,7 +161,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="descripcion">Observaciones</label>
-                                    <textarea class="form-control" rows="2" id="observaciones" name="observaciones" maxlength="140"></textarea>
+                                    <textarea class="form-control" rows="2" id="observaciones" name="observaciones"></textarea>
                                 </div>
                             </div>
                         </div> --}}

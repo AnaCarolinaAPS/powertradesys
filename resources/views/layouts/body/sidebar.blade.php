@@ -66,7 +66,7 @@
                             </li>
                             <li><a href="{{ route('cargas.index'); }}">Cargas</a></li>
                             <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Pacotes</a></li>
+                            <li><a href="{{ route('pacotes.index'); }}">Pacotes</a></li>
                             <li><a href="layouts-compact-sidebar.html">Estoque</a></li>
                         </ul>
                     </li>

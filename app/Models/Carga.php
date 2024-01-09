@@ -50,6 +50,6 @@ class Carga extends Model
 
     public function faturaCarga()
     {
-        return $this->belongsTo(Embarcador::class);
+        return $this->belongsTo(FaturaCarga::class);
     }
 }

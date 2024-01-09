@@ -37,6 +37,7 @@
                                         <th>Data Recebida</th>
                                         <th>Carga</th>
                                         <th>Peso Guia</th>
+                                        <th>Serviço</th>
                                         <!-- <th>Total Despesas</th>
                                         <th>Valor Cobrado</th>
                                         <th>Lucro</th>
@@ -49,6 +50,7 @@
                                         <td>{{ \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td>{{ $fatura->numero; }}</td>
                                         <td>{{ '$carga->peso_guia'; }}</td>
+                                        <td>{{ $fatura->servico->descricao; }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -86,6 +88,16 @@
                                     <select class="selectpicker form-control" data-live-search="true" id="carga_id" name="carga_id">
                                         @foreach ($all_cargas as $carga)
                                             <option value="{{ $carga->id }}"> {{ $carga->data_recebida }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="servico_id">Serviço</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="servico_id" name="servico_id">
+                                        @foreach ($all_servicos as $servico)
+                                            <option value="{{ $servico->id }}"> {{ $servico->descricao }} </option>
                                         @endforeach
                                     </select>
                                 </div>

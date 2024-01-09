@@ -15,6 +15,7 @@ use App\Http\Controllers\ServicosDespachanteController;
 use App\Http\Controllers\EmbarcadorController;
 use App\Http\Controllers\FaturaCargaController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\ServicoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -147,6 +148,17 @@ Route::middleware('auth')->group(function () {
             Route::put('/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
             // Route::delete('/{invoice}', [EmbarcadorController::class, 'destroy'])->name('invoices.destroy');
         });
+
+
+        // Serviços CRUD
+        Route::prefix('/admin/servicos')->group(function () {
+            Route::get('/', [ServicoController::class, 'index'])->name('servicos.index');
+            Route::post('/', [ServicoController::class, 'store'])->name('servicos.store');
+            Route::get('/{servico}', [ServicoController::class, 'show'])->name('servicos.show');
+            Route::put('/{servico}', [ServicoController::class, 'update'])->name('servicos.update');
+            Route::delete('/{servico}', [ServicoController::class, 'destroy'])->name('servicos.destroy');
+        });
+
     });
 
     Route::middleware(['role:client'])->group(function () {

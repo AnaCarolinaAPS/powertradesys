@@ -13,6 +13,7 @@ class FaturaCarga extends Model
         'data',
         'numero',
         'carga_id',
+        'servico_id',
     ];
 
     public function carga()
@@ -23,5 +24,10 @@ class FaturaCarga extends Model
     public function invoices()
     {
         return $this->hasMany(Invoice::class, 'fatura_carga_id', 'id');
+    }
+
+    public function servico()
+    {
+        return $this->belongsTo(Servico::class, 'servico_id', 'id');
     }
 }

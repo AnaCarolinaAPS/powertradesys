@@ -80,7 +80,7 @@
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="layouts-horizontal.html">Caixas</a></li>
-                                    <li><a href="layouts-horizontal.html">Serviços</a></li>
+                                    <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
                                     <li><a href="layouts-compact-sidebar.html">Categorias</a></li>
                                 </ul>
                             </li>

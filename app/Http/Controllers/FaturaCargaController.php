@@ -7,6 +7,7 @@ use App\Models\FaturaCarga;
 use App\Models\Carga;
 use App\Models\Cliente;
 use App\Models\Invoice;
+use App\Models\Servico;
 use Illuminate\Support\Facades\DB;
 
 class FaturaCargaController extends Controller
@@ -20,7 +21,9 @@ class FaturaCargaController extends Controller
         $all_cargas = Carga::whereNotNull('cargas.data_recebida')
                     ->whereNull('cargas.fatura_carga_id') // Verifica se não há FaturaCarga associada à carga
                     ->get();
-        return view('admin.faturacarga.index', compact('all_items', 'all_cargas'));
+        $all_servicos = Servico::whereNull('servicos.data_fim') // Verifica se não há FaturaCarga associada à carga
+                    ->get();
+        return view('admin.faturacarga.index', compact('all_items', 'all_cargas', 'all_servicos'));
     }
 
     /**
@@ -33,6 +36,7 @@ class FaturaCargaController extends Controller
             $request->validate([
                 'numero' => 'required',
                 'carga_id' => 'required|exists:cargas,id',
+                'servico_id' => 'required|exists:servicos,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -40,6 +44,7 @@ class FaturaCargaController extends Controller
             $faturacarga = FaturaCarga::create([
                 'numero' => $request->input('numero'),
                 'carga_id' => $request->input('carga_id'),
+                'servico_id' => $request->input('servico_id'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -51,7 +56,7 @@ class FaturaCargaController extends Controller
                 // Exibir toastr de Erro
                 return redirect()->route('faturacargas.index')->with('toastr', [
                     'type'    => 'error',
-                    'message' => 'Ocorreu um erro ao atualizar a Carga: <br>'. $e->getMessage(),
+                    'message' => 'Ocorreu um erro ao atualizar a Fatura da Carga: <br>'. $e->getMessage(),
                     'title'   => 'Erro',
                 ]);
             }

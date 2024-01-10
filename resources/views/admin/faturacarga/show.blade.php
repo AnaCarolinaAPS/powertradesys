@@ -76,7 +76,7 @@
                                         <td>{{ '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name }}</td>
                                         <td>{{ $invoice->pacotes_sum_peso}}</td>
                                         <td>{{ $invoice->invoice_pacotes_sum_peso }}</td>
-                                        <td>XX U$</td>
+                                        <td>{{ $invoice->invoice_pacotes_sum_valor }} U$</td>
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->

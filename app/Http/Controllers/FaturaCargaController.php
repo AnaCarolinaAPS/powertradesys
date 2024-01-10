@@ -62,16 +62,16 @@ class FaturaCargaController extends Controller
             }
 
             // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
-            $invoices = InvoiceController::criarInvoices($faturacarga);
+            // $invoices = InvoiceController::criarInvoices($faturacarga);
 
-            if ($invoices != true) {
-                // Exibir toastr de Erro
-                return redirect()->route('faturacargas.index')->with('toastr', [
-                    'type'    => 'error',
-                    'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga<br> '.$invoices,
-                    'title'   => 'Erro',
-                ]);
-            }
+            // if ($invoices != true) {
+            //     // Exibir toastr de Erro
+            //     return redirect()->route('faturacargas.index')->with('toastr', [
+            //         'type'    => 'error',
+            //         'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga<br> '.$invoices,
+            //         'title'   => 'Erro',
+            //     ]);
+            // }
 
             // Exibir toastr de sucesso
             return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
@@ -97,21 +97,32 @@ class FaturaCargaController extends Controller
         try {
             // Buscar o shipper pelo ID
             $faturacarga = FaturaCarga::findOrFail($id);
-            $all_clientes = Cliente::all();
 
-            // $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-            //                 ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
-            //                 ->select(
-            //                     'invoices.*',
-            //                     DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'),
-            //                     DB::raw('SUM(pacotes.peso) as pacotes_sum_peso')
-            //                 )
-            //                 ->where('invoices.fatura_carga_id', $id)
-            //                 ->whereColumn('invoices.cliente_id', 'pacotes.cliente_id')
-            //                 ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
-            //                 ->get();
+            // $all_clientes = Cliente::all();
 
-            $all_invoices = Invoice::where('fatura_carga_id', $faturacarga->id)->get();
+            // Obtém a carga associada à fatura
+            $carga = $faturacarga->carga;
+
+            if ($carga) {
+                // Obtém todos os clientes associados aos pacotes da carga
+                $all_clientes = $carga->clientes()->distinct()->get();
+            } else {
+                $all_clientes = collect(); // Retorna uma coleção vazia se não houver carga associada
+            }
+
+            // $all_invoices = Invoice::where('fatura_carga_id', $faturacarga->id)->get();
+
+            $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
+                            ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
+                            ->select(
+                                'invoices.*',
+                                DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'),
+                                DB::raw('SUM(pacotes.peso) as pacotes_sum_peso'),
+                                DB::raw('SUM(invoice_pacotes.valor) as invoice_pacotes_sum_valor')
+                            )
+                            ->where('fatura_carga_id', $faturacarga->id)
+                            ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
+                            ->get();
 
             // Retornar a view com os detalhes do shipper
             return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices'));

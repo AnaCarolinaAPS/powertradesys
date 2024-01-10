@@ -22,7 +22,7 @@ class Servico extends Model
         'tipo',
     ];
 
-    public function faturaCargas()
+    public function fatura_cargas()
     {
         return $this->hasMany(FaturaCarga::class);
     }

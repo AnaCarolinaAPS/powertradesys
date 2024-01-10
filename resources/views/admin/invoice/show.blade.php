@@ -21,7 +21,7 @@
                 </div>
             </div>
         </div>
-        <!-- end page title -->  
+        <!-- end page title -->
         <div class="row">
         <div class="col-xl-12">
                 <div class="card">
@@ -51,7 +51,7 @@
                                             <div class="input-group-prepend">
                                               <span class="input-group-text" id="basic-addon1">U$</span>
                                             </div>
-                                            <input class="form-control" type="number" value="0.00" step="0.10" id="valorkg" name="valorkg">
+                                            <input class="form-control" type="text" value="{{ $invoice->fatura_carga->servico->preco; }}" id="valorkg" name="valorkg" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -70,7 +70,7 @@
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir
                                 </button>
-                                <a href="{{ url()->previous(); }}" class="btn btn-light waves-effect">Voltar</a>
+                                <a href="{{ route('faturacargas.show', ['faturacarga' => $invoice->fatura_carga->id]) }}" class="btn btn-light waves-effect">Voltar</a>
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
                             </div>
                         </form>
@@ -78,7 +78,7 @@
                 </div><!-- end card -->
             </div>
             <!-- end col -->
-        </div>     
+        </div>
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">
@@ -88,13 +88,13 @@
                                 <h4 class="card-title mb-4">Pacotes</h4>
                             </div>
                             <div class="col">
-                                Peso Cobrado: {{$resumo->soma_peso;}}
+                                Peso Cobrado: <b>{{$resumo->soma_peso;}}</b>
                             </div>
                             <div class="col">
-                                Valor Cobrado: 
+                                Valor Cobrado: <b>{{$resumo->soma_valor;}}</b>
                             </div>
                         </div>
-                        
+
                         <!-- <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalNewInvoice">
                             <i class="fas fa-plus"></i> Add Invoice
                         </button>
@@ -112,18 +112,18 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @foreach ($all_invoices_pacotes as $invoices)
+                                    @foreach ($all_invoices_pacotes as $invoicep)
                                     <tr>
-                                        <td>{{ $invoices->pacote->rastreio}}</td>
-                                        <td>{{ $invoices->pacote->peso}}</td>
-                                        <td>{{ $invoices->peso }}</td>
-                                        <td>{{ number_format($invoices->peso * 23, 2, ',', '.') }}</td>
+                                        <td>{{ $invoicep->pacote->rastreio}}</td>
+                                        <td>{{ $invoicep->pacote->peso}}</td>
+                                        <td>{{ $invoicep->peso }}</td>
+                                        <td>{{ number_format($invoicep->valor, 2, ',', '.') }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
-                        </div>                        
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -133,7 +133,7 @@
 </div>
 
 <script>
-    
+
 </script>
 <!-- End Page-content -->
 @endsection

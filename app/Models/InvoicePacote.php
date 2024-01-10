@@ -11,7 +11,7 @@ class InvoicePacote extends Model
 
     protected $fillable = [
         'peso',
-        // 'valor',
+        'valor',
         'invoice_id',
         'pacote_id',
     ];

@@ -61,10 +61,10 @@ class InvoiceController extends Controller
             $invoice = Invoice::findOrFail($id);
             $all_invoices_pacotes = InvoicePacote::where('invoice_id', $id)->get();
             $resumo = InvoicePacote::where('invoice_id', $id)
-                    // ->selectRaw('SUM(peso) as soma_peso, SUM(valor) as soma_valor')
-                    ->selectRaw('SUM(peso) as soma_peso')
+                    ->selectRaw('SUM(peso) as soma_peso, SUM(valor) as soma_valor')
+                    // ->selectRaw('SUM(peso) as soma_peso')
                     ->first();
-           
+
             // Retornar a view com os detalhes do shipper
             return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'resumo'));
         } catch (\Exception $e) {
@@ -87,7 +87,7 @@ class InvoiceController extends Controller
             $request->validate([
                 'data' => 'required|date',
                 // 'numero' => 'required',
-                'carga_id' => 'required|exists:cargas,id',
+                'fatura_carga_id' => 'required|exists:fatura_cargas,id',
                 'cliente_id' => 'required|exists:clientes,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
@@ -96,13 +96,28 @@ class InvoiceController extends Controller
             $invoice = Invoice::create([
                 'data' => $request->input('data'),
                 // 'numero' => $request->input('numero'),
-                'carga_id' => $request->input('carga_id'),
+                'fatura_carga_id' => $request->input('fatura_carga_id'),
                 'cliente_id' => $request->input('cliente_id'),
                 // Adicione outros campos conforme necessário
-            ]);            
+            ]);
+
+            // Filtrar os pacotes pertencentes ao cliente atual
+            $pacotesCliente = $invoice->fatura_carga->carga->pacotes()->where('cliente_id', $request->input('cliente_id'))->get();
+
+            //Adicionar a criação de "invoicepacotes" para carga pacote marcado na carga
+            foreach ($pacotesCliente as $pacote) {
+                $valor = $pacote->peso*$invoice->fatura_carga->servico->preco;
+                InvoicePacote::create([
+                    'peso' => $pacote->peso,
+                    'invoice_id' => $invoice->id,
+                    'pacote_id' => $pacote->id,
+                    'valor' => $valor,
+                    // Adicione outros campos conforme necessário
+                ]);
+            }
 
             // Exibir toastr de sucesso
-            return redirect()->route('invoices.items', ['invoice' => $invoice->id])->with('toastr', [
+            return redirect()->back()->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Invoice criada com sucesso!',
                 'title'   => 'Sucesso',
@@ -119,7 +134,7 @@ class InvoiceController extends Controller
 
     public function update(Request $request, Invoice $invoice)
     {
-        try {          
+        try {
             // Validação dos dados do formulário
             // $request->validate([
             //     'contato' => 'string|max:255',
@@ -158,6 +173,7 @@ class InvoiceController extends Controller
             $carga = Carga::with('clientes')->find($faturacarga->carga_id);
             $clientes = $carga->clientes->unique(); // Para obter uma coleção única de clientes
 
+            // return "OKAY Aqui";
             foreach ($clientes as $cliente) {
                 // Cria uma nova invoice para cada cliente
                 $invoice = Invoice::create([
@@ -172,10 +188,12 @@ class InvoiceController extends Controller
 
                 //Adicionar a criação de "invoicepacotes" para carga pacote marcado na carga
                 foreach ($pacotesCliente as $pacote) {
+                    $valor = $pacote->peso*$faturacarga->servico->preco;
                     InvoicePacote::create([
                         'peso' => $pacote->peso,
                         'invoice_id' => $invoice->id,
                         'pacote_id' => $pacote->id,
+                        'valor' => $valor,
                         // Adicione outros campos conforme necessário
                     ]);
                 }
@@ -184,7 +202,7 @@ class InvoiceController extends Controller
             return true;
         } catch (\Exception $e) {
             // Exibir toastr de Erro
-            return false;
+            return $e;
         }
     }
 }

@@ -39,7 +39,7 @@
                                 </tr>
                             </thead><!-- end thead -->
                             <tbody>
-                                
+
                             </tbody><!-- end tbody -->
                         </table> <!-- end table -->
                     </div><!-- end card -->
@@ -78,10 +78,10 @@
                                         <td>{{ $invoice->invoice_pacotes_sum_peso }}</td>
                                         <td>XX U$</td>
                                     </tr>
-                                    @endforeach 
+                                    @endforeach
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
-                        </div>                        
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -99,7 +99,7 @@
                     @csrf
                     <div class="modal-body">
                         <!-- Campo hidden para armazenar o id da Warehouse -->
-                        <input type="hidden" name="carga_id" value="{{ $faturacarga->id }}">
+                        <input type="hidden" name="fatura_carga_id" value="{{ $faturacarga->id }}">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">

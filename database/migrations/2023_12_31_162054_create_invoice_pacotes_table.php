@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('invoice_pacotes', function (Blueprint $table) {
             $table->id();
             $table->decimal('peso', 8, 1);
-            // $table->decimal('valor', 8, 2);
+            $table->decimal('valor', 8, 2);
             $table->unsignedBigInteger('pacote_id');
             $table->foreign('pacote_id')->references('id')->on('pacotes')->onDelete('cascade');
             $table->unsignedBigInteger('invoice_id');

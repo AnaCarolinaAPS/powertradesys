@@ -12,12 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->unsignedBigInteger('fatura_cargas_id')->nullable();
+            // $table->unsignedBigInteger('fatura_carga_id');
+            // $table->foreign('fatura_carga_id')->references('id')->on('fatura_cargas')->onDelete('set null');
 
-            $table->foreign('fatura_cargas_id')
-                ->references('id')
-                ->on('fatura_cargas')
-                ->onDelete('set null'); // Ajuste conforme a lógica desejada ao deletar a fatura_cargas
+            $table->unsignedBigInteger('fatura_carga_id');
+            $table->foreign('fatura_carga_id')->references('id')->on('fatura_cargas')->onDelete('cascade');
+
+            // $table->foreign('fatura_cargas_id')
+            //     ->references('id')
+            //     ->on('fatura_cargas')
+            //     ->onDelete('set null'); // Ajuste conforme a lógica desejada ao deletar a fatura_cargas
         });
     }
 
@@ -27,8 +31,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->dropForeign(['fatura_cargas_id']);
-            $table->dropColumn('fatura_cargas_id');
+            $table->dropForeign(['fatura_carga_id']);
+            $table->dropColumn('fatura_carga_id');
         });
     }
 };

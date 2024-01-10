@@ -56,7 +56,7 @@ class FaturaCargaController extends Controller
                 // Exibir toastr de Erro
                 return redirect()->route('faturacargas.index')->with('toastr', [
                     'type'    => 'error',
-                    'message' => 'Ocorreu um erro ao atualizar a Fatura da Carga: <br>'. $e->getMessage(),
+                    'message' => 'Ocorreu um erro ao atualizar a Carga: <br>'. $th->getMessage(),
                     'title'   => 'Erro',
                 ]);
             }
@@ -64,11 +64,11 @@ class FaturaCargaController extends Controller
             // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
             $invoices = InvoiceController::criarInvoices($faturacarga);
 
-            if ($invoices == false) {
+            if ($invoices != true) {
                 // Exibir toastr de Erro
                 return redirect()->route('faturacargas.index')->with('toastr', [
                     'type'    => 'error',
-                    'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga<br>',
+                    'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga<br> '.$invoices,
                     'title'   => 'Erro',
                 ]);
             }
@@ -76,7 +76,7 @@ class FaturaCargaController extends Controller
             // Exibir toastr de sucesso
             return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Fatura da Carga criada com sucesso!',
+                'message' => 'Fatura da Carga criada com sucesso! '.$invoices,
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
@@ -99,17 +99,19 @@ class FaturaCargaController extends Controller
             $faturacarga = FaturaCarga::findOrFail($id);
             $all_clientes = Cliente::all();
 
-            $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-                            ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
-                            ->select(
-                                'invoices.*',
-                                DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'),
-                                DB::raw('SUM(pacotes.peso) as pacotes_sum_peso')
-                            )
-                            ->where('invoices.fatura_cargas_id', $id)
-                            ->whereColumn('invoices.cliente_id', 'pacotes.cliente_id')
-                            ->groupBy('invoices.id','cliente_id', 'data', 'fatura_cargas_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
-                            ->get();
+            // $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
+            //                 ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
+            //                 ->select(
+            //                     'invoices.*',
+            //                     DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'),
+            //                     DB::raw('SUM(pacotes.peso) as pacotes_sum_peso')
+            //                 )
+            //                 ->where('invoices.fatura_carga_id', $id)
+            //                 ->whereColumn('invoices.cliente_id', 'pacotes.cliente_id')
+            //                 ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
+            //                 ->get();
+
+            $all_invoices = Invoice::where('fatura_carga_id', $faturacarga->id)->get();
 
             // Retornar a view com os detalhes do shipper
             return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices'));

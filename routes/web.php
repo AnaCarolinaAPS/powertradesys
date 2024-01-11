@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\CaixaController;
 use App\Http\Controllers\ClientDashboardController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\DashboardController;
@@ -149,7 +150,6 @@ Route::middleware('auth')->group(function () {
             // Route::delete('/{invoice}', [EmbarcadorController::class, 'destroy'])->name('invoices.destroy');
         });
 
-
         // Serviços CRUD
         Route::prefix('/admin/servicos')->group(function () {
             Route::get('/', [ServicoController::class, 'index'])->name('servicos.index');
@@ -157,6 +157,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{servico}', [ServicoController::class, 'show'])->name('servicos.show');
             Route::put('/{servico}', [ServicoController::class, 'update'])->name('servicos.update');
             Route::delete('/{servico}', [ServicoController::class, 'destroy'])->name('servicos.destroy');
+        });
+
+        // Caixas CRUD
+        Route::prefix('/admin/caixas')->group(function () {
+            Route::get('/', [CaixaController::class, 'index'])->name('caixas.index');
+            Route::post('/', [CaixaController::class, 'store'])->name('caixas.store');
+            Route::get('/{caixa}', [CaixaController::class, 'show'])->name('caixas.show');
+            // Route::put('/{caixa}', [CaixaController::class, 'update'])->name('caixas.update');
+            // Route::delete('/{caixa}', [CaixaController::class, 'destroy'])->name('caixas.destroy');
         });
 
     });

@@ -76,7 +76,7 @@ class FaturaCargaController extends Controller
             // Exibir toastr de sucesso
             return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Fatura da Carga criada com sucesso! '.$invoices,
+                'message' => 'Fatura da Carga criada com sucesso! ',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {

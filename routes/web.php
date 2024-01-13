@@ -17,6 +17,7 @@ use App\Http\Controllers\EmbarcadorController;
 use App\Http\Controllers\FaturaCargaController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ServicoController;
+use App\Http\Controllers\FreteiroController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -157,6 +158,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{servico}', [ServicoController::class, 'show'])->name('servicos.show');
             Route::put('/{servico}', [ServicoController::class, 'update'])->name('servicos.update');
             Route::delete('/{servico}', [ServicoController::class, 'destroy'])->name('servicos.destroy');
+        });
+
+        // Shippers CRUD
+        Route::prefix('/admin/freteiros')->group(function () {
+            Route::get('/', [FreteiroController::class, 'index'])->name('freteiros.index');
+            Route::post('/', [FreteiroController::class, 'store'])->name('freteiros.store');
+            Route::get('/{freteiro}', [FreteiroController::class, 'show'])->name('freteiros.show');
+            Route::put('/{freteiro}', [FreteiroController::class, 'update'])->name('freteiros.update');
+            Route::delete('/{freteiro}', [FreteiroController::class, 'destroy'])->name('freteiros.destroy');
         });
 
         // Caixas CRUD

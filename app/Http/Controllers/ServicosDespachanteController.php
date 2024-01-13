@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 class ServicosDespachanteController extends Controller
 {
-    //
-
     public function show($id)
     {
         $servico = ServicosDespachante::find($id);

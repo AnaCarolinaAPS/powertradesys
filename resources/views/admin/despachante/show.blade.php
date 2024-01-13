@@ -167,7 +167,7 @@
             </div><!-- /.modal-dialog -->
         </div>
 
-        <!-- Modal de Exclusao Pacotes -->
+        <!-- Modal de Exclusao de Servicos -->
         <div class="modal fade" id="confirmDelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -203,9 +203,8 @@
                         @csrf
                         @method('PUT') <!-- Método HTTP para update -->
                         <div class="modal-body">
-                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <!-- Campo hidden para armazenar o id  -->
                             <input type="hidden" name="id" value="" id="dId">
-                            <!-- <input type="hidden" name="warehouse_id" value="{{ $despachante->id }}"> -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">

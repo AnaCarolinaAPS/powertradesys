@@ -61,7 +61,7 @@
                                     {{-- <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
                                     <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li> --}}
                                     <li><a href="{{ route('shippers.index'); }}">Shippers</a></li>
-                                    <li><a href="layouts-compact-sidebar.html">Freteiros</a></li>
+                                    <li><a href="{{ route('freteiros.index'); }}">Freteiros</a></li>
                                 </ul>
                             </li>
                             <li><a href="{{ route('cargas.index'); }}">Cargas</a></li>

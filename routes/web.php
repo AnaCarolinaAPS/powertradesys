@@ -174,8 +174,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [CaixaController::class, 'index'])->name('caixas.index');
             Route::post('/', [CaixaController::class, 'store'])->name('caixas.store');
             Route::get('/{caixa}', [CaixaController::class, 'show'])->name('caixas.show');
-            // Route::put('/{caixa}', [CaixaController::class, 'update'])->name('caixas.update');
-            // Route::delete('/{caixa}', [CaixaController::class, 'destroy'])->name('caixas.destroy');
+            Route::put('/{caixa}', [CaixaController::class, 'update'])->name('caixas.update');
+            Route::delete('/{caixa}', [CaixaController::class, 'destroy'])->name('caixas.destroy');
         });
 
     });

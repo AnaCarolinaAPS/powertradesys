@@ -56,4 +56,78 @@ class CaixaController extends Controller
         $caixa = Caixa::find($id);
         return response()->json($caixa);
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Caixa $caixa)
+    {
+        try {
+
+            if ($caixa->nome == $request->input('nome')) {
+                $request->validate([
+                    'observacoes' => 'nullable|string',
+                    'moeda' => 'required|in:U$,R$,G$,outros'
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+            } else {
+                $request->validate([
+                    'nome' => 'required|string|max:255|unique:caixas',
+                    'observacoes' => 'nullable|string',
+                    'moeda' => 'required|in:U$,R$,G$,outros'
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+            }
+
+            // Atualizar os dados
+            $caixa->update([
+                'nome' => $request->input('nome'),
+                'observacoes' => $request->input('observacoes'),
+                'moeda' => $request->input('moeda'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Caixa atualizada com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar a Caixa: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $caixa = Caixa::find($id);
+            //Adicionar Lógica para que o freteiro não possa ser excluído caso tenha Saídas dos Pacotes no seu nome
+
+            // Excluir o Freteiro do banco de dados
+            $caixa->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Caixa excluída com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir a Caixa: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
 }

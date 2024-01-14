@@ -42,7 +42,7 @@ class CargaController extends Controller
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            // Criação de um novo Shipper no banco de dados
+            // Criação de um novo item no banco de dados
             $carga = Carga::create([
                 'data_enviada' => $request->input('data_enviada'),
                 'embarcador_id' => $request->input('embarcador_id'),
@@ -72,7 +72,7 @@ class CargaController extends Controller
     public function show($id)
     {
         try {
-            // Buscar o shipper pelo ID
+            // Buscar o item pelo ID
             $carga = Carga::findOrFail($id);
             $all_despachantes = Despachante::all();
             $all_embarcadores = Embarcador::all();
@@ -103,7 +103,7 @@ class CargaController extends Controller
                             ->groupBy('clientes.id', 'clientes.caixa_postal', 'clientes.apelido')
                             ->get();
 
-            // Retornar a view com os detalhes do shipper
+            // Retornar a view com os detalhes do item
             return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'all_clientes','resumo', 'totais'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
@@ -131,7 +131,7 @@ class CargaController extends Controller
 
             $dataRecebida = $request->input('data_recebida');
             if ($dataRecebida !== null) {
-                 // Atualizar os dados do Shipper
+                 // Atualizar os dados do item
                 $carga->update([
                     'data_enviada' => $request->input('data_enviada'),
                     'data_recebida' => $request->input('data_recebida'),
@@ -170,7 +170,6 @@ class CargaController extends Controller
     public function destroy(Carga $carga)
     {
         try {
-
             if ($carga->pacotes()->count() > 0) {
                 // Desassociar os pacotes da carga e definir carga_id como null
                 $carga->pacotes()->update(['carga_id' => null]);

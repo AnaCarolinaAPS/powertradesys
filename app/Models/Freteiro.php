@@ -13,4 +13,9 @@ class Freteiro extends Model
         'nome',
         'contato',
     ];
+
+    public function entregas()
+    {
+        return $this->hasMany(Entrega::class);
+    }
 }

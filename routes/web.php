@@ -14,6 +14,7 @@ use App\Http\Controllers\CargaController;
 use App\Http\Controllers\DespachanteController;
 use App\Http\Controllers\ServicosDespachanteController;
 use App\Http\Controllers\EmbarcadorController;
+use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\FaturaCargaController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ServicoController;
@@ -160,7 +161,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{servico}', [ServicoController::class, 'destroy'])->name('servicos.destroy');
         });
 
-        // Shippers CRUD
+        // Freteiros CRUD
         Route::prefix('/admin/freteiros')->group(function () {
             Route::get('/', [FreteiroController::class, 'index'])->name('freteiros.index');
             Route::post('/', [FreteiroController::class, 'store'])->name('freteiros.store');
@@ -176,6 +177,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{caixa}', [CaixaController::class, 'show'])->name('caixas.show');
             Route::put('/{caixa}', [CaixaController::class, 'update'])->name('caixas.update');
             Route::delete('/{caixa}', [CaixaController::class, 'destroy'])->name('caixas.destroy');
+        });
+
+        // Entregas de Carga CRUD
+        Route::prefix('/admin/entregas')->group(function () {
+            Route::get('/', [EntregaController::class, 'index'])->name('entregas.index');
+            Route::post('/', [EntregaController::class, 'store'])->name('entregas.store');
+            Route::get('/{entrega}', [EntregaController::class, 'show'])->name('entregas.show');
+            Route::put('/{entrega}', [EntregaController::class, 'update'])->name('entregas.update');
+            Route::delete('/{entrega}', [EntregaController::class, 'destroy'])->name('entregas.destroy');
         });
 
     });

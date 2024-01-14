@@ -7,6 +7,9 @@ use App\Models\Caixa;
 
 class CaixaController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         $all_caixas = Caixa::all();
@@ -51,6 +54,9 @@ class CaixaController extends Controller
         }
     }
 
+    /**
+     * Display the specified resource.
+     */
     public function show($id)
     {
         $caixa = Caixa::find($id);
@@ -63,7 +69,6 @@ class CaixaController extends Controller
     public function update(Request $request, Caixa $caixa)
     {
         try {
-
             if ($caixa->nome == $request->input('nome')) {
                 $request->validate([
                     'observacoes' => 'nullable|string',

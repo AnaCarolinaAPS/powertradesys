@@ -53,7 +53,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/admin', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
 
         // Clientes CRUD
         Route::prefix('/admin/clientes')->group(function () {

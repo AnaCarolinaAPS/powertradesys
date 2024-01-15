@@ -1,6 +1,6 @@
 
 @extends('layouts.admin_master')
-@section('titulo', 'Warehouses | PowerTrade.Py')
+@section('titulo', 'Entrega de Carga | PowerTrade.Py')
 
 @section('admin')
 <div class="page-content">
@@ -110,23 +110,16 @@
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
                                         <th>Qtd</th>
-                                        <th>Peso Aprox</th>
-                                        <th>Peso Recebido</th>
+                                        <th>Peso</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($entrega->entrega_pacotes as $pacote)
-                                    <tr>
-                                    {{-- <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal"> --}}
-                                        <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
-                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
+                                    <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                        <td><h6 class="mb-0">{{ $pacote->pacote->rastreio }}</h6></td>
+                                        <td>{{ '('.$pacote->pacote->cliente->caixa_postal.') '.$pacote->pacote->cliente->apelido }}</td>
                                         <td>{{ $pacote->qtd }}</td>
-                                        <td>{{ $pacote->peso_aprox }}</td>
-                                        @if ($pacote->peso > 0)
-                                            <td>{{ $pacote->peso }}</td>
-                                        @else
-                                            <td>Aguardando</td>
-                                        @endif
+                                        <td>{{ $pacote->peso }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -181,8 +174,7 @@
                         <h5 class="modal-title" id="myLargeModalLabel">Adicionar Pacotes</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form class="form-horizontal mt-3" method="POST" action="#" id="formNovoPacote">
-                    {{-- <form class="form-horizontal mt-3" method="POST" action="{{ route('entrada_pacotes.store') }}" id="formNovoPacote"> --}}
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('entrega_pacotes.store') }}" id="formNovoPacote">
                         @csrf
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id da Warehouse -->
@@ -208,12 +200,94 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
+
+        <!-- Detalhes dos Itens -->
+    <div class="modal fade" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloModal">Pacote</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form-horizontal mt-3" method="POST" id="formAtualizacao" action="">
+                    @csrf
+                    @method('PUT') <!-- Método HTTP para update -->
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="hidden" name="id" value="" id="dId">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="rastreio">Rastreio</label>
+                                    <input type="text" class="form-control" id="dRastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="qtd">Qtd</label>
+                                    <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="peso">Peso</label>
+                                    <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" name="peso">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <!-- Botão de Exclusão -->
+                        <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelModal">
+                            Excluir
+                        </button>
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacao">Atualizar</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
     </div>
 
 </div>
 
 <script>
+    // JavaScript para abrir o modal ao clicar na linha da tabela
+    document.querySelectorAll('.abrirModal').forEach(item => {
+        item.addEventListener('click', event => {
+            const pacoteId = event.currentTarget.dataset.pacoteId;
+            const url = "{{ route('entrega_pacotes.show', ':id') }}".replace(':id', pacoteId);
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
 
+                    // document.getElementById('tituloModalPacote').innerText = data.rastreio + " - Peso Origem: " + data.peso_aprox + " kgs" ;
+                    document.getElementById('dId').value = data.id;
+                    // document.getElementById('dRastreio').value = data.rastreio;
+                    document.getElementById('dQtd').value = data.qtd;
+                    if (data.peso == null) {
+                        document.getElementById('dPeso').value = 0;
+                    } else {
+                        document.getElementById('dPeso').value = data.peso;
+                    }                    
+
+                    // var form = document.getElementById('formAtualizacaoPacote');
+                    // var novaAction = "{{ route('pacotes.update', ['pacotes' => ':id']) }}".replace(':id', data.id);
+                    // form.setAttribute('action', novaAction);
+
+                    // var form2 = document.getElementById('formDeletePctModal');
+                    // var novaAction2 = "{{ route('pacotes.excluirPctCarga', ['pacotes' => ':id']) }}".replace(':id', data.id);
+                    // form2.setAttribute('action', novaAction2);
+
+                    // var link = "{{ route('warehouses.show', ['warehouse' => ':warehouseId']) }}";
+                    // link = link.replace(':warehouseId', data.warehouse_id);
+                    // $('#wrBotao').show().on('click', function () {
+                    //     window.location.href = link;
+                    // });                    
+                })
+                .catch(error => console.error('Erro:', error));
+        });
+    });
 </script>
 <!-- End Page-content -->
 @endsection

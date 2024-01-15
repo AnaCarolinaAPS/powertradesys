@@ -43,4 +43,9 @@ class Pacote extends Model
     {
         return $this->belongsTo(Carga::class);
     }
+
+    public function entrega_pacote()
+    {
+        return $this->belongsTo(EntregaPacote::class);
+    }
 }

@@ -10,10 +10,11 @@ class Entrega extends Model
     use HasFactory;
 
     protected $fillable = [
-        'peso',
-        'qtd',
-        'pacote_id',
-        'entrega_id',
+        'data',
+        'hora',
+        'responsavel',
+        'freteiro_id',
+        'cliente_id',
     ];
 
     public function cliente()
@@ -28,6 +29,6 @@ class Entrega extends Model
 
     public function entrega_pacotes()
     {
-        return $this->hasMany(EntregaPacotes::class);
+        return $this->hasMany(EntregaPacote::class);
     }
 }

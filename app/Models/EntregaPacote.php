@@ -5,20 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class EntregaPacotes extends Model
+class EntregaPacote extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'data',
-        'hora',
-        'responsavel',
-        'freteiro_id',
-        'cliente_id',
+        'peso',
+        'qtd',
+        'pacote_id',
+        'entrega_id',
     ];
 
     public function entrega()
     {
         return $this->belongsTo(Entrega::class);
+    }
+
+    public function pacote()
+    {
+        return $this->belongsTo(Pacote::class);
     }
 }

@@ -15,6 +15,7 @@ use App\Http\Controllers\DespachanteController;
 use App\Http\Controllers\ServicosDespachanteController;
 use App\Http\Controllers\EmbarcadorController;
 use App\Http\Controllers\EntregaController;
+use App\Http\Controllers\EntregaPacoteController;
 use App\Http\Controllers\FaturaCargaController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ServicoController;
@@ -186,6 +187,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{entrega}', [EntregaController::class, 'show'])->name('entregas.show');
             Route::put('/{entrega}', [EntregaController::class, 'update'])->name('entregas.update');
             Route::delete('/{entrega}', [EntregaController::class, 'destroy'])->name('entregas.destroy');
+        });
+
+        // Entregas de Carga (Pacotes) CRUD
+        Route::prefix('/admin/entregapacotes')->group(function () {
+            // Route::get('/', [EntregaPacoteController::class, 'index'])->name('entrega_pacotes.index');
+            Route::post('/', [EntregaPacoteController::class, 'store'])->name('entrega_pacotes.store');
+            Route::get('/{pacote}', [EntregaPacoteController::class, 'show'])->name('entrega_pacotes.show');
+            // Route::put('/{pacote}', [EntregaPacoteController::class, 'update'])->name('entrada_pacotes.update');
+            // Route::delete('/{pacote}', [EntregaPacoteController::class, 'destroy'])->name('entrada_pacotes.destroy');
         });
 
     });

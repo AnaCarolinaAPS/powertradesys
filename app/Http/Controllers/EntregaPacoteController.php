@@ -14,7 +14,10 @@ class EntregaPacoteController extends Controller
      */
     public function show($id)
     {
-        $entregapacotes = EntregaPacote::find($id);
+        // $entregapacotes = EntregaPacote::find($id);
+        $entregapacotes = EntregaPacote::leftJoin('pacotes', 'entrega_pacotes.pacote_id', '=', 'pacotes.id')
+                                  ->select('entrega_pacotes.*', 'pacotes.rastreio', 'pacotes.peso_aprox')
+                                  ->find($id);
         return response()->json($entregapacotes);
     }
 
@@ -61,6 +64,70 @@ class EntregaPacoteController extends Controller
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
                 'message' => 'Ocorreu um erro ao criar o Pacote: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, EntregaPacote $entrega)
+    {
+        try {
+            $request->validate([
+                'qtd' => 'nullable|numeric',
+                'peso' => 'nullable|numeric',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            $entrega = EntregaPacote::findOrFail($request->input('id'));
+
+            // Atualizar os dados
+            $entrega->update([
+                'qtd' => $request->input('qtd'),
+                'peso' => $request->input('peso'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pacote atualizado com sucesso! ',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar a Pacote: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $entrega = EntregaPacote::find($id);
+
+            // Excluir o Item do banco de dados
+            $entrega->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pacote excluído com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir o Pacote: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

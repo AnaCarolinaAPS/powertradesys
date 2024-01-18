@@ -107,8 +107,8 @@
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data Recebida</th>
                                         <th>Rastreio</th>
-                                        <th>Cliente</th>
                                         <th>Qtd</th>
                                         <th>Peso</th>
                                     </tr>
@@ -116,8 +116,8 @@
                                 <tbody>
                                     @foreach ($entrega->entrega_pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                        <td>{{ \Carbon\Carbon::parse($pacote->pacote->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td><h6 class="mb-0">{{ $pacote->pacote->rastreio }}</h6></td>
-                                        <td>{{ '('.$pacote->pacote->cliente->caixa_postal.') '.$pacote->pacote->cliente->apelido }}</td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso }}</td>
                                     </tr>
@@ -202,51 +202,75 @@
         </div>
 
         <!-- Detalhes dos Itens -->
-    <div class="modal fade" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tituloModal">Pacote</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="form-horizontal mt-3" method="POST" id="formAtualizacao" action="">
-                    @csrf
-                    @method('PUT') <!-- Método HTTP para update -->
-                    <div class="modal-body">
-                        <div class="row">
-                            <input type="hidden" name="id" value="" id="dId">
-                            <div class="col">
-                                <div class="form-group">
-                                    <label for="rastreio">Rastreio</label>
-                                    <input type="text" class="form-control" id="dRastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" readonly>
+        <div class="modal fade" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloModalDetalhe">Pacote</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" id="formAtualizacao" action="">
+                        @csrf
+                        @method('PUT') <!-- Método HTTP para update -->
+                        <div class="modal-body">
+                            <div class="row">
+                                <input type="hidden" name="id" value="" id="dId">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="rastreio">Rastreio</label>
+                                        <input type="text" class="form-control" id="dRastreio" placeholder="Numero de Rastreio" maxlength="255" readonly>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="qtd">Qtd</label>
-                                    <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="qtd">Qtd</label>
+                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="peso">Peso</label>
-                                    <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" name="peso">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="peso">Peso</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPeso" name="peso">
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="modal-footer">
+                            <!-- Botão de Exclusão -->
+                            <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelModal">
+                                Excluir
+                            </button>
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacao">Atualizar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <!-- Modal de Exclusao Pacotes -->
+        <div class="modal fade" id="confirmDelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmação de Exclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja excluir este Pacote?</p>
                     </div>
                     <div class="modal-footer">
-                        <!-- Botão de Exclusão -->
-                        <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelModal">
-                            Excluir
-                        </button>
                         <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacao">Atualizar</button>
+                        <!-- Adicionar o botão de exclusão no modal -->
+                        <form method="post" action="" id="formDeletePctModal">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger waves-effect waves-light" form="formDeletePctModal">Excluir</button>
+                        </form>
                     </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -261,29 +285,29 @@
                 .then(response => response.json())
                 .then(data => {
 
-                    // document.getElementById('tituloModalPacote').innerText = data.rastreio + " - Peso Origem: " + data.peso_aprox + " kgs" ;
+                    document.getElementById('tituloModalDetalhe').innerText = "Rastreio: "+data.rastreio + " - Peso Total: " + data.peso + " kgs" ;
                     document.getElementById('dId').value = data.id;
-                    // document.getElementById('dRastreio').value = data.rastreio;
+                    document.getElementById('dRastreio').value = data.rastreio;
                     document.getElementById('dQtd').value = data.qtd;
                     if (data.peso == null) {
                         document.getElementById('dPeso').value = 0;
                     } else {
                         document.getElementById('dPeso').value = data.peso;
-                    }                    
+                    }
 
-                    // var form = document.getElementById('formAtualizacaoPacote');
-                    // var novaAction = "{{ route('pacotes.update', ['pacotes' => ':id']) }}".replace(':id', data.id);
-                    // form.setAttribute('action', novaAction);
+                    var form = document.getElementById('formAtualizacao');
+                    var novaAction = "{{ route('entrega_pacotes.update', ['pacote' => ':id']) }}".replace(':id', data.id);
+                    form.setAttribute('action', novaAction);
 
-                    // var form2 = document.getElementById('formDeletePctModal');
-                    // var novaAction2 = "{{ route('pacotes.excluirPctCarga', ['pacotes' => ':id']) }}".replace(':id', data.id);
-                    // form2.setAttribute('action', novaAction2);
+                    var form2 = document.getElementById('formDeletePctModal');
+                    var novaAction2 = "{{ route('entrega_pacotes.destroy', ['pacote' => ':id']) }}".replace(':id', data.id);
+                    form2.setAttribute('action', novaAction2);
 
                     // var link = "{{ route('warehouses.show', ['warehouse' => ':warehouseId']) }}";
                     // link = link.replace(':warehouseId', data.warehouse_id);
                     // $('#wrBotao').show().on('click', function () {
                     //     window.location.href = link;
-                    // });                    
+                    // });
                 })
                 .catch(error => console.error('Erro:', error));
         });

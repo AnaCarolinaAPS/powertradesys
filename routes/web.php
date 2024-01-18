@@ -191,11 +191,11 @@ Route::middleware('auth')->group(function () {
 
         // Entregas de Carga (Pacotes) CRUD
         Route::prefix('/admin/entregapacotes')->group(function () {
+            Route::get('/{pacote}', [EntregaPacoteController::class, 'show'])->name('entrega_pacotes.show');
+            Route::put('/{pacote}', [EntregaPacoteController::class, 'update'])->name('entrega_pacotes.update');
+            Route::delete('/{pacote}', [EntregaPacoteController::class, 'destroy'])->name('entrega_pacotes.destroy');
             // Route::get('/', [EntregaPacoteController::class, 'index'])->name('entrega_pacotes.index');
             Route::post('/', [EntregaPacoteController::class, 'store'])->name('entrega_pacotes.store');
-            Route::get('/{pacote}', [EntregaPacoteController::class, 'show'])->name('entrega_pacotes.show');
-            // Route::put('/{pacote}', [EntregaPacoteController::class, 'update'])->name('entrada_pacotes.update');
-            // Route::delete('/{pacote}', [EntregaPacoteController::class, 'destroy'])->name('entrada_pacotes.destroy');
         });
 
     });

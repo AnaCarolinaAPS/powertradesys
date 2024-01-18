@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\EntregaPacote;
 use App\Models\Pacote;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EntregaPacoteController extends Controller
 {
@@ -37,17 +38,37 @@ class EntregaPacoteController extends Controller
                 if ($pacote) {
                     // Validação dos dados do formulário
                     $request->validate([
-                        // 'qtd' => 'nullable|numeric',
-                        // 'peso' => 'nullable|numeric',
                         'entrega_id' => 'required|exists:entregas,id',
                         // Adicione outras regras de validação conforme necessário
                     ]);
+
+                    // Verificar o peso de TODAS as entregas de determinado pacote/rastreio (se foi completamente retirado)
+                    $pesoTotalEntregas = DB::table('entrega_pacotes')
+                        ->where('pacote_id', $pacote->id)
+                        ->sum('peso');
+
+                    $pesoretirado = $pacote->peso - $pesoTotalEntregas;
+
+                    $qtdretirado = 1;
+                    if ($pacote->qtd > 1) {
+                        // Verificar o peso de TODAS as entregas de determinado pacote/rastreio (se foi completamente retirado)
+                        $qtdTotalEntregas = DB::table('entrega_pacotes')
+                            ->where('pacote_id', $pacote->id)
+                            ->sum('qtd');
+                            $qtdretirado = $pacote->qtd - $qtdTotalEntregas;
+                    }
+
                     // Criação de um novo Shipper no banco de dados
                     EntregaPacote::create([
-                        'qtd' => $pacote->qtd,
-                        'peso' => $pacote->peso,
+                        'qtd' => $qtdretirado,
+                        'peso' => $pesoretirado,
                         'pacote_id' => $pacote->id,
                         'entrega_id' => $request->input('entrega_id'),
+                        // Adicione outros campos conforme necessário
+                    ]);
+
+                    $pacote->update([
+                        'retirado' => true,
                         // Adicione outros campos conforme necessário
                     ]);
                 }
@@ -83,12 +104,34 @@ class EntregaPacoteController extends Controller
 
             $entrega = EntregaPacote::findOrFail($request->input('id'));
 
+            //Encontra o pacote correspondente
+            $pacote = Pacote::findOrFail($entrega->pacote_id);
+
             // Atualizar os dados
             $entrega->update([
                 'qtd' => $request->input('qtd'),
                 'peso' => $request->input('peso'),
                 // Adicione outros campos conforme necessário
             ]);
+
+            // Verificar o peso de TODAS as entregas de determinado pacote/rastreio (se foi completamente retirado)
+            $pesoTotalEntregas = DB::table('entrega_pacotes')
+                ->where('pacote_id', $pacote->id)
+                ->sum('peso');
+
+            if ($pesoTotalEntregas >= $pacote->peso) {
+                // Pacote completamente retirado
+                $pacote->update([
+                    'retirado' => true,
+                    // Adicione outros campos conforme necessário
+                ]);
+            } else {
+                // Pacote não foi retirado por completo
+                $pacote->update([
+                    'retirado' => false,
+                    // Adicione outros campos conforme necessário
+                ]);
+            }
 
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [
@@ -113,6 +156,13 @@ class EntregaPacoteController extends Controller
     {
         try {
             $entrega = EntregaPacote::find($id);
+
+            //Altera o estado do pacote para FALSE, uma vez que a entrega é excluída
+            $pacote = Pacote::findOrFail($entrega->pacote_id);
+            $pacote->update([
+                'retirado' => false,
+                // Adicione outros campos conforme necessário
+            ]);
 
             // Excluir o Item do banco de dados
             $entrega->delete();

@@ -27,6 +27,7 @@ class Pacote extends Model
         'largura',
         'profundidade',
         'volume',
+        'retirado',
     ];
 
     public function warehouse()

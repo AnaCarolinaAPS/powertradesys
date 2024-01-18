@@ -126,17 +126,17 @@
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
-                        {{-- <div class="row text-center">
+                        <div class="row text-center">
                             <div class="col">
-                                <p><h6 class="mb-0">Total Recebido: {{ $totais->total_real ?? '0'}} kgs</h6></p>
+                                {{-- <p><h6 class="mb-0">Total Recebido: {{ $totais->total_real ?? '0'}} kgs</h6></p> --}}
                             </div>
                             <div class="col">
-                                <p><h6 class="mb-0">Quantidade Total: {{$totais->total_pacotes ?? '0'}} cxs</h6></p>
+                                <p><h6 class="mb-0">Quantidade Total: {{$totais->total_qtd ?? '0'}} cxs</h6></p>
                             </div>
                             <div class="col">
-                                <p><h6 class="mb-0">Total Previsto: {{$totais->total_aproximado ?? '0'}} kgs</h6></p>
+                                <p><h6 class="mb-0">Total Peso: {{$totais->total_peso ?? '0'}} kgs</h6></p>
                             </div>
-                        </div> --}}
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

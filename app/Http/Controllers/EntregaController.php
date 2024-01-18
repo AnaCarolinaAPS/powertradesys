@@ -8,6 +8,7 @@ use App\Models\Cliente;
 use App\Models\EntregaPacotes;
 use App\Models\Freteiro;
 use App\Models\Pacote;
+use Illuminate\Support\Facades\DB;
 
 class EntregaController extends Controller
 {
@@ -75,13 +76,14 @@ class EntregaController extends Controller
         $all_freteiros = Freteiro::all();
         // Obter os pacotes do cliente que não foram entregues
         $pacotesNaoEntregues = Pacote::where('cliente_id', $entrega->cliente_id)
-            ->whereNotIn('id', function ($query) use ($entregaId) {
-                $query->select('pacote_id')
-                      ->from('entrega_pacotes')
-                      ->where('entrega_id', $entregaId);
-            })
+            ->where('retirado', false)
             ->get();
-        return view('admin.entrega.show', compact('entrega', 'all_clientes', 'all_freteiros', 'pacotesNaoEntregues'));
+
+        $totais = DB::table('entrega_pacotes')
+            ->where('entrega_id', $id)
+            ->selectRaw('SUM(peso) as total_peso, SUM(qtd) as total_qtd')
+            ->first();
+        return view('admin.entrega.show', compact('entrega', 'all_clientes', 'all_freteiros', 'pacotesNaoEntregues', 'totais'));
     }
 
     /**
@@ -132,11 +134,23 @@ class EntregaController extends Controller
             $entrega = Entrega::find($id);
             //Adicionar Lógica para que o freteiro não possa ser excluído caso tenha Saídas dos Pacotes no seu nome
 
+            //Todos os pacotes relacionados com a Entrega
+            $entrega_pacotes = $entrega->entrega_pacotes;
+
+            foreach ($entrega_pacotes as $entrega_pacote){
+                //Atualiza para que não tenham sido retirados
+                $pacote = Pacote::find($entrega_pacote->pacote_id);
+                $pacote->update([
+                    'retirado' => false,
+                    // Adicione outros campos conforme necessário
+                ]);
+            }
+
             // Excluir o Freteiro do banco de dados
             $entrega->delete();
 
             // Redirecionar após a exclusão bem-sucedida
-            return redirect()->back()->with('toastr', [
+            return redirect()->route('entregas.index')->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Entrega excluída com sucesso!',
                 'title'   => 'Sucesso',

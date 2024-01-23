@@ -74,7 +74,7 @@
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
                             </div>
                         </form>
-                       @dump($pacotesAssociadosFatura)
+                       <!-- @dump($pacotesAssociadosFatura) -->
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

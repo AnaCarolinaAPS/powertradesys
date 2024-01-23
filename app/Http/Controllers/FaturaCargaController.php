@@ -124,8 +124,17 @@ class FaturaCargaController extends Controller
                             ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
                             ->get();
 
+            $resumo = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
+                        ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
+                        ->select(
+                            DB::raw('SUM(invoice_pacotes.peso) as soma_peso'),
+                            DB::raw('SUM(invoice_pacotes.valor) as soma_valor')
+                        )
+                        ->where('fatura_carga_id', $faturacarga->id)
+                        ->groupBy('invoices.id')
+                        ->first();
             // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices'));
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'resumo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

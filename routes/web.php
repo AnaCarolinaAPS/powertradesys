@@ -20,6 +20,7 @@ use App\Http\Controllers\FaturaCargaController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\FreteiroController;
+use App\Http\Controllers\CategoriaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -196,6 +197,15 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{pacote}', [EntregaPacoteController::class, 'destroy'])->name('entrega_pacotes.destroy');
             // Route::get('/', [EntregaPacoteController::class, 'index'])->name('entrega_pacotes.index');
             Route::post('/', [EntregaPacoteController::class, 'store'])->name('entrega_pacotes.store');
+        });
+
+        // Categorias (Centros de Custo) CRUD
+        Route::prefix('/admin/categorias')->group(function () {
+            Route::get('/{categoria}', [CategoriaController::class, 'show'])->name('categorias.show');
+            Route::put('/{categoria}', [CategoriaController::class, 'update'])->name('categorias.update');
+            Route::delete('/{categoria}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
+            Route::get('/', [CategoriaController::class, 'index'])->name('categorias.index');
+            Route::post('/', [CategoriaController::class, 'store'])->name('categorias.store');
         });
 
     });

@@ -81,7 +81,7 @@
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="{{ route('caixas.index'); }}">Caixas</a></li>
                                     <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
-                                    <li><a href="layouts-compact-sidebar.html">Categorias</a></li>
+                                    <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
                                 </ul>
                             </li>
                             <li><a href="layouts-dark-sidebar.html">Fluxo de Caixa</a></li>

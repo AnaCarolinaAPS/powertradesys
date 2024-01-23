@@ -62,11 +62,10 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/admin/clientes')->group(function () {
             // Exemplo de rota para listar todos os clientes
             Route::get('/', [ClienteController::class, 'index'])->name('clientes.index');
-            // Exemplo de rota para exibir um cliente específico
-            // Route::get('/admin/clientes/{id}', [ClienteController::class, 'show'])->name('cliente.show');
-            Route::post('/clientes', [ClienteController::class, 'store'])->name('clientes.store');
-            // Route::put('/clientes/{id}', 'ClienteController@update');
-            // Route::delete('/clientes/{id}', 'ClienteController@destroy');
+            Route::post('/', [ClienteController::class, 'store'])->name('clientes.store');
+            Route::get('/{cliente}', [ClienteController::class, 'show'])->name('clientes.show');
+            Route::put('/{cliente}', [ClienteController::class, 'update'])->name('clientes.update');
+            Route::delete('/{cliente}', [ClienteController::class, 'destroy'])->name('clientes.destroy');
         });
 
         // Shippers CRUD

@@ -78,26 +78,20 @@ class ClienteController extends Controller
      */
     public function show($id)
     {
-        // Recupera o cliente pelo ID
-        $cliente = Cliente::find($id);
+        try {
+            // Buscar o item pelo ID
+            $cliente = Cliente::findOrFail($id);
 
-        // Verifica se o cliente foi encontrado
-        if (!$cliente) {
-            // Redireciona ou exibe uma mensagem de erro
-            return redirect('/alguma-rota')->with('error', 'Cliente não encontrado.');
+            // Retornar a view com os detalhes do shipper
+            return view('admin.cliente.show', compact('cliente'));
+        } catch (\Exception $e) {
+            // Exibir uma mensagem de erro ou redirecionar para uma página de erro
+            return redirect()->route('clientes.index')->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao exibir os detalhes do Cliente: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
         }
-
-        // Carrega a view com os detalhes do cliente
-        return back()->with('success', 'Cliente criado com sucesso!');
-
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Cliente $cliente)
-    {
-        //
     }
 
     /**
@@ -105,7 +99,32 @@ class ClienteController extends Controller
      */
     public function update(Request $request, Cliente $cliente)
     {
-        //
+        try {
+            $request->validate([
+                'apelido' => 'required|string|max:255|unique:clientes',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            // Atualizar os dados
+            $cliente->update([
+                'apelido' => $request->input('apelido'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Cliente atualizado com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar o Cliente: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 
     /**
@@ -113,6 +132,29 @@ class ClienteController extends Controller
      */
     public function destroy(Cliente $cliente)
     {
-        //
+        try {
+            // Buscar o item pelo ID
+            $cliente = Cliente::findOrFail($cliente->id);
+
+            $user = $cliente->user;
+            $user->update([
+                'status' => 'inactive',
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Cliente inativado com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar o Cliente: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 }

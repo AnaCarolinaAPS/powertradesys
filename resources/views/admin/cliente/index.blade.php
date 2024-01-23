@@ -81,7 +81,6 @@
                             @endif
                         </p>
                         <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                        {{-- <table id="datatable" class="table table-bordered dt-responsive nowrap table-striped" style="border-collapse: collapse; border-spacing: 0; width: 100%;"> --}}
                             <thead>
                             <tr>
                                 <th>Código</th>
@@ -95,7 +94,7 @@
 
                             <tbody>
                                 @foreach ($clientesComUsuarios as $cliente)
-                                <tr>
+                                <tr data-href="{{ route('clientes.show', ['cliente' => $cliente->id]) }}">
                                     <td>{{ $cliente->caixa_postal }}</td>
                                     <td>{{ $cliente->user->name }}</td>
                                     <td>{{ $cliente->user->email }}</td>
@@ -175,7 +174,17 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
-
 </div>
 <!-- End Page-content -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var tableRows = document.querySelectorAll('tbody tr[data-href]');
+
+        tableRows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+</script>
 @endsection

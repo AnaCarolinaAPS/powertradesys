@@ -125,13 +125,12 @@ class FaturaCargaController extends Controller
                             ->get();
 
             $resumo = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-                        ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
                         ->select(
                             DB::raw('SUM(invoice_pacotes.peso) as soma_peso'),
                             DB::raw('SUM(invoice_pacotes.valor) as soma_valor')
                         )
                         ->where('fatura_carga_id', $faturacarga->id)
-                        ->groupBy('invoices.id')
+                        ->groupBy('invoices.fatura_carga_id')
                         ->first();
             // Retornar a view com os detalhes do shipper
             return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'resumo'));

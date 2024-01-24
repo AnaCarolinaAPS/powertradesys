@@ -24,7 +24,7 @@
         </div>
         <!-- end page title -->
         <div class="row">
-            <div class="col-xl-6">
+            <div class="col">
                 <div class="card">
                     <div class="card-body">
                         <!-- <h4 class="card-title mb-4">WR-{{ $warehouse->wr;}}</h4> -->
@@ -44,14 +44,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="data">Data</label>
                                         <input class="form-control" type="date" value="{{  $warehouse->data; }}" id="data" name="data">
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row mt-2">
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="shipper_id">Embarcador</label>
@@ -77,11 +75,25 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="observacoes">Observações</label>
-                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="5">{{$warehouse->observacoes}}</textarea>
+                            <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accordionObsWR">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-headingObs">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseObs" aria-expanded="false" aria-controls="flush-collapseTwo">
+                                        + Informações
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapseObs" class="accordion-collapse collapse" aria-labelledby="flush-headingObs" data-bs-parent="#accordionObsWR">
+                                        <div class="accordion-body">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="observacoes">Observações</label>
+                                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="3">{{$warehouse->observacoes}}</textarea>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -98,33 +110,6 @@
                 </div><!-- end card -->
             </div>
             <!-- end col -->
-            <div class="col-xl-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h4 class="card-title mb-4">Totais</h4>
-                        <table id="datatable-totals" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Cliente</th>
-                                    <th>Qtd</th>
-                                    <th>Aprox</th>
-                                    <th>Recebido</th>
-                                </tr>
-                            </thead><!-- end thead -->
-                            <tbody>
-                                @foreach ($resumo as $cli_totais)
-                                <tr>
-                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.') '.$cli_totais->apelido }}<h6></td>
-                                    <td>{{ $cli_totais->total_pacotes }}</td>
-                                    <td>{{ $cli_totais->total_aproximado }}</td>
-                                    <td>{{ $cli_totais->total_real }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody><!-- end tbody -->
-                        </table> <!-- end table -->
-                    </div><!-- end card -->
-                </div><!-- end card -->
-            </div>
         </div>
         <!-- end page title -->
         <div class="row">
@@ -140,7 +125,6 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
@@ -186,6 +170,35 @@
             <!-- end col -->
         </div>
         <!-- end row -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Totais</h4>
+                        <table id="datatable-totals" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Qtd</th>
+                                    <th>Aprox</th>
+                                    <th>Recebido</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                @foreach ($resumo as $cli_totais)
+                                <tr>
+                                    <td><h6 class="mb-0">{{ '('.$cli_totais->caixa_postal.') '.$cli_totais->apelido }}<h6></td>
+                                    <td>{{ $cli_totais->total_pacotes }}</td>
+                                    <td>{{ $cli_totais->total_aproximado }}</td>
+                                    <td>{{ $cli_totais->total_real }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+        </div>
         <!-- Modal de Confirmação -->
         <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
             <div class="modal-dialog" role="document">

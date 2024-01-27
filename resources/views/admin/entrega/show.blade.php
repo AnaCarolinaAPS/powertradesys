@@ -114,7 +114,13 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
+                                    {{-- @php
+                                        $qtdtotal = 0;
+                                    @endphp --}}
                                     @foreach ($entrega->entrega_pacotes as $pacote)
+                                    {{-- @php
+                                        $qtdtotal += $pacote->qtd;
+                                    @endphp --}}
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td>{{ \Carbon\Carbon::parse($pacote->pacote->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td><h6 class="mb-0">{{ $pacote->pacote->rastreio }}</h6></td>
@@ -131,7 +137,7 @@
                                 {{-- <p><h6 class="mb-0">Total Recebido: {{ $totais->total_real ?? '0'}} kgs</h6></p> --}}
                             </div>
                             <div class="col">
-                                <p><h6 class="mb-0">Quantidade Total: {{$totais->total_qtd ?? '0'}} cxs</h6></p>
+                                <p><h6 class="mb-0">Quantidade Total: {{$totais->total_qtd ?? '0'}} cxs </h6></p>
                             </div>
                             <div class="col">
                                 <p><h6 class="mb-0">Total Peso: {{$totais->total_peso ?? '0'}} kgs</h6></p>

@@ -40,7 +40,19 @@ use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('inicio');
+
+Route::get('/empresa', function () {
+    return view('empresa');
+})->name('empresa');
+
+Route::get('/servicios', function () {
+    return view('servicos');
+})->name('servicios');
+
+Route::get('/contacto', function () {
+    return view('contato');
+})->name('contacto');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

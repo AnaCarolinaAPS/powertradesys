@@ -8,6 +8,8 @@ use App\Models\Carga;
 use App\Models\Cliente;
 use App\Models\Invoice;
 use App\Models\Servico;
+use App\Models\Embarcador;
+use App\Models\Despachante;
 use Illuminate\Support\Facades\DB;
 
 class FaturaCargaController extends Controller
@@ -61,18 +63,19 @@ class FaturaCargaController extends Controller
                 ]);
             }
 
-            // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
-            // $invoices = InvoiceController::criarInvoices($faturacarga);
+            try {
 
-            // if ($invoices != true) {
-            //     // Exibir toastr de Erro
-            //     return redirect()->route('faturacargas.index')->with('toastr', [
-            //         'type'    => 'error',
-            //         'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga<br> '.$invoices,
-            //         'title'   => 'Erro',
-            //     ]);
-            // }
+                // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
+                $invoices = InvoiceController::criarInvoices($faturacarga);
 
+            } catch (\Exception $e) {
+                // Exibir toastr de Erro
+                return redirect()->route('faturacargas.index')->with('toastr', [
+                    'type'    => 'error',
+                    'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga: <br>'. $e->getMessage(),
+                    'title'   => 'Erro',
+                ]);
+            }
             // Exibir toastr de sucesso
             return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
                 'type'    => 'success',
@@ -97,8 +100,8 @@ class FaturaCargaController extends Controller
         try {
             // Buscar o shipper pelo ID
             $faturacarga = FaturaCarga::findOrFail($id);
-
-            // $all_clientes = Cliente::all();
+            $all_despachantes = Despachante::all();
+            $all_embarcadores = Embarcador::all();
 
             // Obtém a carga associada à fatura
             $carga = $faturacarga->carga;
@@ -133,7 +136,7 @@ class FaturaCargaController extends Controller
                         ->groupBy('invoices.fatura_carga_id')
                         ->first();
             // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'resumo'));
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'resumo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

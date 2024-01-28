@@ -18,6 +18,7 @@ use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EntregaPacoteController;
 use App\Http\Controllers\FaturaCargaController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\InvoicePacoteController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\FreteiroController;
 use App\Http\Controllers\CategoriaController;
@@ -151,8 +152,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [FaturaCargaController::class, 'index'])->name('faturacargas.index');
             Route::post('/', [FaturaCargaController::class, 'store'])->name('faturacargas.store');
             Route::get('/{faturacarga}', [FaturaCargaController::class, 'show'])->name('faturacargas.show');
-            // Route::put('/{invoice}', [EmbarcadorController::class, 'update'])->name('invoices.update');
-            // Route::delete('/{invoice}', [EmbarcadorController::class, 'destroy'])->name('invoices.destroy');
+            // Route::put('/{faturacarga}', [FaturaCargaController::class, 'update'])->name('faturacargas.update');
+            // Route::delete('/{faturacarga}', [FaturaCargaController::class, 'destroy'])->name('faturacargas.destroy');
         });
 
         // INVOICES CRUD
@@ -162,7 +163,16 @@ Route::middleware('auth')->group(function () {
             Route::get('/criar-invoices/{faturaCarga}', [InvoiceController::class, 'criarInvoices'])->name('invoices.criar');
             Route::get('/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
             Route::put('/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
-            // Route::delete('/{invoice}', [EmbarcadorController::class, 'destroy'])->name('invoices.destroy');
+            Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+        });
+
+        // INVOICES CRUD
+        Route::prefix('/admin/invoicespacotes')->group(function () {
+            // Route::get('/', [InvoicePacoteController::class, 'index'])->name('invoices.index');
+            Route::post('/', [InvoicePacoteController::class, 'store'])->name('invoices_pacotes.store');
+            Route::get('/{invoicespacotes}', [InvoicePacoteController::class, 'show'])->name('invoices_pacotes.show');
+            Route::put('/{invoicespacotes}', [InvoicePacoteController::class, 'update'])->name('invoices_pacotes.update');
+            Route::delete('/{invoicespacotes}', [InvoicePacoteController::class, 'destroy'])->name('invoices_pacotes.destroy');
         });
 
         // Serviços CRUD

@@ -115,6 +115,9 @@
                                 <button type="button" class="btn btn-info me-auto" data-bs-toggle="modal" data-bs-target="#receberModal">
                                     Status
                                 </button>
+                                @if ( $carga->fatura_carga )
+                                <a href="{{ route('faturacargas.show', ['faturacarga' => $carga->fatura_carga->id]) }}" class="btn btn-info waves-effect me-auto">Fatura da Carga</a>
+                                @endif
                                 <!-- Botão de Exclusão -->
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir

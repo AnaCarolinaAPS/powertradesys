@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\InvoicePacote;
 use App\Models\FaturaCarga;
 use App\Models\Carga;
+use App\Models\Pacote;
 
 class InvoiceController extends Controller
 {
@@ -65,9 +66,16 @@ class InvoiceController extends Controller
                     // ->selectRaw('SUM(peso) as soma_peso')
                     ->first();
 
-                    $pacotesAssociadosFatura = $invoice->invoice_pacotes()->pluck('pacote_id')->toArray();
+            $pacotesAssociadosFatura = $invoice->invoice_pacotes()->pluck('pacote_id')->toArray();
+
+            // Obter todos os pacotes que não estão em InvoicePacotes
+            $all_pacotes = Pacote::whereNotIn('id', $pacotesAssociadosFatura)
+                            ->where('carga_id', $invoice->fatura_carga->carga_id)
+                            ->where('cliente_id', $invoice->cliente_id)
+                            ->get();
+
             // Retornar a view com os detalhes do shipper
-            return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'resumo', 'pacotesAssociadosFatura'));
+            return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'resumo', 'pacotesAssociadosFatura', 'all_pacotes'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [
@@ -105,7 +113,7 @@ class InvoiceController extends Controller
             $invoice_cliente = Invoice::where('fatura_carga_id', $request->input('fatura_carga_id'))
                                 ->where('cliente_id', $request->input('cliente_id'))
                                 ->first();
-            
+
             //Já existe uma invoice nessa fatura e com o mesmo código de cliente
             if ($invoice_cliente->count() > 0) {
                 // IDs dos pacotes associados à fatura (invoice)
@@ -119,7 +127,7 @@ class InvoiceController extends Controller
                 $pacotesCliente = $invoice->fatura_carga->carga->pacotes()
                                 ->where('cliente_id', $request->input('cliente_id'))
                                 ->get();
-            }            
+            }
 
             //Adicionar a criação de "invoicepacotes" para carga pacote marcado na carga
             foreach ($pacotesCliente as $pacote) {
@@ -181,6 +189,33 @@ class InvoiceController extends Controller
     }
 
     /**
+     * Remove the specified resource from storage.
+     */
+    // public function destroy(Pacote $pacote)
+    public function destroy($id)
+    {
+        try {
+            $invoice = Invoice::find($id);
+            // Excluir o Shipper do banco de dados
+            $invoice->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->route('faturacargas.show', ['faturacarga' => $invoice->fatura_carga_id])->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Invoice excluída com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir a Invoice: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public static function criarInvoices(FaturaCarga $faturacarga)
@@ -195,12 +230,12 @@ class InvoiceController extends Controller
                 // Cria uma nova invoice para cada cliente
                 $invoice = Invoice::create([
                         'data' => $faturacarga->created_at,
-                        'fatura_cargas_id' => $faturacarga->id,
+                        'fatura_carga_id' => $faturacarga->id,
                         'cliente_id' => $cliente->id,
                         // Adicione outros campos conforme necessário
                 ]);
 
-                // Filtrar os pacotes pertencentes ao cliente atual
+                // // Filtrar os pacotes pertencentes ao cliente atual
                 $pacotesCliente = $carga->pacotes()->where('cliente_id', $cliente->id)->get();
 
                 //Adicionar a criação de "invoicepacotes" para carga pacote marcado na carga

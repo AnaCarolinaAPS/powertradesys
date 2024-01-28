@@ -26,27 +26,95 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Despesas</h4>
-                        <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddPacote">
-                            <i class="fas fa-plus"></i> Add Despesa
-                        </button>
-                        <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Descrição</th>
-                                    <th>Valor Despesa</th>
-                                    <th>Pendente</th>
-                                </tr>
-                            </thead><!-- end thead -->
-                            <tbody>
-
-                            </tbody><!-- end tbody -->
-                        </table> <!-- end table -->
+                        <h4 class="card-title mb-4">Carga</h4>
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="data_enviada">Data Enviada</label>
+                                    <input class="form-control" type="date" value="{{  $faturacarga->carga->data_enviada; }}" id="data_enviada" name="data_enviada" readonly>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="data_recebida">Data Recebida</label>
+                                    <input class="form-control" type="date" value="{{  $faturacarga->carga->data_recebida; }}" id="data_recebida" name="data_recebida" readonly>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="peso">Peso Guia</label>
+                                    <input class="form-control" type="number" value="0.00" step="0.10" id="peso_guia" name="peso_guia">
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="numero_guia">Numero de Guia Aérea</label>
+                                    <input type="text" class="form-control" id="numero_guia" name="numero_guia" placeholder="Numero de Guia Aérea" maxlength="255">
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Acordeom -->
+                        <div class="accordion accordion-flush mt-2" id="accordionFlushExample">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="flush-headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseDetalhes" aria-expanded="false" aria-controls="flush-collapseDetalhes">
+                                    + Detalhes
+                                </button>
+                                </h2>
+                                <div id="flush-collapseDetalhes" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionDetalhes">
+                                    <div class="accordion-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label for="embarcador_id">Embarcador</label>
+                                                    <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
+                                                        @foreach ($all_embarcadores as $embarcador)
+                                                            <option value="{{ $embarcador->id }}" {{ $faturacarga->carga->embarcador->id == $embarcador->id ? 'selected' : '' }}> {{ $embarcador->nome }} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label for="embarcador_id">Despachante</label>
+                                                    <select class="selectpicker form-control" data-live-search="true" id="despachante_id" name="despachante_id" disabled>
+                                                        @foreach ($all_despachantes as $despachante)
+                                                            <option value="{{ $despachante->id }}" {{ $faturacarga->carga->despachante->id == $despachante->id ? 'selected' : '' }}> {{ $despachante->nome }} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label for="embarcador_id">Transportadora</label>
+                                                    <select class="selectpicker form-control" data-live-search="true" id="despachante_id" name="despachante_id" disabled>
+                                                        @foreach ($all_despachantes as $despachante)
+                                                            <option value="{{ $despachante->id }}" {{ $faturacarga->carga->despachante->id == $despachante->id ? 'selected' : '' }}> {{ $despachante->nome }} </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- <div class="row mt-2">
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label for="observacoes">Observações</label>
+                                                    <textarea name="observacoes" id="observacoes" class="form-control" rows="5">{{$carga->observacoes}}</textarea>
+                                                </div>
+                                            </div>
+                                        </div> --}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div><!-- end card -->
+                    <div class="modal-footer">
+                        <a href="{{ route('cargas.show', ['carga' => $faturacarga->carga_id]) }}" class="btn btn-info waves-effect waves-light me-auto">Ver Carga</a>
+                        <a href="{{ route('faturacargas.index'); }}" class="btn btn-light waves-effect">Voltar</a>
+                    </div>
                 </div><!-- end card -->
             </div>
             <!-- end col -->
-
         </div>
         <!-- end page title -->
         <div class="row">
@@ -93,6 +161,31 @@
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Despesas</h4>
+                        <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddPacote">
+                            <i class="fas fa-plus"></i> Add Despesa
+                        </button>
+                        <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Descrição</th>
+                                    <th>Valor Despesa</th>
+                                    <th>Pendente</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

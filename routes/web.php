@@ -22,6 +22,7 @@ use App\Http\Controllers\InvoicePacoteController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\FreteiroController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -228,6 +229,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [CategoriaController::class, 'index'])->name('categorias.index');
             Route::post('/', [CategoriaController::class, 'store'])->name('categorias.store');
         });
+
+        Route::prefix('/admin/gerar-pdf')->group(function () {
+            Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
+        });
+
+
 
     });
 

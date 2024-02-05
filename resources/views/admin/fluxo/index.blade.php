@@ -43,7 +43,7 @@
                                         <tr data-href="{{ route('fluxo_caixa.show', ['caixa' => $caixa->id]) }}">
                                             <td><h6 class="mb-0">{{ $caixa->nome }}</h6></td>
                                             <td>{{ $caixa->moeda }}</td>
-                                            <td>{{ $caixa->saldo }}</td>
+                                            <td>{{ $caixa->saldo_origem }}</td>
                                         </tr>
                                         @endforeach
                                          <!-- end -->

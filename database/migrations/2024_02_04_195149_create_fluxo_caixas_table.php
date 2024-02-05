@@ -13,16 +13,17 @@ return new class extends Migration
     {
         Schema::create('fluxo_caixas', function (Blueprint $table) {
             $table->id();
+            $table->date('data');
             $table->string('descricao');
             $table->enum('tipo', ['entrada', 'saida', 'transferencia', 'cambio']);
             $table->foreignId('caixa_origem_id')->references('id')->on('caixas')->onDelete('cascade');
             $table->decimal('valor_origem', 10, 2);
             $table->foreignId('caixa_destino_id')->nullable()->references('id')->on('caixas')->onDelete('cascade');
             $table->decimal('valor_destino', 10, 2)->nullable();
-            $table->foreign('categoria_id')->references('id')->on('categorias')->onDelete('cascade');
-            $table->unsignedBigInteger('categoria_id');
-            $table->foreign('subcategoria_id')->references('id')->on('categorias')->onDelete('cascade');
-            $table->unsignedBigInteger('subcategoria_id');
+            $table->foreign('categoria_id')->nullable()->references('id')->on('categorias')->onDelete('cascade');
+            $table->unsignedBigInteger('categoria_id')->nullable();
+            $table->foreign('subcategoria_id')->nullable()->references('id')->on('categorias')->onDelete('cascade');
+            $table->unsignedBigInteger('subcategoria_id')->nullable();
             $table->timestamps();
         });
     }

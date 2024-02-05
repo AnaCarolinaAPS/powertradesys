@@ -237,7 +237,7 @@ Route::middleware('auth')->group(function () {
             // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
             // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
             Route::get('/', [FluxoCaixaController::class, 'index'])->name('fluxo_caixa.index');
-            // Route::post('/', [FluxoCaixaController::class, 'store'])->name('fluxo_caixa.store');
+            Route::post('/', [FluxoCaixaController::class, 'store'])->name('fluxo_caixa.store');
         });
 
         Route::prefix('/admin/gerar-pdf')->group(function () {

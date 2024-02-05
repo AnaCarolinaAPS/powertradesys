@@ -34,16 +34,25 @@
                                 </div>
                             </div>
                             <div class="row justify-content-between">
-                                <div class="col-1">
-                                    <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
-                                        <i class="fas fa-plus"></i> Novo
+                                <div class="col-5">
+                                    <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('entrada')">
+                                        <i class="fas fa-plus"></i> Entrada
+                                    </button>
+                                    <button type="button" class="btn btn-danger waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('saida')">
+                                        <i class="fas fa-plus"></i> Saída
+                                    </button>
+                                    <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('transferencia')">
+                                        <i class="fas fa-plus"></i> Transferencia
+                                    </button>
+                                    <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('cambio')">
+                                        <i class="fas fa-plus"></i> Cambio
                                     </button>
                                 </div>
                                 <div class="col"></div>
                                 <div class="col-2">
                                     <div class="form-group">
                                         {{-- <label for="status">Ano</label> --}}
-                                        <select class="selectpicker form-control" data-live-search="true" id="tipo" name="tipo">
+                                        <select class="selectpicker form-control" data-live-search="true" id="ano" name="ano">
                                             <option value="aereo"> 2024 </option>
                                             <option value="maritimo"> 2023 </option>
                                         </select>
@@ -52,7 +61,7 @@
                                 <div class="col-2">
                                     <div class="form-group">
                                         {{-- <label for="status">Mês</label> --}}
-                                        <select class="selectpicker form-control" data-live-search="true" id="tipo" name="tipo">
+                                        <select class="selectpicker form-control" data-live-search="true" id="mes" name="mes">
                                             <option value="aereo"> Janeiro </option>
                                             <option value="maritimo"> Fevereiro </option>
                                             <option value="compras"> Março </option>
@@ -71,8 +80,8 @@
                                 <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
-                                            {{-- <th>Caixa</th> --}}
-                                            <th>Tipo</th>
+                                            <th>Data</th>
+                                            <!-- <th>Tipo</th> -->
                                             <th>Categoria</th>
                                             <th>Descrição</th>
                                             <th>Subcategoria</th>
@@ -82,10 +91,37 @@
                                     <tbody>
                                         @foreach ($all_items as $fluxo)
                                         <tr data-href="{{ route('fluxo_caixa.show', ['caixa' => $caixa->id]) }}">
-                                            <td><h6 class="mb-0">{{ $fluxo->descricao }}</h6></td>
+                                            <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
+                                            <td>
+                                                @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
+                                                    {{ $fluxo->categoria->nome }}
+                                                @elseif ($fluxo->tipo == 'transferencia')
+                                                    {{ 'Transferencia' }}
+                                                @elseif ($fluxo->tipo == 'cambio')
+                                                    {{ 'Cambio' }}
+                                                @endif
+                                            </td>
                                             <td>{{ $fluxo->descricao }}</td>
-                                            <td>{{ $fluxo->descricao }}</td>
-                                            <td>{{ $fluxo->descricao }}</td>
+                                            <td>
+                                                @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
+                                                    {{ $fluxo->subcategoria->nome }}
+                                                @elseif ($fluxo->tipo == 'transferencia')
+                                                    {{ 'Transferencia' }}
+                                                @elseif ($fluxo->tipo == 'cambio')
+                                                    {{ 'Cambio' }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
+                                                    {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
+                                                @else 
+                                                    @if ($fluxo->caixaOrigem->id == $caixa->id)
+                                                        {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
+                                                    @else 
+                                                        {{ number_format($fluxo->valor_destino, 2, ',', '.') }}
+                                                    @endif
+                                                @endif
+                                            </td>
                                         </tr>
                                         @endforeach
                                          <!-- end -->
@@ -111,21 +147,67 @@
                 <h5 class="modal-title" id="myLargeModalLabel">Nova Transação</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form class="form-horizontal mt-3" method="POST" action="{{ route('freteiros.store') }}">
+            <form class="form-horizontal mt-3" method="POST" action="{{ route('fluxo_caixa.store') }}">
                 @csrf
                 <div class="modal-body">
                     {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
+                    <input type="hidden" id="tipo" name="tipo" value="entrada">
+                    <input type="hidden" name="caixa_origem_id" value="{{$caixa->id;}}">
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="nome">Categoria</label>
-                                <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Freteiro" maxlength="255" required>
+                                <label for="data">Data</label>
+                                <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data" name="data">
                             </div>
                         </div>
+                        <div class="col-3" id="div_categoria">
+                            <div class="form-group">
+                                <label for="categoria_id">Categoria</label>
+                                <select class="selectpicker form-control" data-live-search="true" id="categoria_id" name="categoria_id">
+                                    @foreach ($all_categorias as $categoria)
+                                        <option value="{{ $categoria->id }}"> {{ $categoria->nome }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col" id="div_subcategoria">
+                            <div class="form-group">
+                                <label for="subcategoria_id">Subcategoria</label>
+                                <select class="selectpicker form-control" data-live-search="true" id="subcategoria_id" name="subcategoria_id">
+                                    @foreach ($all_subcategorias as $subcategoria)
+                                        <option value="{{ $subcategoria->id }}"> {{ $subcategoria->nome }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="valor_origem">Valor</label>
+                                <input class="form-control" type="number" value="0.00" step="0.10" id="valor_origem" name="valor_origem">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
                         <div class="col">
                             <div class="form-group">
                                 <label for="contato">Descrição</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição da Transação" maxlength="255" required>
+                            </div>
+                        </div>
+                        <div class="col-3" id="div_caixa_destino">
+                            <div class="form-group">
+                                <label for="caixa_destino_id">Destino</label>
+                                <select class="selectpicker form-control" data-live-search="true" id="caixa_destino_id" name="caixa_destino_id">
+                                    @foreach ($all_caixas as $caixa_destino)
+                                        <option value="{{ $caixa_destino->id }}"> {{ $caixa_destino->nome }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3" id="div_valor_destino">
+                            <div class="form-group">
+                                <label for="valor_destino">Valor Destino</label>
+                                <input class="form-control" type="number" value="0.00" step="0.10" id="valor_destino" name="valor_destino">
                             </div>
                         </div>
                     </div>
@@ -140,6 +222,35 @@
 </div>
 
 <script>
-    // JavaScript para abrir o modal ao clicar na linha da tabela
+    //Função para habilitar/desabilitar campos baseado no botão que ativou o modal
+    function abrirModal(tipo) {
+        // Preencher o input com base no tipo
+        if (tipo === 'entrada') {
+            document.getElementById('tipo').value = 'entrada';
+            document.getElementById('div_caixa_destino').style.display = 'none';
+            document.getElementById('div_valor_destino').style.display = 'none';
+            document.getElementById('div_categoria').style.display = 'block';
+            document.getElementById('div_subcategoria').style.display = 'block';
+        } else if (tipo === 'saida') {
+            document.getElementById('tipo').value = 'saida';
+            document.getElementById('div_caixa_destino').style.display = 'none';
+            document.getElementById('div_valor_destino').style.display = 'none';
+            document.getElementById('div_categoria').style.display = 'block';
+            document.getElementById('div_subcategoria').style.display = 'block';
+        } else if (tipo === 'transferencia') {
+            document.getElementById('tipo').value = 'transferencia';
+            document.getElementById('div_caixa_destino').style.display = 'block';
+            document.getElementById('div_valor_destino').style.display = 'none';
+            document.getElementById('div_categoria').style.display = 'none';
+            document.getElementById('div_subcategoria').style.display = 'none';
+        } else if (tipo === 'cambio') {
+            document.getElementById('tipo').value = 'cambio';
+            document.getElementById('div_caixa_destino').style.display = 'block';
+            document.getElementById('div_valor_destino').style.display = 'block';
+            document.getElementById('div_categoria').style.display = 'none';
+            document.getElementById('div_subcategoria').style.display = 'none';
+        }
+        console.log (tipo);
+    }
 </script>
 @endsection

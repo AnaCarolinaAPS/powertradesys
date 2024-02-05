@@ -19,4 +19,14 @@ class Categoria extends Model
         'observacoes',
         'tipo',
     ];
+
+    public function transacoes()
+    {
+        return $this->hasMany(FluxoCaixa::class, 'categoria_id');
+    }
+
+    public function transacoesSubcategoria()
+    {
+        return $this->hasMany(FluxoCaixa::class, 'subcategoria_id');
+    }
 }

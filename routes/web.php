@@ -22,6 +22,7 @@ use App\Http\Controllers\InvoicePacoteController;
 use App\Http\Controllers\ServicoController;
 use App\Http\Controllers\FreteiroController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\FluxoCaixaController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
@@ -228,6 +229,15 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{categoria}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
             Route::get('/', [CategoriaController::class, 'index'])->name('categorias.index');
             Route::post('/', [CategoriaController::class, 'store'])->name('categorias.store');
+        });
+
+        // Categorias (Fluxo de Caixa) CRUD
+        Route::prefix('/admin/fluxocaixa')->group(function () {
+            Route::get('/{caixa}', [FluxoCaixaController::class, 'show'])->name('fluxo_caixa.show');
+            // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
+            // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
+            Route::get('/', [FluxoCaixaController::class, 'index'])->name('fluxo_caixa.index');
+            // Route::post('/', [FluxoCaixaController::class, 'store'])->name('fluxo_caixa.store');
         });
 
         Route::prefix('/admin/gerar-pdf')->group(function () {

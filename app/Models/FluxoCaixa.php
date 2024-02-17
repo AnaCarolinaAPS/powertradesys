@@ -24,6 +24,7 @@ class FluxoCaixa extends Model
         'valor_destino',
         'categoria_id',
         'subcategoria_id',
+        'fechamento_caixa_id',
     ];
 
     public function categoria()
@@ -44,5 +45,10 @@ class FluxoCaixa extends Model
     public function caixaDestino()
     {
         return $this->belongsTo(Caixa::class, 'caixa_destino_id');
+    }
+
+    public function fechamento()
+    {
+        return $this->belongsTo(FechamentoCaixa::class, 'fechamento_caixa_id');
     }
 }

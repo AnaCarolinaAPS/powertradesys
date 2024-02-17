@@ -1,6 +1,6 @@
 
 @extends('layouts.admin_master')
-@section('titulo', 'Fluxo de Caixa | PowerTrade.Py')
+@section('titulo', 'Registro de Caixa | PowerTrade.Py')
 
 @section('admin')
 <div class="page-content">
@@ -10,13 +10,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                    <h4 class="mb-sm-0">Fluxo de Caixa</h4>
+                    <h4 class="mb-sm-0">Registro de Caixa</h4>
 
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('registro_caixa.index'); }}">Registro de Caixas</a></li>
-                            <li class="breadcrumb-item active">{{$caixa->fechamento->ano;}}/{{$caixa->fechamento->mes;}} - {{ $caixa->nome;}}</li>
+                            <li class="breadcrumb-item active">{{$fechamento->ano;}}/{{$fechamento->mes;}} - {{ $fechamento->caixa->nome;}}</li>
                         </ol>
                     </div>
                 </div>
@@ -27,62 +27,34 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <form class="form-horizontal mt-3" method="POST" action="{{ route('servicos.store') }}#" id="formNovoItem">
-                            @csrf
-                            <div class="row">
-                                <div class="col">
-                                    <h4 class="card-title mb-4">{{ $caixa->nome }}</h4>
-                                </div>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">{{ $fechamento->caixa->nome }}</h4>
                             </div>
-                            <div class="row justify-content-between">
-                                <div class="col-5">
-                                    <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('entrada')">
-                                        <i class="fas fa-plus"></i> Entrada
-                                    </button>
-                                    <button type="button" class="btn btn-danger waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('saida')">
-                                        <i class="fas fa-plus"></i> Saída
-                                    </button>
-                                    <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('transferencia')">
-                                        <i class="fas fa-plus"></i> Transferencia
-                                    </button>
-                                    <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('cambio')">
-                                        <i class="fas fa-plus"></i> Cambio
-                                    </button>
-                                </div>
-                                <div class="col"></div>
-                                <div class="col-2">
-                                    <div class="form-group">
-                                        {{-- <label for="status">Ano</label> --}}
-                                        <select class="selectpicker form-control" data-live-search="true" id="ano" name="ano">
-                                            <option value="aereo"> 2024 </option>
-                                            <option value="maritimo"> 2023 </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-2">
-                                    <div class="form-group">
-                                        {{-- <label for="status">Mês</label> --}}
-                                        <select class="selectpicker form-control" data-live-search="true" id="mes" name="mes">
-                                            <option value="aereo"> Janeiro </option>
-                                            <option value="maritimo"> Fevereiro </option>
-                                            <option value="compras"> Março </option>
-                                            <option value="outros"> Abril </option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-1">
-                                    <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovoItem">Filtrar</button>
-                                </div>
+                        </div>
+                        <div class="row justify-content-between">
+                            <div class="col-5">
+                                <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('entrada')">
+                                    <i class="fas fa-plus"></i> Entrada
+                                </button>
+                                <button type="button" class="btn btn-danger waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('saida')">
+                                    <i class="fas fa-plus"></i> Saída
+                                </button>
+                                <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('transferencia')">
+                                    <i class="fas fa-plus"></i> Transferencia
+                                </button>
+                                <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal" onclick="abrirModal('cambio')">
+                                    <i class="fas fa-plus"></i> Cambio
+                                </button>
                             </div>
-                        </form>
-
+                        </div>
+                        
                         <div class="row mt-3">
                             <div class="table-responsive">
                                 <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Data</th>
-                                            <!-- <th>Tipo</th> -->
                                             <th>Categoria</th>
                                             <th>Descrição</th>
                                             <th>Subcategoria</th>
@@ -91,7 +63,7 @@
                                     </thead><!-- end thead -->
                                     <tbody>
                                         @foreach ($all_items as $fluxo)
-                                        <tr data-href="{{ route('fluxo_caixa.show', ['caixa' => $caixa->id]) }}">
+                                        <tr>
                                             <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
                                             <td>
                                                 @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
@@ -116,7 +88,7 @@
                                                 @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
                                                     {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
                                                 @else 
-                                                    @if ($fluxo->caixaOrigem->id == $caixa->id)
+                                                    @if ($fluxo->caixaOrigem->id == $fechamento->caixa->id)
                                                         {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
                                                     @else 
                                                         {{ number_format($fluxo->valor_destino, 2, ',', '.') }}
@@ -125,6 +97,13 @@
                                             </td>
                                         </tr>
                                         @endforeach
+                                        <tr>
+                                            <td><h6 class="mb-0">{{ '01/'.$fechamento->mes.'/'.$fechamento->ano }}</h6></td>
+                                            <td>Saldo</td>
+                                            <td>Saldo Inicial</td>
+                                            <td>Saldo</td>
+                                            <td>{{ $fechamento->saldo_inicial }}</td>
+                                        </tr>
                                          <!-- end -->
                                     </tbody><!-- end tbody -->
                                 </table> <!-- end table -->
@@ -153,7 +132,8 @@
                 <div class="modal-body">
                     {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
                     <input type="hidden" id="tipo" name="tipo" value="entrada">
-                    <input type="hidden" name="caixa_origem_id" value="{{$caixa->id;}}">
+                    <input type="hidden" name="fechamento_caixa_id" value="{{$fechamento->id;}}">
+                    <input type="hidden" name="caixa_origem_id" value="{{$fechamento->caixa ->id;}}">
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
@@ -187,15 +167,13 @@
                                 <input class="form-control" type="number" value="0.00" step="0.10" id="valor_origem" name="valor_origem">
                             </div>
                         </div>
-                    </div>
-                    <div class="row mt-2">
-                        <div class="col">
+                        <div class="col-12 mt-3" id="div_descricao">
                             <div class="form-group">
                                 <label for="contato">Descrição</label>
-                                <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição da Transação" maxlength="255" required>
+                                <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição da Transação" maxlength="255">
                             </div>
                         </div>
-                        <div class="col-3" id="div_caixa_destino">
+                        <div class="col" id="div_caixa_destino">
                             <div class="form-group">
                                 <label for="caixa_destino_id">Destino</label>
                                 <select class="selectpicker form-control" data-live-search="true" id="caixa_destino_id" name="caixa_destino_id">
@@ -232,24 +210,28 @@
             document.getElementById('div_valor_destino').style.display = 'none';
             document.getElementById('div_categoria').style.display = 'block';
             document.getElementById('div_subcategoria').style.display = 'block';
+            document.getElementById('div_descricao').style.display = 'block';
         } else if (tipo === 'saida') {
             document.getElementById('tipo').value = 'saida';
             document.getElementById('div_caixa_destino').style.display = 'none';
             document.getElementById('div_valor_destino').style.display = 'none';
             document.getElementById('div_categoria').style.display = 'block';
             document.getElementById('div_subcategoria').style.display = 'block';
+            document.getElementById('div_descricao').style.display = 'block';
         } else if (tipo === 'transferencia') {
             document.getElementById('tipo').value = 'transferencia';
             document.getElementById('div_caixa_destino').style.display = 'block';
             document.getElementById('div_valor_destino').style.display = 'none';
             document.getElementById('div_categoria').style.display = 'none';
             document.getElementById('div_subcategoria').style.display = 'none';
+            document.getElementById('div_descricao').style.display = 'none';
         } else if (tipo === 'cambio') {
             document.getElementById('tipo').value = 'cambio';
             document.getElementById('div_caixa_destino').style.display = 'block';
             document.getElementById('div_valor_destino').style.display = 'block';
             document.getElementById('div_categoria').style.display = 'none';
             document.getElementById('div_subcategoria').style.display = 'none';
+            document.getElementById('div_descricao').style.display = 'none';
         }
         console.log (tipo);
     }

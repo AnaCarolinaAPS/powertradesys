@@ -174,8 +174,8 @@ class FluxoCaixaController extends Controller
 
                 $caixa_origem = Caixa::findOrFail($request->input('caixa_origem_id'));
                 $caixa_destino = Caixa::findOrFail($request->input('caixa_destino_id'));
-                // $descricao = "Transferencia de ".$caixa_origem->nome." para ".$caixa_destino->nome;
-                $descricao = "";
+                $descricao = "Transferencia: ".$caixa_origem->nome." -> ".$caixa_destino->nome;
+                // $descricao = "";
                 //Cria um registro em "origem"
                 $fluxo = FluxoCaixa::create([
                     'data' => $request->input('data'),
@@ -214,17 +214,58 @@ class FluxoCaixaController extends Controller
                 $fechamentoDestino->atualizaSaldo($valor_destino);
             } else if ($request->input('tipo') == 'cambio') {
                 //obrigatoriamente tem caixa_destino_id e o valor é DIFERENTE
+                if ($request->input('valor_origem') < 0) {
+                    $valor_origem = $request->input('valor_origem');
+                } else {
+                    $valor_origem = $request->input('valor_origem')*-1;
+                }
+
+                if ($request->input('valor_destino') < 0) {
+                    $valor_destino = $request->input('valor_destino')*-1;
+                } else {
+                    $valor_destino = $request->input('valor_destino');
+                }
+
+                $caixa_origem = Caixa::findOrFail($request->input('caixa_origem_id'));
+                $caixa_destino = Caixa::findOrFail($request->input('caixa_destino_id'));
+                $descricao = "Cambio: ".$valor_origem.$caixa_origem->moeda." ".$caixa_origem->nome." -> ".$caixa_destino->nome;
+                // $descricao = "";
+                //Cria um registro em "origem"
                 $fluxo = FluxoCaixa::create([
                     'data' => $request->input('data'),
-                    'descricao' => $request->input('descricao'),
+                    'descricao' => $descricao,
                     'tipo' => $request->input('tipo'),
                     'caixa_origem_id' => $request->input('caixa_origem_id'),
-                    'valor_origem' => $request->input('valor_origem'),
+                    'valor_origem' => $valor_origem,
                     'caixa_destino_id' => $request->input('caixa_destino_id'),
-                    'valor_destino' => $request->input('valor_destino'),
+                    'valor_destino' => $valor_destino,
                     'fechamento_caixa_id' => $request->input('fechamento_caixa_id'),
                     // Adicione outros campos conforme necessário
                 ]);
+                //atualiza fechamento
+                $fechamento = FechamentoCaixa::findOrFail($request->input('fechamento_caixa_id'));
+                $fechamento->atualizaSaldo($valor_origem);
+
+                //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
+                $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data'));
+                $ano = $data->year;
+                $mes = $data->month;
+                $fechamentoDestino = FechamentoCaixa::where('caixa_id', $request->input('caixa_destino_id'))->where('mes', $mes)->where('ano', $ano)->firstOrFail();
+
+                //Cria um registro em "destino"
+                $fluxo = FluxoCaixa::create([
+                    'data' => $request->input('data'),
+                    'descricao' => $descricao,
+                    'tipo' => $request->input('tipo'),
+                    'caixa_origem_id' => $request->input('caixa_origem_id'),
+                    'valor_origem' => $valor_origem,
+                    'caixa_destino_id' => $request->input('caixa_destino_id'),
+                    'valor_destino' => $valor_destino,
+                    'fechamento_caixa_id' => $fechamentoDestino->id,
+                    // Adicione outros campos conforme necessário
+                ]);
+
+                $fechamentoDestino->atualizaSaldo($valor_destino);
             }
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [

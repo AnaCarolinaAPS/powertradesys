@@ -31,6 +31,9 @@
                             <div class="col">
                                 <h4 class="card-title mb-4">{{ $fechamento->caixa->nome }}</h4>
                             </div>
+                            <div class="col">
+                                <h4 class="card-title mb-4">Disponível: {{ $fechamento->saldo_final }} {{ $fechamento->caixa->moeda }}</h4>
+                            </div>
                         </div>
                         <div class="row justify-content-between">
                             <div class="col-5">
@@ -63,7 +66,11 @@
                                     </thead><!-- end thead -->
                                     <tbody>
                                         @foreach ($all_items as $fluxo)
-                                        <tr>
+                                        @if ($fluxo->tipo == 'entrada')
+                                            <tr class="table-success">
+                                        @else 
+                                            <tr class="">
+                                        @endif
                                             <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
                                             <td>
                                                 @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
@@ -115,6 +122,36 @@
             <!-- end col -->
         </div>
         <!-- end row -->
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Gráfico por Categoria</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <canvas id="categoriaChart"></canvas>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+            <div class="col-xl-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Gráfico por Subcategoria</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <canvas id="subcategoriaChart"></canvas>
+                        </div>
+                    </div>    
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <!-- End Page-content -->
@@ -200,6 +237,7 @@
     </div><!-- /.modal-dialog -->
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     //Função para habilitar/desabilitar campos baseado no botão que ativou o modal
     function abrirModal(tipo) {
@@ -235,5 +273,62 @@
         }
         console.log (tipo);
     }
+
+    var dados = @json($data_grafico);
+
+    var datapie = {
+      labels: dados.labels,
+      datasets: [{
+        // label: 'My First Dataset',
+        data: dados.data,
+        backgroundColor: dados.backgroundColor,
+        borderColor: dados.borderColor,
+        borderWidth: 1
+      }]
+    };
+
+    // Opções do gráfico
+    var optionspie = {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        title: {
+          display: true,
+          text: 'Gastos x Valor'
+        }
+      }
+    };
+
+    // Criando o gráfico de pizza
+    var ctxpie = document.getElementById('categoriaChart').getContext('2d');
+    var myPieChart = new Chart(ctxpie, {
+      type: 'pie',
+      data: datapie,
+      options: optionspie
+    });
+
+    var dadossub = @json($data_grafico_sub);
+
+    var datapiesub = {
+      labels: dadossub.labels,
+      datasets: [{
+        // label: 'My First Dataset',
+        data: dadossub.data,
+        backgroundColor: dadossub.backgroundColor,
+        borderColor: dadossub.borderColor,
+        borderWidth: 1
+      }]
+    };
+
+    // Criando o gráfico de pizza
+    var ctxpie2 = document.getElementById('subcategoriaChart').getContext('2d');
+    var myPieChart2 = new Chart(ctxpie2, {
+      type: 'pie',
+      data: datapiesub,
+      options: optionspie
+    });
+
 </script>
 @endsection

@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "bootstrap-select": "^1.13.18",
+        "chart.js": "^4.4.1",
         "toastr": "^2.1.4"
     }
 }

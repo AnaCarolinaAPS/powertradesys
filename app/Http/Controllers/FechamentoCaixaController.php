@@ -7,6 +7,7 @@ use App\Models\FechamentoCaixa;
 use App\Models\FluxoCaixa;
 use App\Models\Categoria;
 use App\Models\Caixa;
+use Illuminate\Support\Facades\DB;
 
 class FechamentoCaixaController extends Controller
 {
@@ -41,15 +42,85 @@ class FechamentoCaixaController extends Controller
         try {
             // Buscar o item pelo ID
             $fechamento = FechamentoCaixa::findOrFail($id);
-            $all_items = FluxoCaixa::where('fechamento_caixa_id', $id)->get();
+            $all_items = FluxoCaixa::where('fechamento_caixa_id', $id)->orderBy('data', 'desc')->get();
             $all_categorias = Categoria::where('tipo', 'categoria')
                             ->get();
             $all_subcategorias = Categoria::where('tipo', 'subcategoria')
                             ->get();
             $all_caixas = Caixa::all();
 
+            $soma_categorias = FluxoCaixa::select('categoria_id', DB::raw('SUM(valor_origem) as total_saida'))
+                            ->where('tipo', 'saida')
+                            ->where('fechamento_caixa_id', $id)
+                            ->groupBy('categoria_id')
+                            ->get();
+            
+            // Forma arrays para montagem do gráfico:
+            // Inicializar arrays para armazenar os dados do gráfico
+            $labels = [];
+            $data = [];
+            $backgroundColor = [];
+            $borderColor = [];
+
+            // Iterar sobre os resultados da consulta
+            foreach ($soma_categorias as $categoria) {
+                // Adicionar categoria_id como label
+                $labels[] = $categoria->categoria->nome;
+                // Adicionar total_saida como dado
+                $data[] = $categoria->total_saida;
+                // Gerar cores aleatórias para o gráfico
+                $red = mt_rand(0, 255);
+                $green = mt_rand(0, 255);
+                $blue = mt_rand(0, 255);
+                $backgroundColor[] = "rgba($red, $green, $blue, 0.5)";
+                $borderColor[] = "rgba($red, $green, $blue, 1)";
+            }
+            
+            // Criar um array associativo com todas as informações
+            $data_grafico = [
+                'labels' => $labels,
+                'data' => $data,
+                'backgroundColor' => $backgroundColor,
+                'borderColor' => $borderColor
+            ];
+
+            $soma_subcategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'))
+                            ->where('tipo', 'saida')
+                            ->where('fechamento_caixa_id', $id)
+                            ->groupBy('categoria_id', 'subcategoria_id')
+                            ->get();
+            
+            // Forma arrays para montagem do gráfico:
+            // Inicializar arrays para armazenar os dados do gráfico
+            $labels_sub = [];
+            $data_sub = [];
+            $backgroundColor_sub = [];
+            $borderColor_sub = [];
+
+            // Iterar sobre os resultados da consulta
+            foreach ($soma_subcategorias as $categoria) {
+                // Adicionar categoria_id como label
+                $labels_sub[] = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+                // Adicionar total_saida como dado
+                $data_sub[] = $categoria->total_saida;
+                // Gerar cores aleatórias para o gráfico
+                $red = mt_rand(0, 255);
+                $green = mt_rand(0, 255);
+                $blue = mt_rand(0, 255);
+                $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
+                $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
+            }
+            
+            // Criar um array associativo com todas as informações
+            $data_grafico_sub = [
+                'labels' => $labels_sub,
+                'data' => $data_sub,
+                'backgroundColor' => $backgroundColor_sub,
+                'borderColor' => $borderColor_sub
+            ];
+
             // Retornar a view com os detalhes do shipper
-            return view('admin.fechamentocaixa.show', compact('fechamento', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas'));
+            return view('admin.fechamentocaixa.show', compact('fechamento', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas', 'data_grafico', 'data_grafico_sub'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [

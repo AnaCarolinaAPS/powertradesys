@@ -234,7 +234,7 @@ Route::middleware('auth')->group(function () {
 
         // Fluxo de Caixa CRUD
         Route::prefix('/admin/fluxocaixa')->group(function () {
-            Route::get('/{caixa}', [FluxoCaixaController::class, 'show'])->name('fluxo_caixa.show');
+            Route::get('/{fluxo}', [FluxoCaixaController::class, 'show'])->name('fluxo_caixa.show');
             // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
             // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
             Route::get('/', [FluxoCaixaController::class, 'index'])->name('fluxo_caixa.index');

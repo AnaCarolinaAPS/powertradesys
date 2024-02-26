@@ -72,26 +72,8 @@ class FluxoCaixaController extends Controller
      */
     public function show($id)
     {
-        try {
-            // Buscar o shipper pelo ID
-            $caixa = Caixa::findOrFail($id);
-            $all_items = FluxoCaixa::where('caixa_origem_id', $id)->orWhere('caixa_destino_id', $id)->get();
-            $all_categorias = Categoria::where('tipo', 'categoria')
-                            ->get();
-            $all_subcategorias = Categoria::where('tipo', 'subcategoria')
-                            ->get();
-            $all_caixas = Caixa::all();
-
-            // Retornar a view com os detalhes do shipper
-            return view('admin.fluxo.show', compact('caixa', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas'));
-        } catch (\Exception $e) {
-            // Exibir uma mensagem de erro ou redirecionar para uma página de erro
-            return redirect()->back()->with('toastr', [
-                'type'    => 'error',
-                'message' => 'Ocorreu um erro ao exibir os detalhes da Caixa: <br>'. $e->getMessage(),
-                'title'   => 'Erro',
-            ]);
-        }
+        $fluxo = FluxoCaixa::findOrFail($id);
+        return response()->json($fluxo);
     }
 
     /**

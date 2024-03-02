@@ -235,12 +235,12 @@ Route::middleware('auth')->group(function () {
         // Fluxo de Caixa CRUD
         Route::prefix('/admin/fluxocaixa')->group(function () {
             Route::get('/{fluxo}', [FluxoCaixaController::class, 'show'])->name('fluxo_caixa.show');
-            // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
-            // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
-            Route::get('/', [FluxoCaixaController::class, 'index'])->name('fluxo_caixa.index');
+            Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
+            Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
+            // Route::get('/', [FluxoCaixaController::class, 'index'])->name('fluxo_caixa.index');
             Route::post('/', [FluxoCaixaController::class, 'store'])->name('fluxo_caixa.store');
         });
-        
+
         // Fechamento de Caixa CRUD
         Route::prefix('/admin/registrocaixa')->group(function () {
             Route::get('/{fechamento}', [FechamentoCaixaController::class, 'show'])->name('registro_caixa.show');

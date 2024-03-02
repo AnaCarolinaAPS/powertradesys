@@ -47,14 +47,14 @@ class FechamentoCaixaController extends Controller
                             ->get();
             $all_subcategorias = Categoria::where('tipo', 'subcategoria')
                             ->get();
-            $all_caixas = Caixa::all();
+            $all_caixas = Caixa::where('id', '!=', $id)->get();//Caixa::all();
 
             $soma_categorias = FluxoCaixa::select('categoria_id', DB::raw('SUM(valor_origem) as total_saida'))
                             ->where('tipo', 'saida')
                             ->where('fechamento_caixa_id', $id)
                             ->groupBy('categoria_id')
                             ->get();
-            
+
             // Forma arrays para montagem do gráfico:
             // Inicializar arrays para armazenar os dados do gráfico
             $labels = [];
@@ -75,7 +75,7 @@ class FechamentoCaixaController extends Controller
                 $backgroundColor[] = "rgba($red, $green, $blue, 0.5)";
                 $borderColor[] = "rgba($red, $green, $blue, 1)";
             }
-            
+
             // Criar um array associativo com todas as informações
             $data_grafico = [
                 'labels' => $labels,
@@ -89,7 +89,7 @@ class FechamentoCaixaController extends Controller
                             ->where('fechamento_caixa_id', $id)
                             ->groupBy('categoria_id', 'subcategoria_id')
                             ->get();
-            
+
             // Forma arrays para montagem do gráfico:
             // Inicializar arrays para armazenar os dados do gráfico
             $labels_sub = [];
@@ -110,7 +110,7 @@ class FechamentoCaixaController extends Controller
                 $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
                 $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
             }
-            
+
             // Criar um array associativo com todas as informações
             $data_grafico_sub = [
                 'labels' => $labels_sub,

@@ -16,41 +16,6 @@ class FluxoCaixaController extends Controller
      */
     public function index()
     {
-        // $all_items = DB::table('caixas')
-        //             ->select('caixas.id', 'caixas.nome', 'caixas.moeda',
-        //                     DB::raw('COALESCE(SUM(entradas.valor_origem), 0) as total_entradas'),
-        //                     DB::raw('COALESCE(SUM(saidas.valor_origem), 0) as total_saidas'),
-        //                     DB::raw('(COALESCE(SUM(entradas.valor_origem), 0) + COALESCE(SUM(saidas.valor_origem    ), 0)) as saldo'))
-        //             ->leftJoin('fluxo_caixas as entradas', function($join) {
-        //                 $join->on('caixas.id', '=', 'entradas.caixa_origem_id')
-        //                     ->where('entradas.tipo', '=', 'entrada');
-        //             })
-        //             ->leftJoin('fluxo_caixas as saidas', function($join) {
-        //                 $join->on('caixas.id', '=', 'saidas.caixa_origem_id')
-        //                     ->where('saidas.tipo', '=', 'saida');
-        //             })
-        //             ->groupBy('caixas.id', 'caixas.nome', 'caixas.moeda')
-        //             ->get();
-
-        // $all_items = DB::table('caixas')
-        //             ->select('caixas.id', 'caixas.nome', 'caixas.moeda',
-        //                     DB::raw('COALESCE(SUM(fluxo_caixas.valor_origem), 0) as saldo'),
-        //             )->leftJoin('fluxo_caixas', 'caixas.id', '=', 'fluxo_caixas.caixa_origem_id')
-        //             ->groupBy('caixas.id', 'caixas.nome', 'caixas.moeda')
-        //             ->get();
-
-        // $all_items = DB::table('caixas')
-        //                 ->select('caixas.id', 'caixas.nome', 'caixas.moeda',
-        //                     DB::raw('COALESCE(SUM(fluxo_caixas.valor_origem), 0) as saldo_origem'),
-        //                     DB::raw('COALESCE(SUM(fluxo_caixas.valor_destino), 0) as saldo_destino')
-        //                 )
-        //                 ->leftJoin('fluxo_caixas', function ($join) {
-        //                     $join->on('caixas.id', '=', 'fluxo_caixas.caixa_origem_id')
-        //                         ->orOn('caixas.id', '=', 'fluxo_caixas.caixa_destino_id');
-        //                 })
-        //                 ->groupBy('caixas.id', 'caixas.nome', 'caixas.moeda')
-        //                 ->get();
-
         $all_items = DB::table('caixas')
                     ->select('caixas.id', 'caixas.nome', 'caixas.moeda',
                         DB::raw('COALESCE(SUM(CASE WHEN fluxo_caixas.tipo = "entrada" THEN fluxo_caixas.valor_origem ELSE 0 END), 0) as saldo_entrada'),
@@ -264,4 +229,98 @@ class FluxoCaixaController extends Controller
             ]);
         }
     }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, FluxoCaixa $fluxocaixa)
+    {
+        try {
+
+            // Validação dos dados do formulário
+            $request->validate([
+                'data' => 'required|date',
+                'descricao' => 'nullable|required_if:tipo,entrada,saida|string|max:255',
+                'categoria_id' => 'required_if:tipo,entrada,saida|exists:categorias,id',
+                'subcategoria_id' => 'required_if:tipo,entrada,saida|exists:categorias,id',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            // Atualizar os dados
+            $fluxocaixa->update([
+                'data' => $request->input('data'),
+                'descricao' => $request->input('descricao'),
+                'categoria_id' => $request->input('categoria_id'),
+                'subcategoria_id' => $request->input('subcategoria_id'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Registro atualizado com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar o Registro: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $fluxocaixa = FluxoCaixa::find($id);
+
+            //Encontra a qual fechamento o registro pertence
+            $fechamento = FechamentoCaixa::findOrFail($fluxocaixa->fechamento_caixa_id);
+            //Troca o valor + ou - do valor_origem para ajustar o saldo e Atualiza
+            $fechamento->atualizaSaldo($fluxocaixa->valor_origem*-1);
+
+            if ($fluxocaixa->tipo == 'transferencia' || $fluxocaixa->tipo == 'cambio') {
+                //Busca a copia da transferencia / cambio
+                $fluxo_destino = FluxoCaixa::whereNot('fechamento_caixa_id', $fluxocaixa->fechamento_caixa_id)
+                                            ->where('descricao', $fluxocaixa->descricao)
+                                            ->where('caixa_origem_id', $fluxocaixa->caixa_origem_id)
+                                            ->where('valor_origem', $fluxocaixa->valor_origem)
+                                            ->where('caixa_destino_id', $fluxocaixa->caixa_destino_id)
+                                            ->where('valor_destino', $fluxocaixa->valor_destino)
+                                            ->where('data', $fluxocaixa->data)
+                                            ->where('created_at', $fluxocaixa->created_at)
+                                            ->where('updated_at', $fluxocaixa->updated_at)
+                                            ->where('id', '!=', $fluxocaixa->id)
+                                            ->first();
+
+                $fechamento_destino = FechamentoCaixa::findOrFail($fluxo_destino->fechamento_caixa_id);
+                //Troca o valor + ou - do valor_origem para ajustar o saldo e Atualiza
+                $fechamento_destino->atualizaSaldo($fluxo_destino->valor_destino*-1);
+                $fluxo_destino->delete();
+            }
+
+            // Excluir o Freteiro do banco de dados
+            $fluxocaixa->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Freteiro excluído com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir o Freteiro: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
 }

@@ -51,7 +51,7 @@
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="row mt-3">
                             <div class="table-responsive">
                                 <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -68,7 +68,7 @@
                                         @foreach ($all_items as $fluxo)
                                         @if ($fluxo->tipo == 'entrada')
                                             <tr class="abrirModal table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                        @else 
+                                        @else
                                             <tr class="abrirModal" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         @endif
                                             <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
@@ -94,10 +94,10 @@
                                             <td>
                                                 @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
                                                     {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
-                                                @else 
+                                                @else
                                                     @if ($fluxo->caixaOrigem->id == $fechamento->caixa->id)
                                                         {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
-                                                    @else 
+                                                    @else
                                                         {{ number_format($fluxo->valor_destino, 2, ',', '.') }}
                                                     @endif
                                                 @endif
@@ -134,7 +134,7 @@
                         <div class="row">
                             <canvas id="categoriaChart"></canvas>
                         </div>
-                    </div>    
+                    </div>
                 </div>
             </div>
             <div class="col-xl-6">
@@ -148,7 +148,7 @@
                         <div class="row">
                             <canvas id="subcategoriaChart"></canvas>
                         </div>
-                    </div>    
+                    </div>
                 </div>
             </div>
         </div>
@@ -236,6 +236,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
+
 <!-- Detalhes dos Itens -->
 <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
     <div class="modal-dialog modal-lg">
@@ -252,18 +253,24 @@
                         <input type="hidden" name="id" value="" id="did">
                         <div class="col">
                             <div class="form-group">
+                                <label for="data">Data</label>
+                                <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="ddata" name="data">
+                            </div>
+                        </div>
+                        <div class="col" id="div_categoria_detalhe">
+                            <div class="form-group">
                                 <label for="categoria_id">Categoria</label>
-                                <select class="selectpicker form-control" data-live-search="true" id="categoria_id" name="categoria_id">
+                                <select class="selectpicker form-control" data-live-search="true" id="dcategoria_id" name="categoria_id">
                                     @foreach ($all_categorias as $categoria)
                                         <option value="{{ $categoria->id }}"> {{ $categoria->nome }} </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col" id="div_subcategoria_detalhe">
                             <div class="form-group">
                                 <label for="subcategoria_id">Subcategoria</label>
-                                <select class="selectpicker form-control" data-live-search="true" id="subcategoria_id" name="subcategoria_id">
+                                <select class="selectpicker form-control" data-live-search="true" id="dsubcategoria_id" name="subcategoria_id">
                                     @foreach ($all_subcategorias as $subcategoria)
                                         <option value="{{ $subcategoria->id }}"> {{ $subcategoria->nome }} </option>
                                     @endforeach
@@ -276,7 +283,7 @@
                                 <input class="form-control" type="number" step="0.10" id="dvalor" readonly>
                             </div>
                         </div>
-                        <div class="col-12">
+                        <div class="col-12 mt-3">
                             <div class="form-group">
                                 <label for="contato">Descrição</label>
                                 <input type="text" class="form-control" id="ddescricao" name="descricao" placeholder="Descrição da Transação" maxlength="255">
@@ -290,13 +297,36 @@
                         Excluir
                     </button>
                     <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
-                    <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacao">Atualizar</button>
+                    <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacao" id="btnAtualizar">Atualizar</button>
                 </div>
             </form>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
-    
+
+<!-- Modal de Confirmação -->
+<div class="modal fade" id="confirmDelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmação de Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir este Registro?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                <!-- Adicionar o botão de exclusão no modal -->
+                <form method="post" action="" id="formDeleteModal">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger waves-effect waves-light">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -399,24 +429,37 @@
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('tituloModal').innerText = data.nome;
+                    document.getElementById('tituloModal').innerText = data.descricao;
                     document.getElementById('did').value = data.id;
                     document.getElementById('ddescricao').value = data.descricao;
-                    document.getElementById('dcategoria').value = data.categoria_id;
-                    document.getElementById('dsubcategoria').value = data.subcategoria_id;
+                    document.getElementById('dcategoria_id').value = data.categoria_id;
+                    document.getElementById('dsubcategoria_id').value = data.subcategoria_id;
                     document.getElementById('dvalor').value = data.valor_origem;
+                    document.getElementById('ddata').value = data.data;
 
-                    console.log(data);
+
+                    if (data.tipo === 'transferencia' || data.tipo === 'cambio') {
+                        // console.log(data.tipo);
+                        document.getElementById('div_categoria_detalhe').style.display = 'none';
+                        document.getElementById('div_subcategoria_detalhe').style.display = 'none';
+                        document.getElementById('btnAtualizar').style.display = 'none';
+                        document.getElementById('ddescricao').readOnly = true;
+                    } else {
+                        document.getElementById('div_categoria_detalhe').style.display = 'block';
+                        document.getElementById('div_subcategoria_detalhe').style.display = 'block';
+                        document.getElementById('btnAtualizar').style.display = 'block';
+                        document.getElementById('ddescricao').readOnly = false;
+                    }
 
                     $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacao');
-                    var novaAction = "{{ route('freteiros.update', ['freteiro' => ':id']) }}".replace(':id', data.id);
+                    var novaAction = "{{ route('fluxo_caixa.update', ['fluxocaixa' => ':id']) }}".replace(':id', data.id);
                     form.setAttribute('action', novaAction);
 
-                    // var form2 = document.getElementById('formDeleteModal');
-                    // var novaAction2 = "{{ route('freteiros.destroy', ['freteiro' => ':id']) }}".replace(':id', data.id);
-                    // form2.setAttribute('action', novaAction2);
+                    var form2 = document.getElementById('formDeleteModal');
+                    var novaAction2 = "{{ route('fluxo_caixa.destroy', ['fluxocaixa' => ':id']) }}".replace(':id', data.id);
+                    form2.setAttribute('action', novaAction2);
                 })
                 .catch(error => console.error('Erro:', error));
         });

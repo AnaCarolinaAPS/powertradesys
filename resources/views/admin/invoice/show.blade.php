@@ -99,10 +99,9 @@
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddPacote">
                             <i class="fas fa-plus"></i> Add Pacote
                         </button>
-                        <!--
-                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddWarehouse">
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
                             <i class="fas fa-plus"></i> Add Pagamento
-                        </button> -->
+                        </button>
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -262,6 +261,42 @@
                 </div>
             </div>
         </div>
+
+        {{-- Criação do Pagamento --}}
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNovo" aria-hidden="true" style="display: none;" id="novoModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Novo Pagamento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('freteiros.store') }}">
+                        @csrf
+                        <div class="modal-body">
+                            {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="nome">Data</label>
+                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data" name="data" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="contato">Valor</label>
+                                        <input class="form-control" type="number" value="{{$resumo->soma_valor;}}" step="0.10" id="valor_pgto" name="valor" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Adicionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
     </div>
 </div>
 
@@ -308,6 +343,7 @@
                 .catch(error => console.error('Erro:', error));
         });
     });
+
 </script>
 <!-- End Page-content -->
 @endsection

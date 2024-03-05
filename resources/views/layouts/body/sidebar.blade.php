@@ -84,7 +84,7 @@
                                     <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
                                 </ul>
                             </li>
-                            <li><a href="{{ route('registro_caixa.index'); }}">Fluxo de Caixa</a></li>
+                            <li><a href="{{ route('registro_caixa.index'); }}">Registro de Caixa</a></li>
                             <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
                             <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
                             <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>

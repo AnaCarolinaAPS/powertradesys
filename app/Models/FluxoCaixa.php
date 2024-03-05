@@ -51,4 +51,9 @@ class FluxoCaixa extends Model
     {
         return $this->belongsTo(FechamentoCaixa::class, 'fechamento_caixa_id');
     }
+
+    public function pagamento()
+    {
+        return $this->hasOne(Pagamento::class);
+    }
 }

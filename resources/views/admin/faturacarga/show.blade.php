@@ -128,9 +128,9 @@
                                 <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalNewInvoice">
                                     <i class="fas fa-plus"></i> Add Invoice
                                 </button>
-                                <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddWarehouse">
+                                {{-- <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddWarehouse">
                                     <i class="fas fa-plus"></i> Add Pagamento
-                                </button>
+                                </button> --}}
                             </div>
                             <div class="col">
                                 Peso Total: <b>{{$resumo->soma_peso;}} kgs</b>

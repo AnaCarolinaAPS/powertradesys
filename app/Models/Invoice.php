@@ -30,4 +30,9 @@ class Invoice extends Model
         return $this->hasMany(InvoicePacote::class);
     }
 
+    public function pagamentos()
+    {
+        return $this->hasMany(Pagamento::class);
+    }
+
 }

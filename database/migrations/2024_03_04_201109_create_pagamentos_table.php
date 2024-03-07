@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
             $table->decimal('valor', 10, 2);
             $table->date('data_pagamento');
-            $table->string('observacoes');
+            $table->string('observacoes')->nullable();
             $table->unsignedBigInteger('fluxo_caixa_id');
             $table->foreign('fluxo_caixa_id')->references('id')->on('fluxo_caixas')->onDelete('cascade');
             $table->timestamps();

@@ -250,10 +250,18 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [FechamentoCaixaController::class, 'store'])->name('registro_caixa.store');
         });
 
+        // Pagamento CRUD
+        Route::prefix('/admin/registrocaixa')->group(function () {
+            // Route::get('/{fechamento}', [FechamentoCaixaController::class, 'show'])->name('registro_caixa.show');
+            // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
+            // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
+            // Route::get('/', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
+            Route::post('/', [PagamentoController::class, 'store'])->name('pagamento.store');
+        });
+
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
         });
-
 
 
     });

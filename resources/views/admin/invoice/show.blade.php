@@ -270,10 +270,11 @@
                         <h5 class="modal-title" id="myLargeModalLabel">Novo Pagamento</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form class="form-horizontal mt-3" method="POST" action="{{ route('freteiros.store') }}">
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('pagamento.store') }}">
                         @csrf
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
+                            <input type="hidden" name="invoice_id" value="{{  $invoice->id; }}" id="invoice_id">
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
@@ -283,11 +284,29 @@
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="contato">Valor</label>
-                                        <input class="form-control" type="number" value="{{$resumo->soma_valor;}}" step="0.10" id="valor_pgto" name="valor" required>
+                                        <label for="contato">Valor Pagamento</label>
+                                        <input class="form-control" type="number" value="{{$resumo->soma_valor;}}" step="0.10" id="valor" name="valor" required>
                                     </div>
                                 </div>
-                            </div>
+                            <!-- </div>
+                            <div class="row"> -->
+                                <div class="col" id="div_caixa_destino">
+                                    <div class="form-group">
+                                        <label for="caixa_origem_id">Onde foi Pago</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="caixa_origem_id" name="caixa_origem_id">
+                                            @foreach ($all_caixas as $caixa_destino)
+                                                <option value="{{ $caixa_destino->id }}"> {{ $caixa_destino->nome }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="contato">Entrada em Caixa</label>
+                                        <input class="form-control" type="number" value="{{$resumo->soma_valor;}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                    </div>
+                                </div>
+                            </div> 
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>

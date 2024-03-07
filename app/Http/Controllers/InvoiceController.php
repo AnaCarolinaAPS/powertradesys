@@ -9,6 +9,7 @@ use App\Models\InvoicePacote;
 use App\Models\FaturaCarga;
 use App\Models\Carga;
 use App\Models\Pacote;
+use App\Models\Caixa;
 
 class InvoiceController extends Controller
 {
@@ -73,9 +74,10 @@ class InvoiceController extends Controller
                             ->where('carga_id', $invoice->fatura_carga->carga_id)
                             ->where('cliente_id', $invoice->cliente_id)
                             ->get();
-
+                
+            $all_caixas = Caixa::all();
             // Retornar a view com os detalhes do shipper
-            return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'resumo', 'pacotesAssociadosFatura', 'all_pacotes'));
+            return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'resumo', 'pacotesAssociadosFatura', 'all_pacotes', 'all_caixas'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [

@@ -73,8 +73,10 @@
                                         @endif
                                             <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
                                             <td>
-                                                @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
+                                                @if ($fluxo->tipo == 'saida')
                                                     {{ $fluxo->categoria->nome }}
+                                                @elseif ($fluxo->tipo == 'entrada')
+                                                    {{ 'Pagamento' }}
                                                 @elseif ($fluxo->tipo == 'transferencia')
                                                     {{ 'Transferencia' }}
                                                 @elseif ($fluxo->tipo == 'cambio')
@@ -83,8 +85,10 @@
                                             </td>
                                             <td>{{ $fluxo->descricao }}</td>
                                             <td>
-                                                @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
+                                                @if ($fluxo->tipo == 'saida')
                                                     {{ $fluxo->subcategoria->nome }}
+                                                @elseif ($fluxo->tipo == 'entrada')
+                                                    {{ 'Pagamento' }}
                                                 @elseif ($fluxo->tipo == 'transferencia')
                                                     {{ 'Transferencia' }}
                                                 @elseif ($fluxo->tipo == 'cambio')

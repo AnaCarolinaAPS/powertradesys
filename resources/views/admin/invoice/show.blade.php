@@ -99,9 +99,6 @@
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddPacote">
                             <i class="fas fa-plus"></i> Add Pacote
                         </button>
-                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
-                            <i class="fas fa-plus"></i> Add Pagamento
-                        </button>
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -119,6 +116,53 @@
                                         <td>{{ $invoicep->pacote->peso}}</td>
                                         <td>{{ $invoicep->peso }}</td>
                                         <td>{{ number_format($invoicep->valor, 2, ',', '.') }}</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Pagamentos</h4>
+                            </div>
+                            <!-- <div class="col">
+                                Peso Cobrado: <b>{{$resumo->soma_peso;}}</b>
+                            </div>
+                            <div class="col">
+                                Valor Cobrado: <b>{{$resumo->soma_valor;}}</b>
+                            </div> -->
+                        </div>
+
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
+                            <i class="fas fa-plus"></i> Add Pagamento
+                        </button>
+                        <div class="table-responsive">
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Valor Recebido</th>
+                                        <th></th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($all_pagamentos as $pagamento)
+                                    <tr class="abrirModal" data-pacote-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }}</td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.') }}</td>
+                                        <td>
+                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamento->id]) }}" class="link-info">Ver Caixa</a>
+                                        </td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -279,7 +323,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="nome">Data</label>
-                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data" name="data" required>
+                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_pagamento" name="data_pagamento" required>
                                     </div>
                                 </div>
                                 <div class="col">

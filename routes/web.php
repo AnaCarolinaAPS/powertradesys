@@ -24,6 +24,7 @@ use App\Http\Controllers\FreteiroController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\FluxoCaixaController;
 use App\Http\Controllers\FechamentoCaixaController;
+use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\PDFController;
 use Illuminate\Support\Facades\Route;
 
@@ -251,7 +252,7 @@ Route::middleware('auth')->group(function () {
         });
 
         // Pagamento CRUD
-        Route::prefix('/admin/registrocaixa')->group(function () {
+        Route::prefix('/admin/pagamento')->group(function () {
             // Route::get('/{fechamento}', [FechamentoCaixaController::class, 'show'])->name('registro_caixa.show');
             // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
             // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');

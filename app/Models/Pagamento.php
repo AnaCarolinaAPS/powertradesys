@@ -28,6 +28,6 @@ class Pagamento extends Model
 
     public function fluxo_caixa()
     {
-        return $this->belongsTo(Invoice::class);
+        return $this->belongsTo(FluxoCaixa::class);
     }
 }

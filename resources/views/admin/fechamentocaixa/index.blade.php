@@ -69,7 +69,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="myLargeModalLabel">Novo Freteiro</h5>
+                    <h5 class="modal-title" id="myLargeModalLabel">Novo Fechamento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form class="form-horizontal mt-3" method="POST" action="{{ route('registro_caixa.store') }}">

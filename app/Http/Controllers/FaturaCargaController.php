@@ -124,13 +124,13 @@ class FaturaCargaController extends Controller
                                 DB::raw('SUM(invoice_pacotes.valor) as invoice_pacotes_sum_valor')
                             )
                             ->where('fatura_carga_id', $faturacarga->id)
-                            ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
+                            ->groupBy('invoices.id','cliente_id', 'data', 'valor_pago', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
                             ->get();
 
             $resumo = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
                         ->select(
-                            DB::raw('SUM(invoice_pacotes.peso) as soma_peso'),
-                            DB::raw('SUM(invoice_pacotes.valor) as soma_valor')
+                            DB::raw('COALESCE(SUM(invoice_pacotes.peso),0) as soma_peso'),
+                            DB::raw('COALESCE(SUM(invoice_pacotes.valor),0) as soma_valor'),
                         )
                         ->where('fatura_carga_id', $faturacarga->id)
                         ->groupBy('invoices.fatura_carga_id')

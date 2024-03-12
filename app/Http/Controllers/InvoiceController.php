@@ -63,10 +63,6 @@ class InvoiceController extends Controller
             // Buscar o shipper pelo ID
             $invoice = Invoice::findOrFail($id);
             $all_invoices_pacotes = InvoicePacote::where('invoice_id', $id)->get();
-            $resumo = InvoicePacote::where('invoice_id', $id)
-                    ->selectRaw('SUM(peso) as soma_peso, SUM(valor) as soma_valor')
-                    // ->selectRaw('SUM(peso) as soma_peso')
-                    ->first();
 
             $pacotesAssociadosFatura = $invoice->invoice_pacotes()->pluck('pacote_id')->toArray();
 
@@ -80,7 +76,7 @@ class InvoiceController extends Controller
                 
             $all_caixas = Caixa::all();
             // Retornar a view com os detalhes do shipper
-            return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'resumo', 'pacotesAssociadosFatura', 'all_pacotes', 'all_caixas', 'all_pagamentos'));
+            return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'pacotesAssociadosFatura', 'all_pacotes', 'all_caixas', 'all_pagamentos'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [

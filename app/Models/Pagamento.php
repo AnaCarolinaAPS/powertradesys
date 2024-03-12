@@ -21,9 +21,9 @@ class Pagamento extends Model
         'fluxo_caixa_id',
     ];
 
-    public function invoice()
+    public function invoices()
     {
-        return $this->belongsTo(Invoice::class);
+        return $this->belongsToMany(Invoice::class, 'invoice_pagamentos');
     }
 
     public function fluxo_caixa()

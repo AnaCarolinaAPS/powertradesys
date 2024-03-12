@@ -32,7 +32,7 @@ class FechamentoCaixa extends Model
         return $this->hasMany(FluxoCaixa::class, 'fechamento_caixa_id', 'id');
     }
 
-    // // Dentro do modelo FechamentoCaixa
+    // Dentro do modelo FechamentoCaixa
     public function atualizaSaldo($valor){
         try {
             $saldo_atualizado = $this->saldo_final + $valor;

@@ -37,11 +37,8 @@
                                         <th>Data Recebida</th>
                                         <th>Carga</th>
                                         <th>Peso Guia</th>
-                                        <th>Serviço</th>
-                                        <!-- <th>Total Despesas</th>
                                         <th>Valor Cobrado</th>
-                                        <th>Lucro</th>
-                                        <th>Valor Pendente</th> -->
+                                        <th>Falta COBRAR</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -50,7 +47,8 @@
                                         <td>{{ \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td>{{ $fatura->numero; }}</td>
                                         <td>{{ '$carga->peso_guia'; }}</td>
-                                        <td>{{ $fatura->servico->descricao; }}</td>
+                                        <td>{{ number_format($fatura->valor_total(), 2, ',', '.'); }}</td>
+                                        <td>{{ number_format($fatura->valor_total() - $fatura->invoices->sum('valor_pago'), 2, ',', '.'); }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

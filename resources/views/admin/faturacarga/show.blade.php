@@ -133,10 +133,13 @@
                                 </button> --}}
                             </div>
                             <div class="col">
-                                Peso Total: <b>{{$resumo->soma_peso;}} kgs</b>
+                                Peso Total: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b>
                             </div>
                             <div class="col">
-                                Valor Total: <b>{{$resumo->soma_valor;}} U$</b>
+                                Valor Total: <b>{{number_format($faturacarga->valor_total(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                Falta COBRAR : <b>{{number_format($faturacarga->valor_total() - $faturacarga->invoices->sum('valor_pago'), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -147,6 +150,7 @@
                                         <th>Peso Recebido</th>
                                         <th>Peso Cobrado</th>
                                         <th>Valor Total</th>
+                                        <th>Falta Cobrar</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -156,6 +160,7 @@
                                         <td>{{ $invoice->pacotes_sum_peso}}</td>
                                         <td>{{ $invoice->invoice_pacotes_sum_peso }}</td>
                                         <td>{{ $invoice->invoice_pacotes_sum_valor }} U$</td>
+                                        <td>{{ $invoice->invoice_pacotes_sum_valor - $invoice->valor_pago }} U$</td>
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->

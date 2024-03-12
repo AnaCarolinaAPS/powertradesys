@@ -89,10 +89,13 @@
                                 <h4 class="card-title mb-4">Pacotes</h4>
                             </div>
                             <div class="col">
-                                Peso Cobrado: <b>{{$resumo->soma_peso;}}</b>
+                                Peso Cobrado: <b>{{$invoice->invoice_pacotes->sum('peso');}}</b>
                             </div>
                             <div class="col">
-                                Valor Cobrado: <b>{{$resumo->soma_valor;}}</b>
+                                Valor Cobrado: <b>{{number_format($invoice->valor_total(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                <b>Valor PAGO: {{number_format($invoice->valor_pago, 2, ',', '.');}} U$</b>
                             </div>
                         </div>
 
@@ -135,12 +138,6 @@
                             <div class="col">
                                 <h4 class="card-title mb-4">Pagamentos</h4>
                             </div>
-                            <!-- <div class="col">
-                                Peso Cobrado: <b>{{$resumo->soma_peso;}}</b>
-                            </div>
-                            <div class="col">
-                                Valor Cobrado: <b>{{$resumo->soma_valor;}}</b>
-                            </div> -->
                         </div>
 
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
@@ -329,7 +326,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Valor Pagamento</label>
-                                        <input class="form-control" type="number" value="{{$resumo->soma_valor;}}" step="0.10" id="valor" name="valor" required>
+                                        <input class="form-control" type="number" value="{{number_format($invoice->valor_total()-$invoice->valor_pago, 2, ',', '.');}}" step="0.10" id="valor" name="valor" required>
                                     </div>
                                 </div>
                             <!-- </div>
@@ -347,7 +344,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Entrada em Caixa</label>
-                                        <input class="form-control" type="number" value="{{$resumo->soma_valor;}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                        <input class="form-control" type="number" value="{{number_format($invoice->valor_total()-$invoice->valor_pago, 2, ',', '.');}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
                                     </div>
                                 </div>
                             </div> 

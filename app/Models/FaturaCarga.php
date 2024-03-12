@@ -30,4 +30,10 @@ class FaturaCarga extends Model
     {
         return $this->belongsTo(Servico::class, 'servico_id', 'id');
     }
+
+    public function valor_total(){
+        return $this->invoices->sum(function ($invoice) {
+            return $invoice->valor_total();
+        });
+    }
 }

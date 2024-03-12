@@ -58,12 +58,24 @@ class PagamentoController extends Controller
                 // Adicione outros campos conforme necessário
             ]);
 
-            // Exibir toastr de sucesso
-            return redirect()->back()->with('toastr', [
-                'type'    => 'success',
-                'message' => 'Pagamento criado com sucesso!',
-                'title'   => 'Sucesso',
-            ]);
+            $invoice->pagamentos()->attach($pagamento->id);
+
+            $atualiza = $invoice->atualizaPago($request->input('valor'));
+
+            if ($atualiza == true) {
+                // Exibir toastr de sucesso
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'success',
+                    'message' => 'Pagamento criado com sucesso!',
+                    'title'   => 'Sucesso',
+                ]);
+            } else {
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'error',
+                    'message' => 'Ocorreu um erro ao criar ao Atualizar a Invoice: <br>'. $e->getMessage(),
+                    'title'   => 'Erro',o
+                ]);
+            }            
         } catch (\Exception $e) {
             // Exibir toastr de Erro
             return redirect()->back()->with('toastr', [

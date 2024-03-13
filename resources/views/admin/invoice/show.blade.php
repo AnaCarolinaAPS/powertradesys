@@ -74,7 +74,6 @@
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
                             </div>
                         </form>
-                       <!-- @dump($pacotesAssociadosFatura) -->
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -113,7 +112,7 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @foreach ($all_invoices_pacotes as $invoicep)
+                                    @foreach ($invoice->invoice_pacotes as $invoicep)
                                     <tr class="abrirModal" data-pacote-id="{{ $invoicep->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td>{{ $invoicep->pacote->rastreio}}</td>
                                         <td>{{ $invoicep->pacote->peso}}</td>
@@ -153,7 +152,7 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @foreach ($all_pagamentos as $pagamento)
+                                    @foreach ($invoice->pagamentos as $pagamento)
                                     <tr class="abrirModal" data-pacote-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }}</td>
                                         <td>{{ number_format($pagamento->valor, 2, ',', '.') }}</td>
@@ -315,7 +314,7 @@
                         @csrf
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
-                            <input type="hidden" name="invoice_id" value="{{  $invoice->id; }}" id="invoice_id">
+                            <input type="hidden" name="cliente_id" value="{{  $invoice->cliente->id; }}" id="cliente_id">
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
@@ -347,7 +346,7 @@
                                         <input class="form-control" type="number" value="{{number_format($invoice->valor_total()-$invoice->valor_pago, 2, ',', '.');}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>

@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('pagamentos', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('invoice_id');
-            $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
             $table->decimal('valor', 10, 2);
             $table->date('data_pagamento');
             $table->string('observacoes')->nullable();

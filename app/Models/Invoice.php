@@ -33,7 +33,7 @@ class Invoice extends Model
 
     public function pagamentos()
     {
-        return $this->hasMany(Pagamento::class, 'invoice_pagamento');
+        return $this->belongsToMany(Pagamento::class, 'invoice_pagamentos');
     }
 
     // Dentro do modelo Invoice

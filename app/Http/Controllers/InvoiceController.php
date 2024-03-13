@@ -19,37 +19,6 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        // $all_items = Carga::all();
-        // $all_items = Carga::select('cargas.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
-        //             ->leftJoin('pacotes', 'cargas.id', '=', 'pacotes.carga_id')
-        //             ->whereNotNull('cargas.data_recebida') // Filtra onde data_recebida não é NULL
-        //             ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.observacoes', 'cargas.created_at', 'cargas.updated_at', 'cargas.despachante_id', 'cargas.embarcador_id')
-        //             ->get();
-
-        // $all_items = Carga::select(
-        //                 'cargas.*',
-        //                 DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'),
-        //                 DB::raw('COUNT(DISTINCT invoices.id) as qtd_invoices'),
-        //                 DB::raw('COUNT(DISTINCT clientes.id) as qtd_clientes')
-        //             )
-        //             ->leftJoin('pacotes', 'cargas.id', '=', 'pacotes.carga_id')
-        //             ->leftJoin('invoices', 'cargas.id', '=', 'invoices.carga_id')
-        //             ->leftJoin('clientes', 'pacotes.cliente_id', '=', 'clientes.id')
-        //             ->whereNotNull('cargas.data_recebida')
-        //             ->groupBy(
-        //                 'cargas.id',
-        //                 'cargas.data_enviada',
-        //                 'cargas.data_recebida',
-        //                 'cargas.observacoes',
-        //                 'cargas.created_at',
-        //                 'cargas.updated_at',
-        //                 'cargas.despachante_id',
-        //                 'cargas.embarcador_id'
-        //             )
-        //             ->get();
-        // $all_despachantes = Despachante::all();
-        // $all_embarcadores = Embarcador::all();
-
         $all_items = Carga::all();
         return view('admin.invoice.index', compact('all_items'));
     }
@@ -62,7 +31,6 @@ class InvoiceController extends Controller
         try {
             // Buscar o shipper pelo ID
             $invoice = Invoice::findOrFail($id);
-            $all_invoices_pacotes = InvoicePacote::where('invoice_id', $id)->get();
 
             $pacotesAssociadosFatura = $invoice->invoice_pacotes()->pluck('pacote_id')->toArray();
 
@@ -72,11 +40,11 @@ class InvoiceController extends Controller
                             ->where('cliente_id', $invoice->cliente_id)
                             ->get();
 
-            $all_pagamentos = Pagamento::where('invoice_id', $id)->get();
-                
+            // $all_pagamentos = Pagamento::where('invoice_id', $id)->get();
+
             $all_caixas = Caixa::all();
             // Retornar a view com os detalhes do shipper
-            return view('admin.invoice.show', compact('invoice', 'all_invoices_pacotes', 'pacotesAssociadosFatura', 'all_pacotes', 'all_caixas', 'all_pagamentos'));
+            return view('admin.invoice.show', compact('invoice', 'all_pacotes', 'all_caixas'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [

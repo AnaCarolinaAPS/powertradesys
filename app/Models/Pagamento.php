@@ -29,4 +29,16 @@ class Pagamento extends Model
     {
         return $this->belongsTo(FluxoCaixa::class);
     }
+
+    //Para resgatar os valores dos pagamentos de DETERMINADA INVOICE
+    public function getValorPagoForInvoice($invoiceId)
+    {
+        // Procurar a invoice pelo ID e retornar o valor pago associado a ela
+        $invoice = $this->invoices()->find($invoiceId);
+        if ($invoice) {
+            return $invoice->pivot->valor_recebido;
+        } else {
+            return null; // Ou algum outro valor padrão, se preferir
+        }
+    }
 }

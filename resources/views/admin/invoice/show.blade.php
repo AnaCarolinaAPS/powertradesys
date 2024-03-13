@@ -142,7 +142,7 @@
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
                             <i class="fas fa-plus"></i> Add Pagamento
                         </button>
-                        <div class="table-responsive">
+                        <div class="table-responsive table accordion">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
@@ -153,11 +153,16 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($invoice->pagamentos as $pagamento)
-                                    <tr class="abrirModal" data-pacote-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
-                                        <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }}</td>
-                                        <td>{{ number_format($pagamento->valor, 2, ',', '.') }}</td>
+                                    <tr data-bs-toggle="collapse" data-bs-target="#r1">
+                                        <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." (".number_format($pagamento->getValorPagoForInvoice($invoice->id), 2, ',', '.').")" }}</td>
                                         <td>
                                             <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamento->id]) }}" class="link-info">Ver Caixa</a>
+                                        </td>
+                                    </tr>
+                                    <tr class="collapse accordion-collapse" id="r1" data-bs-parent=".table">
+                                        <td colspan="3">
+                                            <div>Hidden by default</div>
                                         </td>
                                     </tr>
                                     @endforeach

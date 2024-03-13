@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('invoice_id');
             $table->unsignedBigInteger('pagamento_id');
+            $table->decimal('valor_recebido', 10, 2); // Adicionando o campo para controlar o valor pago
             $table->timestamps();
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
             $table->foreign('pagamento_id')->references('id')->on('pagamentos')->onDelete('cascade');

@@ -87,7 +87,7 @@ class PagamentoController extends Controller
                     // Atualiza a coluna da invoice com o pagamento
                     $aberto->atualizaPago($saldoAberto);
                     // Registrar o pagamento para esta invoice
-                    $aberto->pagamentos()->attach($pagamento->id);
+                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
 
                 //Caso ainda existam invoices não pagas, e um valor em valorRestante, é possível fazer o pagamento PARCIAL
                 } else {
@@ -95,7 +95,7 @@ class PagamentoController extends Controller
                         // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
                         $aberto->atualizaPago($valorRestante);
                         // Registrar o pagamento para esta invoice
-                        $aberto->pagamentos()->attach($pagamento->id);
+                        $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
                         $valorRestante = 0;
                     } else {
                         //Não existem mais valores para serem registrado (quebra o foreach)

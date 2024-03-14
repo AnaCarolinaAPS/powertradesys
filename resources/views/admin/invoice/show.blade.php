@@ -94,7 +94,7 @@
                                 Valor Cobrado: <b>{{number_format($invoice->valor_total(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
-                                <b>Valor PAGO: {{number_format($invoice->valor_pago, 2, ',', '.');}} U$</b>
+                                <b>Valor PAGO: {{number_format($invoice->valor_pago(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
 
@@ -149,20 +149,41 @@
                                         <th>Data</th>
                                         <th>Valor Recebido</th>
                                         <th></th>
+                                        <th></th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
+                                    @php
+                                        $i = 0;
+                                    @endphp
                                     @foreach ($invoice->pagamentos as $pagamento)
-                                    <tr data-bs-toggle="collapse" data-bs-target="#r1">
+                                    <tr data-bs-toggle="collapse" data-bs-target="#r{{$i}}">
                                         <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
-                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." (".number_format($pagamento->getValorPagoForInvoice($invoice->id), 2, ',', '.').")" }}</td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForInvoice($invoice->id), 2, ',', '.')." U$)" }}</td>
                                         <td>
-                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamento->id]) }}" class="link-info">Ver Caixa</a>
+                                            <!-- <a href="{{ route('pagamento.destroy', ['pagamento' =>  $pagamento->id]) }}" class="link-danger">Excluir</a> -->
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamento->id]) }}" class="link-info">Ir p/ Caixa</a>
                                         </td>
                                     </tr>
-                                    <tr class="collapse accordion-collapse" id="r1" data-bs-parent=".table">
-                                        <td colspan="3">
-                                            <div>Hidden by default</div>
+                                    <tr class="collapse accordion-collapse" id="r{{$i++}}" data-bs-parent=".table">
+                                        <td colspan="2">
+                                            @foreach ($pagamento->invoices as $inv)
+                                                <div class="row">
+                                                    <div class="col">
+                                                        Invoice de {{\Carbon\Carbon::parse($inv->data)->format('d/m/Y')}} - Pago {{$inv->pivot->valor_recebido}} U$
+                                                        @if ($inv->id == $invoice->id)
+                                                            <b>[ATUAL]</b>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            <div class="row">
+                                                <div class="col">
+                                                    <b>Total Pago: {{number_format($pagamento->valor, 2, ',', '.');}} U$</b>
+                                                </div>
+                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -330,7 +351,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Valor Pagamento</label>
-                                        <input class="form-control" type="number" value="{{number_format($invoice->valor_total()-$invoice->valor_pago, 2, ',', '.');}}" step="0.10" id="valor" name="valor" required>
+                                        <input class="form-control" type="number" value="{{number_format($invoice->valor_total()-$invoice->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor" name="valor" required>
                                     </div>
                                 </div>
                             <!-- </div>
@@ -348,7 +369,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Entrada em Caixa</label>
-                                        <input class="form-control" type="number" value="{{number_format($invoice->valor_total()-$invoice->valor_pago, 2, ',', '.');}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                        <input class="form-control" type="number" value="{{number_format($invoice->valor_total()-$invoice->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
                                     </div>
                                 </div>
                             </div>

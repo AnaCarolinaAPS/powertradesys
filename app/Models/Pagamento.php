@@ -22,7 +22,7 @@ class Pagamento extends Model
 
     public function invoices()
     {
-        return $this->belongsToMany(Invoice::class, 'invoice_pagamentos');
+        return $this->belongsToMany(Invoice::class, 'invoice_pagamentos')->withPivot('valor_recebido');
     }
 
     public function fluxo_caixa()

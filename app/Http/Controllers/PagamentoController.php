@@ -68,7 +68,7 @@ class PagamentoController extends Controller
 
             // Filtra TODAS as invoices que tem valores em aberto
             $invoicesEmAberto = $cliente->invoices()->get()->filter(function ($invoice) {
-                return $invoice->valor_pago < $invoice->valor_total();
+                return $invoice->valor_pago() < $invoice->valor_total();
             });
 
             $valorRestante = $request->input('valor');
@@ -78,14 +78,13 @@ class PagamentoController extends Controller
 
             foreach ($invoicesEmAberto as $aberto) {
                 //Calcula o valor em ABERTO da Invoice
-                $saldoAberto = $aberto->valor_total() - $aberto->valor_pago;
+                $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
 
                 // Verificar se o valor restante pode pagar totalmente a invoice atual
                 if ($valorRestante >= $saldoAberto) {
                     // O valor pago é suficiente para pagar totalmente esta invoice
                     $valorRestante -= $saldoAberto;
                     // Atualiza a coluna da invoice com o pagamento
-                    $aberto->atualizaPago($saldoAberto);
                     // Registrar o pagamento para esta invoice
                     $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
 
@@ -93,7 +92,6 @@ class PagamentoController extends Controller
                 } else {
                     if ($valorRestante > 0) {
                         // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
-                        $aberto->atualizaPago($valorRestante);
                         // Registrar o pagamento para esta invoice
                         $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
                         $valorRestante = 0;
@@ -123,6 +121,33 @@ class PagamentoController extends Controller
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
                 'message' => 'Ocorreu um erro ao criar o Pagamento: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+        try {
+            $pagamento = Pagamento::find($id);
+
+            // Excluir o Freteiro do banco de dados
+            $pagamento->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pagamento excluído com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir o Pagamento: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

@@ -255,7 +255,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/admin/pagamento')->group(function () {
             // Route::get('/{fechamento}', [FechamentoCaixaController::class, 'show'])->name('registro_caixa.show');
             // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
-            // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
+            Route::delete('/{pagamento}', [PagamentoController::class, 'destroy'])->name('pagamento.destroy');
             // Route::get('/', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
             Route::post('/', [PagamentoController::class, 'store'])->name('pagamento.store');
         });

@@ -11,7 +11,7 @@ class Invoice extends Model
 
     protected $fillable = [
         'data',
-        'valor_pago',
+        // 'valor_pago',
         'cliente_id',
         'fatura_carga_id',
     ];
@@ -33,28 +33,22 @@ class Invoice extends Model
 
     public function pagamentos()
     {
-        return $this->belongsToMany(Pagamento::class, 'invoice_pagamentos');
-    }
-
-    // Dentro do modelo Invoice
-    public function atualizaPago($valor){
-        try {
-            $saldo_atualizado = $this->valor_pago + $valor;
-
-            $this->update([
-                'valor_pago' => $saldo_atualizado,
-                // Adicione outros campos conforme necessário
-            ]);
-
-            return true;
-        } catch (\Exception $e) {
-            return false;
-        }
+        return $this->belongsToMany(Pagamento::class, 'invoice_pagamentos')->withPivot('valor_recebido');;
     }
 
     //Para resgatar os valores dos pacotes (Total do Valor da Invoice)
     public function valor_total()
     {
         return $this->invoice_pacotes->sum('valor');
+    }
+
+    //Para resgatar todos os pagamentos associados a invoice
+    public function valor_pago()
+    {
+        $valor_pago = 0;
+        foreach ($this->pagamentos as $pgto) {
+            $valor_pago += $pgto->invoices->find($this->id)->pivot->valor_recebido;
+        }
+        return $valor_pago;
     }
 }

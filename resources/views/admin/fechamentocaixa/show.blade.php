@@ -443,11 +443,24 @@
 
 
                     if (data.tipo === 'transferencia' || data.tipo === 'cambio') {
-                        // console.log(data.tipo);
                         document.getElementById('div_categoria_detalhe').style.display = 'none';
                         document.getElementById('div_subcategoria_detalhe').style.display = 'none';
                         document.getElementById('btnAtualizar').style.display = 'none';
                         document.getElementById('ddescricao').readOnly = true;
+                    } else if (data.tipo === 'entrada') {
+                        if (data.categoria_id === null) {
+                            document.getElementById('div_categoria_detalhe').style.display = 'none';
+                            document.getElementById('div_subcategoria_detalhe').style.display = 'none';
+                            document.getElementById('ddata').readOnly = true;
+                            document.getElementById('ddescricao').readOnly = true;
+                            document.getElementById('btnAtualizar').style.display = 'none';
+                        } else {
+                            document.getElementById('div_categoria_detalhe').style.display = 'block';
+                            document.getElementById('div_subcategoria_detalhe').style.display = 'block';
+                            document.getElementById('ddata').readOnly = false;
+                            document.getElementById('ddescricao').readOnly = false;
+                            document.getElementById('btnAtualizar').style.display = 'block';
+                        }
                     } else {
                         document.getElementById('div_categoria_detalhe').style.display = 'block';
                         document.getElementById('div_subcategoria_detalhe').style.display = 'block';

@@ -304,6 +304,10 @@ class FluxoCaixaController extends Controller
                 $fluxo_destino->delete();
             }
 
+            if ($fluxocaixa->tipo == 'entrada' && $fluxocaixa->categoria_id == null) {
+                //veio de pagamento de cliente
+            }
+
             // Excluir o Freteiro do banco de dados
             $fluxocaixa->delete();
 

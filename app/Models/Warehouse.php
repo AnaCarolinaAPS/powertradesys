@@ -34,6 +34,6 @@ class Warehouse extends Model
 
     public function embarcador()
     {
-        return $this->belongsTo(Embarcador::class);
+        return $this->belongsTo(Fornecedor::class, 'embarcador_id');
     }
 }

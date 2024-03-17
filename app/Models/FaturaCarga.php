@@ -36,4 +36,12 @@ class FaturaCarga extends Model
             return $invoice->valor_total();
         });
     }
+
+    public function valor_pagado(){
+        $total = 0;
+
+        foreach ($this->invoices as $invoice) {
+            $total += $invoice->valor_total();
+        }
+    }
 }

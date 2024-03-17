@@ -36,13 +36,13 @@
                                 <div class="col-md-9">
                                     <div class="form-group">
                                         <label for="nome">Nome do Despachante</label>
-                                        <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Despachante" value="{{ $despachante->nome; }}" maxlength="255" required>
+                                        <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome do Despachante" value="{{ $despachante->nome; }}" maxlength="255" required autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="contato">Contato do Despachante</label>
-                                        <input type="text" class="form-control" id="contato" name="contato" placeholder="Contato do Despachante" value="{{ $despachante->contato; }}" maxlength="255">
+                                        <input type="text" class="form-control" id="contato" name="contato" placeholder="Contato do Despachante" value="{{ $despachante->contato; }}" maxlength="255" autocomplete="off">
                                     </div>
                                 </div>
                             </div>

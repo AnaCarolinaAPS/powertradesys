@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
-use App\Models\Embarcador;
+use App\Models\Fornecedor;
 use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\Shipper;
@@ -22,7 +22,7 @@ class WarehouseController extends Controller
                     ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.observacoes', 'warehouses.shipper_id', 'warehouses.embarcador_id', 'warehouses.created_at', 'warehouses.updated_at')
                     ->get();
         $all_shippers = Shipper::all();
-        $all_embarcadors = Embarcador::all();
+        $all_embarcadors = Fornecedor::where('tipo', 'embarcador')->get();
         return view('admin.warehouse.index', compact('all_items', 'all_shippers', 'all_embarcadors'));
     }
 
@@ -45,7 +45,7 @@ class WarehouseController extends Controller
                 'wr' => 'required|string|max:255|unique:warehouses',
                 'data' => 'required|date|before_or_equal:today',
                 'shipper_id' => 'required|exists:shippers,id',
-                'embarcador_id' => 'required|exists:embarcadors,id',
+                'embarcador_id' => 'required|exists:fornecedors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -84,7 +84,7 @@ class WarehouseController extends Controller
             $warehouse = Warehouse::findOrFail($id);
             $all_shippers = Shipper::all();
             $all_clientes = Cliente::all();
-            $all_embarcadors = Embarcador::all();
+            $all_embarcadors = Fornecedor::where('tipo', 'embarcador')->get();
 
             $totais = DB::table('pacotes')
                     ->select('warehouse_id', DB::raw('COALESCE(SUM(qtd), 0) as total_pacotes, COALESCE(SUM(peso_aprox), 0) as total_aproximado, COALESCE(SUM(peso), 0) as total_real'))
@@ -113,14 +113,6 @@ class WarehouseController extends Controller
                 'title'   => 'Erro',
             ]);
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Warehouse $shipper)
-    {
-        //
     }
 
     /**

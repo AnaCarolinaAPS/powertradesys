@@ -30,12 +30,12 @@ class Carga extends Model
 
     public function despachante()
     {
-        return $this->belongsTo(Despachante::class);
+        return $this->belongsTo(Fornecedor::class, 'despachante_id');
     }
 
     public function embarcador()
     {
-        return $this->belongsTo(Embarcador::class);
+        return $this->belongsTo(Fornecedor::class, 'embarcador_id');
     }
 
     public function invoices()

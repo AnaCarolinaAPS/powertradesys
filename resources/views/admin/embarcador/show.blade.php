@@ -70,7 +70,6 @@
                             <i class="fas fa-plus"></i> Novo
                         </button>
                         <div class="table-responsive">
-                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
@@ -82,7 +81,7 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                {{--  @foreach ($embarcador->servicos as $servico)
+                                 @foreach ($embarcador->servicos as $servico)
                                     <tr class="abrirModal" data-item-id="{{ $servico->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($servico->data_inicio)->format('d/m/Y') }}</h6></td>
                                         <td>
@@ -96,7 +95,7 @@
                                         <td>{{ $servico->descricao }}</td>
                                         <td>Valor</td>
                                     </tr>
-                                    @endforeach --}}
+                                    @endforeach
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
@@ -131,7 +130,7 @@
             </div>
         </div>
 
-
+        {{-- Novo Item --}}
         <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNovoItem" aria-hidden="true" style="display: none;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -139,11 +138,10 @@
                         <h5 class="modal-title" id="myLargeModalLabel">Novo Servico</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <!-- <form class="form-horizontal mt-3" method="POST" action="{{ route('servicos_despachantes.store') }}" id="formNovoItem"> -->
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('servicos_fornecedors.store') }}" id="formNovoItem">
                         @csrf
                         <div class="modal-body">
-                            <!-- Campo hidden para armazenar o id da Warehouse -->
-                            <input type="hidden" name="despachante_id" value="{{ $embarcador->id }}">
+                            <input type="hidden" name="fornecedor_id" value="{{ $embarcador->id }}">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -158,7 +156,7 @@
                                     </div>
                                 </div>
                             </div>
-                        <!-- </div> -->
+                        </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
                             <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovoItem">Adicionar</button>
@@ -168,8 +166,8 @@
             </div><!-- /.modal-dialog -->
         </div>
 
-        <!-- Modal de Exclusao Pacotes -->
-        <!-- <div class="modal fade" id="confirmDelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
+        <!-- Exclusao de Itens -->
+        <div class="modal fade" id="confirmDelModal" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -189,9 +187,8 @@
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
 
-        {{-- 
         <!-- Detalhes dos Itens -->
         <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
             <div class="modal-dialog modal-lg">
@@ -206,7 +203,7 @@
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id da Warehouse -->
                             <input type="hidden" name="id" value="" id="dId">
-                            <!-- <input type="hidden" name="warehouse_id" value="{{ $despachante->id }}"> -->
+                            <!-- <input type="hidden" name="warehouse_id" value="{{ $embarcador->id }}"> -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -240,9 +237,7 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
-        --}}
     </div>
-
 </div>
 
 <script>
@@ -250,7 +245,7 @@
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {
             const itemId = event.currentTarget.dataset.itemId;
-            const url = "{{ route('servicos_despachantes.show', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('servicos_fornecedors.show', ':id') }}".replace(':id', itemId);
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -264,15 +259,12 @@
                     // $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacao');
-                    var novaAction = "{{ route('servicos_despachantes.update', ['servico' => ':id']) }}".replace(':id', data.id);
+                    var novaAction = "{{ route('servicos_fornecedors.update', ['servico' => ':id']) }}".replace(':id', data.id);
                     form.setAttribute('action', novaAction);
 
                     var form2 = document.getElementById('formDeleteModal');
-                    var novaAction2 = "{{ route('servicos_despachantes.destroy', ['servico' => ':id']) }}".replace(':id', data.id);
+                    var novaAction2 = "{{ route('servicos_fornecedors.destroy', ['servico' => ':id']) }}".replace(':id', data.id);
                     form2.setAttribute('action', novaAction2);
-                    // console.error('Erro:', data);
-                    // Preencha o conteúdo do modal com os dados do pacote recebido
-                    // Exemplo: document.getElementById('modalTitle').innerText = data.titulo;
                 })
                 .catch(error => console.error('Erro:', error));
         });

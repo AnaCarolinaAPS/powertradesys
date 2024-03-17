@@ -5,23 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Fornecedor;
 use Illuminate\Http\Request;
 
-class DespachanteController extends Controller
+class TransportadoraController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        // Lógica para mostrar uma lista de despachantes
-        $all_items = Fornecedor::where('tipo', 'despachante')->get();
-        return view('admin.despachante.index', compact('all_items'));
+        // Lógica para mostrar uma lista de transportadoras
+        $all_items = Fornecedor::where('tipo', 'transportadora')->get();
+        return view('admin.transportadora.index', compact('all_items'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
+        // Lógica para armazenar uma nova transportadora
         try {
             // Validação dos dados do formulário
             $request->validate([
@@ -30,59 +25,54 @@ class DespachanteController extends Controller
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            // Criação de um novo Despachante no banco de dados
-            $despachante = Fornecedor::create([
+            // Criação de uma nova Transportadora no banco de dados
+            $transportadora = Fornecedor::create([
                 'nome' => $request->input('nome'),
                 'contato' => $request->input('contato'),
-                'tipo' => 'despachante',
+                'tipo' => 'transportadora',
                 // Adicione outros campos conforme necessário
             ]);
 
             // Exibir toastr de sucesso
-            return redirect()->route('despachantes.show', ['despachante' => $despachante->id])->with('toastr', [
+            return redirect()->route('transportadoras.show', ['transportadora' => $transportadora->id])->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Despachante criado com sucesso!',
+                'message' => 'Transportadora criada com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de Erro
-            return redirect()->route('despachantes.index')->with('toastr', [
+            return redirect()->route('transportadoras.index')->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao criar o Despachante: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao criar a Transportadora: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
+        // Lógica para mostrar uma transportadora específico
         try {
-            // Buscar o despachante pelo ID
-            $despachante = Fornecedor::findOrFail($id);
+            $transportadora = Fornecedor::findOrFail($id);
 
-            // Retornar a view com os detalhes do despachante
-            return view('admin.despachante.show', compact('despachante'));
+            // Retornar a view com os detalhes do shipper
+            return view('admin.transportadora.show', compact('transportadora'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
-            return redirect()->route('despachantes.index')->with('toastr', [
+            return redirect()->route('transportadoras.index')->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao exibir os detalhes do Despachante: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao exibir os detalhes da Transportadora: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Fornecedor $despachante)
+    public function update(Request $request, Fornecedor $transportadora)
     {
+        // Lógica para atualizar uma transportadora específico
         try {
 
-            if ($despachante->nome == $request->input('nome')) {
+            if ($transportadora->nome == $request->input('nome')) {
                 // Validação dos dados do formulário
                 $request->validate([
                     'contato' => 'string|max:255',
@@ -90,7 +80,7 @@ class DespachanteController extends Controller
                 ]);
 
                 // Atualizar os dados do Shipper
-                $despachante->update([
+                $transportadora->update([
                     'contato' => $request->input('contato'),
                     // Adicione outros campos conforme necessário
                 ]);
@@ -103,7 +93,7 @@ class DespachanteController extends Controller
                 ]);
 
                 // Atualizar os dados do Shipper
-                $despachante->update([
+                $transportadora->update([
                     'nome' => $request->input('nome'),
                     'contato' => $request->input('contato'),
                     // Adicione outros campos conforme necessário
@@ -111,52 +101,41 @@ class DespachanteController extends Controller
             }
 
             // Exibir toastr de sucesso
-            return redirect()->route('despachantes.show', ['despachante' => $despachante->id])->with('toastr', [
+            return redirect()->route('transportadoras.show', ['transportadora' => $transportadora->id])->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Despachante atualizado com sucesso!',
+                'message' => 'Transportadora atualizado com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de Erro
-            return redirect()->route('despachantes.show', ['despachante' => $despachante->id])->with('toastr', [
+            return redirect()->route('transportadoras.show', ['transportadora' => $transportadora->id])->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao atualizar o Despachante: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao atualizar a Transportadora: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Fornecedor $despachante)
+    public function destroy(Fornecedor $transportadora)
     {
-        // if ($fornecedor->pacotes()->count() > 0) {
-        //     return redirect()->back()->with('toastr', [
-        //         'type'    => 'error',
-        //         'message' => 'Não é possível excluir a Warehouse, pois ele possui pacotes associados.',
-        //         'title'   => 'Erro',
-        //     ]);
-        // }
-
+        // Lógica para excluir um embarcador específico
         try {
-            // Excluir o Despachante do banco de dados
-            $despachante->delete();
+            // Excluir o Shipper do banco de dados
+            $transportadora->delete();
 
             // Redirecionar após a exclusão bem-sucedida
-            return redirect()->route('despachantes.index')->with('toastr', [
+            return redirect()->route('transportadoras.index')->with('toastr', [
                 'type'    => 'success',
-                'message' => 'Despachante excluído com sucesso!',
+                'message' => 'Transportadora excluído com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de erro se ocorrer uma exceção
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao atualizar o Despachante: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao atualizar a Transportadora: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }
     }
-
 }

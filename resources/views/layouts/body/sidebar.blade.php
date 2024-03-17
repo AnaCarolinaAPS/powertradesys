@@ -46,7 +46,7 @@
                             <li><a href="{{ route('clientes.index'); }}">Clientes</a></li>
                             <li><a href="{{ route('despachantes.index'); }}">Despachantes</a></li>
                             <li><a href="{{ route('embarcadores.index'); }}">Embarcadores</a></li>
-                            <li><a href="{{ route('despachantes.index'); }}">Transportadoras</a></li>
+                            <li><a href="{{ route('transportadoras.index'); }}">Transportadoras</a></li>
                         </ul>
                     </li>
                     <li>

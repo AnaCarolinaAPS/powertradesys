@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ServicosDespachante;
+use App\Models\ServicosFornecedor;
 use Illuminate\Http\Request;
 
-class ServicosDespachanteController extends Controller
+class ServicosFornecedorController extends Controller
 {
     public function show($id)
     {
-        $servico = ServicosDespachante::find($id);
+        $servico = ServicosFornecedor::find($id);
         return response()->json($servico);
     }
 
@@ -24,16 +24,16 @@ class ServicosDespachanteController extends Controller
                 'descricao' => 'required|string|max:255',
                 'data_inicio' => 'required|date',
                 'data_fim' => 'nullable|date',
-                'despachante_id' => 'required|exists:despachantes,id',
+                'fornecedor_id' => 'required|exists:fornecedors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Criação de um novo Shipper no banco de dados
-            ServicosDespachante::create([
+            ServicosFornecedor::create([
                 'descricao' => $request->input('descricao'),
                 'data_inicio' => $request->input('data_inicio'),
                 'data_fim' => $request->input('data_fim'),
-                'despachante_id' => $request->input('despachante_id'),
+                'fornecedor_id' => $request->input('fornecedor_id'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -56,7 +56,7 @@ class ServicosDespachanteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ServicosDespachante $servico)
+    public function update(Request $request, ServicosFornecedor $servico)
     {
         try {
             // Validação dos dados do formulário
@@ -67,7 +67,7 @@ class ServicosDespachanteController extends Controller
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            $servico = ServicosDespachante::find($request->input('id'));
+            $servico = ServicosFornecedor::find($request->input('id'));
             // Atualizar os dados
 
             $dataFim = $request->input('data_fim');
@@ -108,7 +108,7 @@ class ServicosDespachanteController extends Controller
     public function destroy($id)
     {
         try {
-            $servico = ServicosDespachante::find($id);
+            $servico = ServicosFornecedor::find($id);
             // Excluir o Shipper do banco de dados
             $servico->delete();
 

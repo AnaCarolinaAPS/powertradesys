@@ -12,8 +12,9 @@ use App\Http\Controllers\ShipperController;
 use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\CargaController;
 use App\Http\Controllers\DespachanteController;
-use App\Http\Controllers\ServicosDespachanteController;
 use App\Http\Controllers\EmbarcadorController;
+use App\Http\Controllers\TransportadoraController;
+use App\Http\Controllers\ServicosFornecedorController;
 use App\Http\Controllers\EntregaController;
 use App\Http\Controllers\EntregaPacoteController;
 use App\Http\Controllers\FaturaCargaController;
@@ -124,13 +125,31 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{despachante}', [DespachanteController::class, 'destroy'])->name('despachantes.destroy');
         });
 
-        // Serviços Despachantes CRUD
-        Route::prefix('/admin/servicosdespachantes')->group(function () {
-            // Route::get('/', [ServicosDespachanteController::class, 'index'])->name('servicos_despachantes.index');
-            Route::post('/', [ServicosDespachanteController::class, 'store'])->name('servicos_despachantes.store');
-            Route::get('/{servico}', [ServicosDespachanteController::class, 'show'])->name('servicos_despachantes.show');
-            Route::put('/{servico}', [ServicosDespachanteController::class, 'update'])->name('servicos_despachantes.update');
-            Route::delete('/{servico}', [ServicosDespachanteController::class, 'destroy'])->name('servicos_despachantes.destroy');
+        // Embarcador CRUD
+        Route::prefix('/admin/embarcadores')->group(function () {
+            Route::get('/', [EmbarcadorController::class, 'index'])->name('embarcadores.index');
+            Route::post('/', [EmbarcadorController::class, 'store'])->name('embarcadores.store');
+            Route::get('/{embarcador}', [EmbarcadorController::class, 'show'])->name('embarcadores.show');
+            Route::put('/{embarcador}', [EmbarcadorController::class, 'update'])->name('embarcadores.update');
+            Route::delete('/{embarcador}', [EmbarcadorController::class, 'destroy'])->name('embarcadores.destroy');
+        });
+
+        // Transportadora CRUD
+        Route::prefix('/admin/transportadoras')->group(function () {
+            Route::get('/', [TransportadoraController::class, 'index'])->name('transportadoras.index');
+            Route::post('/', [TransportadoraController::class, 'store'])->name('transportadoras.store');
+            Route::get('/{transportadora}', [TransportadoraController::class, 'show'])->name('transportadoras.show');
+            Route::put('/{transportadora}', [TransportadoraController::class, 'update'])->name('transportadoras.update');
+            Route::delete('/{transportadora}', [TransportadoraController::class, 'destroy'])->name('transportadoras.destroy');
+        });
+
+        // Serviços Fornecedores CRUD
+        Route::prefix('/admin/servicosfornecedors')->group(function () {
+            // Route::get('/', [ServicosFornecedorController::class, 'index'])->name('servicos_fornecedors.index');
+            Route::post('/', [ServicosFornecedorController::class, 'store'])->name('servicos_fornecedors.store');
+            Route::get('/{servico}', [ServicosFornecedorController::class, 'show'])->name('servicos_fornecedors.show');
+            Route::put('/{servico}', [ServicosFornecedorController::class, 'update'])->name('servicos_fornecedors.update');
+            Route::delete('/{servico}', [ServicosFornecedorController::class, 'destroy'])->name('servicos_fornecedors.destroy');
         });
 
         // Serviços Cargas CRUD
@@ -140,15 +159,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/{carga}', [CargaController::class, 'show'])->name('cargas.show');
             Route::put('/{carga}', [CargaController::class, 'update'])->name('cargas.update');
             Route::delete('/{carga}', [CargaController::class, 'destroy'])->name('cargas.destroy');
-        });
-
-        // Despachantes CRUD
-        Route::prefix('/admin/embarcadores')->group(function () {
-            Route::get('/', [EmbarcadorController::class, 'index'])->name('embarcadores.index');
-            Route::post('/', [EmbarcadorController::class, 'store'])->name('embarcadores.store');
-            Route::get('/{embarcador}', [EmbarcadorController::class, 'show'])->name('embarcadores.show');
-            Route::put('/{embarcador}', [EmbarcadorController::class, 'update'])->name('embarcadores.update');
-            Route::delete('/{embarcador}', [EmbarcadorController::class, 'destroy'])->name('embarcadores.destroy');
         });
 
         // INVOICES CRUD

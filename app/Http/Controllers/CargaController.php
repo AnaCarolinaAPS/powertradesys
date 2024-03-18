@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Carga;
 use App\Models\Pacote;
 use App\Models\Warehouse;
-use App\Models\Despachante;
-use App\Models\Embarcador;
+use App\Models\Fornecedor;
 use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
 
@@ -23,9 +22,10 @@ class CargaController extends Controller
                     ->leftJoin('pacotes', 'cargas.id', '=', 'pacotes.carga_id')
                     ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.observacoes', 'cargas.created_at', 'cargas.updated_at', 'cargas.despachante_id', 'cargas.embarcador_id', 'cargas.fatura_carga_id')
                     ->get();
-        $all_despachantes = Despachante::all();
-        $all_embarcadores = Embarcador::all();
-        return view('admin.carga.index', compact('all_items', 'all_despachantes', 'all_embarcadores'));
+        $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
+        $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
+        $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
+        return view('admin.carga.index', compact('all_items', 'all_despachantes', 'all_embarcadores', 'all_transportadoras'));
     }
 
     /**
@@ -37,8 +37,9 @@ class CargaController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'data_enviada' => 'required|date',
-                'embarcador_id' => 'required|exists:embarcadors,id',
-                'despachante_id' => 'exists:despachantes,id',
+                'embarcador_id' => 'required|exists:fornecedors,id',
+                'despachante_id' => 'exists:fornecedors,id',
+                // 'transportadora_id' => 'exists:fornecedors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -74,8 +75,9 @@ class CargaController extends Controller
         try {
             // Buscar o item pelo ID
             $carga = Carga::findOrFail($id);
-            $all_despachantes = Despachante::all();
-            $all_embarcadores = Embarcador::all();
+            $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
+            $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
+            $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
             $embarcador_id = $carga->embarcador_id;
             $all_pacotes = Pacote::whereNull('carga_id')->whereHas('warehouse', function ($query) use ($embarcador_id) {
                 $query->where('embarcador_id', $embarcador_id);
@@ -104,7 +106,7 @@ class CargaController extends Controller
                             ->get();
 
             // Retornar a view com os detalhes do item
-            return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'all_clientes','resumo', 'totais'));
+            return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_clientes','resumo', 'totais'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('cargas.index')->with('toastr', [
@@ -125,7 +127,7 @@ class CargaController extends Controller
             $request->validate([
                 'data_enviada' => 'required|date',
                 'data_recebida' => 'nullable|date',
-                'despachante_id' => 'exists:despachantes,id',
+                'despachante_id' => 'exists:fornecedors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 

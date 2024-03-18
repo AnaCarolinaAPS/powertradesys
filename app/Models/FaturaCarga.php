@@ -36,7 +36,6 @@ class FaturaCarga extends Model
             return $invoice->valor_total();
         });
     }
-
     public function invoicesPagas()
     {
         return $this->invoices->flatMap(function ($invoice) {

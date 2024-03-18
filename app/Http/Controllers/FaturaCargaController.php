@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\FaturaCarga;
 use App\Models\Carga;
-use App\Models\Cliente;
 use App\Models\Invoice;
 use App\Models\Servico;
-use App\Models\Embarcador;
-use App\Models\Despachante;
+use App\Models\Fornecedor;
 use Illuminate\Support\Facades\DB;
 
 class FaturaCargaController extends Controller
@@ -100,8 +98,8 @@ class FaturaCargaController extends Controller
         try {
             // Buscar o shipper pelo ID
             $faturacarga = FaturaCarga::findOrFail($id);
-            $all_despachantes = Despachante::all();
-            $all_embarcadores = Embarcador::all();
+            $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
+            $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
 
             // Obtém a carga associada à fatura
             $carga = $faturacarga->carga;

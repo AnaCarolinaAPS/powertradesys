@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Embarcador;
+use App\Models\Fornecedor;
 use Illuminate\Http\Request;
 
 class EmbarcadorController extends Controller
@@ -10,7 +10,7 @@ class EmbarcadorController extends Controller
     public function index()
     {
         // Lógica para mostrar uma lista de embarcadores
-        $all_items = Embarcador::all();
+        $all_items = Fornecedor::where('tipo', 'embarcador')->get();
         return view('admin.embarcador.index', compact('all_items'));
     }
 
@@ -20,15 +20,16 @@ class EmbarcadorController extends Controller
         try {
             // Validação dos dados do formulário
             $request->validate([
-                'nome' => 'required|string|max:255|unique:embarcadors',
+                'nome' => 'required|string|max:255|unique:fornecedors',
                 'contato' => 'string|max:255',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            // Criação de um novo Shipper no banco de dados
-            $embarcador = Embarcador::create([
+            // Criação de um novo Embarcador no banco de dados
+            $embarcador = Fornecedor::create([
                 'nome' => $request->input('nome'),
                 'contato' => $request->input('contato'),
+                'tipo' => 'embarcador',
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -53,7 +54,7 @@ class EmbarcadorController extends Controller
         // Lógica para mostrar um embarcador específico
         try {
             // Buscar o shipper pelo ID
-            $embarcador = Embarcador::findOrFail($id);
+            $embarcador = Fornecedor::findOrFail($id);
 
             // Retornar a view com os detalhes do shipper
             return view('admin.embarcador.show', compact('embarcador'));
@@ -67,7 +68,7 @@ class EmbarcadorController extends Controller
         }
     }
 
-    public function update(Request $request, Embarcador $embarcador)
+    public function update(Request $request, Fornecedor $embarcador)
     {
         // Lógica para atualizar um embarcador específico
         try {
@@ -87,7 +88,7 @@ class EmbarcadorController extends Controller
             } else {
                 // Validação dos dados do formulário
                 $request->validate([
-                    'nome' => 'required|string|max:255|unique:embarcadors',
+                    'nome' => 'required|string|max:255|unique:fornecedors',
                     'contato' => 'string|max:255',
                     // Adicione outras regras de validação conforme necessário
                 ]);
@@ -116,7 +117,7 @@ class EmbarcadorController extends Controller
         }
     }
 
-    public function destroy(Embarcador $embarcador)
+    public function destroy(Fornecedor $embarcador)
     {
         // Lógica para excluir um embarcador específico
         try {
@@ -133,7 +134,7 @@ class EmbarcadorController extends Controller
             // Exibir toastr de erro se ocorrer uma exceção
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
-                'message' => 'Ocorreu um erro ao atualizar a Embarcador: <br>'. $e->getMessage(),
+                'message' => 'Ocorreu um erro ao atualizar o Embarcador: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

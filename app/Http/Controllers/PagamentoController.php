@@ -126,6 +126,32 @@ class PagamentoController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        $pagamento = Pagamento::find($id);
+
+        // Verifique se o pagamento foi encontrado
+        if (!$pagamento) {
+            return response()->json(['error' => 'Pagamento não encontrado'], 404);
+        }
+
+        $fluxo_caixa = FluxoCaixa::find($pagamento->fluxo_caixa_id);
+        // Coletar informações relevantes da tabela pivot
+        $informacoesPivot = [];
+        foreach ($pagamento->invoices as $invoice) {
+            $informacoesPivot[$invoice->id] = [
+                'valor_recebido' => $pagamento->invoices->find($invoice->id)->pivot->valor_recebido,
+                // Adicione mais informações da tabela pivot conforme necessário
+            ];
+        }
+
+        // Adicione as informações da tabela pivot ao JSON do pagamento
+        $pagamento->informacoes_pagamento = $informacoesPivot;
+        $pagamento->informacoes_fluxo = $fluxo_caixa;
+
+        return response()->json($pagamento);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

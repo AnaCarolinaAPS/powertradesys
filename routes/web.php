@@ -253,11 +253,11 @@ Route::middleware('auth')->group(function () {
 
         // Pagamento CRUD
         Route::prefix('/admin/pagamento')->group(function () {
-            // Route::get('/{fechamento}', [FechamentoCaixaController::class, 'show'])->name('registro_caixa.show');
-            // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
-            Route::delete('/{pagamento}', [PagamentoController::class, 'destroy'])->name('pagamento.destroy');
+            Route::get('/{pagamento}', [PagamentoController::class, 'show'])->name('pagamentos.show');
+            // Route::put('/{pagamento}', [PagamentoController::class, 'update'])->name('fluxo_caixa.update');
+            Route::delete('/{pagamento}', [PagamentoController::class, 'destroy'])->name('pagamentos.destroy');
             // Route::get('/', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
-            Route::post('/', [PagamentoController::class, 'store'])->name('pagamento.store');
+            Route::post('/', [PagamentoController::class, 'store'])->name('pagamentos.store');
         });
 
         Route::prefix('/admin/gerar-pdf')->group(function () {

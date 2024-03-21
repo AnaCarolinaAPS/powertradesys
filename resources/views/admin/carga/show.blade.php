@@ -81,19 +81,20 @@
                                                     <div class="form-group">
                                                         <label for="status">Tipo Serviço</label>
                                                         <select class="selectpicker form-control" data-live-search="true" id="" name="" disabled>
-                                                            <option value="0"> Em Destino </option>
-                                                            <option value="0"> Aduana </option>
-                                                            <option value="0"> Recebido </option>
-                                                            <option value="0"> Liberado </option>
+                                                            <option value="" {{ optional($carga->fatura_carga)->servico ? 'selected' : '' }}>Nenhum</option>
+                                                            @foreach ($all_servicos as $servico)
+                                                                <option value="{{ $servico->id }}" {{ optional($carga->fatura_carga)->servico_id == $servico->id ? 'selected' : '' }}> {{ $servico->descricao." (".$servico->preco." U$)" }} </option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="col">
                                                     <div class="form-group">
-                                                        <label for="embarcador_id">Transportadora</label>
-                                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
-                                                            @foreach ($all_embarcadores as $embarcador)
-                                                                <option value="{{ $embarcador->id }}" {{ optional($carga->embarcador->id == $embarcador->id) ? 'selected' : '' }}> {{ $embarcador->nome }} </option>
+                                                        <label for="transportadora_id">Transportadora</label>
+                                                        <select class="selectpicker form-control" data-live-search="true" id="transportadora_id" name="transportadora_id">
+                                                            <option value="" {{ is_null($carga->transportadora_id) ? 'selected' : '' }}>Nenhum</option>
+                                                            @foreach ($all_transportadoras as $transportadora)
+                                                                <option value="{{ $transportadora->id }}" {{ optional($carga->transportadora)->id == $transportadora->id ? 'selected' : '' }}> {{ $transportadora->nome }} </option>
                                                             @endforeach
                                                         </select>
                                                     </div>

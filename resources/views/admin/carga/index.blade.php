@@ -52,7 +52,8 @@
                                             @endif
                                         </td>
                                         <td>{{ $carga->embarcador->nome; }}</td>
-                                        <td>{{ $carga->quantidade_de_pacotes }}</td>
+                                        <td>{{ $carga->pacotes->sum('qtd') }}</td>
+                                        {{-- <td>{{ $carga->quantidade_de_pacotes }}</td> --}}
                                     </tr>
                                     @endforeach
                                      <!-- end -->

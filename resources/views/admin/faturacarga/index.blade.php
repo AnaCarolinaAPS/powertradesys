@@ -46,7 +46,7 @@
                                     <tr data-href="{{ route('faturacargas.show', ['faturacarga' => $fatura->id]) }}">
                                         <td>{{ \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td>{{ $fatura->numero; }}</td>
-                                        <td>{{ '$carga->peso_guia'; }}</td>
+                                        <td>{{ $fatura->carga->peso_guia ?? '0,0' }}</td>
                                         <td>{{ number_format($fatura->valor_total(), 2, ',', '.'); }}</td>
                                         <td>{{ number_format($fatura->valor_total() - $fatura->invoicesPagas(), 2, ',', '.'); }}</td>
                                     </tr>

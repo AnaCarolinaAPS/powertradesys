@@ -8,6 +8,7 @@ use App\Models\Pacote;
 use App\Models\Warehouse;
 use App\Models\Fornecedor;
 use App\Models\Cliente;
+use App\Models\Servico;
 use Illuminate\Support\Facades\DB;
 
 class CargaController extends Controller
@@ -17,11 +18,7 @@ class CargaController extends Controller
      */
     public function index()
     {
-        // $all_items = Carga::all();
-        $all_items = Carga::select('cargas.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
-                    ->leftJoin('pacotes', 'cargas.id', '=', 'pacotes.carga_id')
-                    ->groupBy('cargas.id', 'cargas.data_enviada', 'cargas.data_recebida', 'cargas.observacoes', 'cargas.created_at', 'cargas.updated_at', 'cargas.despachante_id', 'cargas.embarcador_id', 'cargas.fatura_carga_id')
-                    ->get();
+        $all_items = Carga::all();
         $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
         $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
         $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
@@ -78,6 +75,7 @@ class CargaController extends Controller
             $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
             $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
             $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
+            $all_servicos = Servico::all();
             $embarcador_id = $carga->embarcador_id;
             $all_pacotes = Pacote::whereNull('carga_id')->whereHas('warehouse', function ($query) use ($embarcador_id) {
                 $query->where('embarcador_id', $embarcador_id);
@@ -106,7 +104,7 @@ class CargaController extends Controller
                             ->get();
 
             // Retornar a view com os detalhes do item
-            return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_clientes','resumo', 'totais'));
+            return view('admin.carga.show', compact('carga', 'all_pacotes', 'all_warehouses', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_clientes', 'all_servicos', 'resumo', 'totais'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('cargas.index')->with('toastr', [
@@ -128,27 +126,18 @@ class CargaController extends Controller
                 'data_enviada' => 'required|date',
                 'data_recebida' => 'nullable|date',
                 'despachante_id' => 'exists:fornecedors,id',
+                'transportadora_id' => 'nullable|exists:fornecedors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            $dataRecebida = $request->input('data_recebida');
-            if ($dataRecebida !== null) {
-                 // Atualizar os dados do item
-                $carga->update([
-                    'data_enviada' => $request->input('data_enviada'),
-                    'data_recebida' => $request->input('data_recebida'),
-                    'despachante_id' => $request->input('despachante_id'),
-                    'observacoes' => $request->input('observacoes'),
-                    // Adicione outros campos conforme necessário
-                ]);
-            } else {
-                $carga->update([
-                    'data_enviada' => $request->input('data_enviada'),
-                    'despachante_id' => $request->input('despachante_id'),
-                    'observacoes' => $request->input('observacoes'),
-                    // Adicione outros campos conforme necessário
-                ]);
-            }
+            $carga->update([
+                'data_enviada' => $request->input('data_enviada'),
+                'data_recebida' => $request->input('data_recebida'),
+                'despachante_id' => $request->input('despachante_id'),
+                'transportadora_id' => $request->input('transportadora_id'),
+                'observacoes' => $request->input('observacoes'),
+                // Adicione outros campos conforme necessário
+            ]);
 
             // Exibir toastr de sucesso
             return redirect()->route('cargas.show', ['carga' => $carga->id])->with('toastr', [

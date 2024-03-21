@@ -37,6 +37,8 @@ class FaturaCargaController extends Controller
                 'numero' => 'required',
                 'carga_id' => 'required|exists:cargas,id',
                 'servico_id' => 'required|exists:servicos,id',
+                // 'peso_guia' => 'nullable|numeric',
+                // 'guia_aerea' => 'nullable|string',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -45,6 +47,8 @@ class FaturaCargaController extends Controller
                 'numero' => $request->input('numero'),
                 'carga_id' => $request->input('carga_id'),
                 'servico_id' => $request->input('servico_id'),
+                // 'peso_guia' => $request->input('peso_guia'),
+                // 'guia_aerea' => $request->input('guia_aerea'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -100,6 +104,8 @@ class FaturaCargaController extends Controller
             $faturacarga = FaturaCarga::findOrFail($id);
             $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
             $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
+            $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
+            $all_servicos = Servico::all();
 
             // Obtém a carga associada à fatura
             $carga = $faturacarga->carga;
@@ -134,7 +140,7 @@ class FaturaCargaController extends Controller
                         ->groupBy('invoices.fatura_carga_id')
                         ->first();
             // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'resumo'));
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'resumo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [
@@ -148,9 +154,36 @@ class FaturaCargaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, FaturaCarga $faturacarga)
     {
-        //
+        try {
+            // Validação dos dados do formulário
+            $request->validate([
+                'peso_guia' => 'nullable|numeric',
+                'guia_aerea' => 'nullable|string',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            $faturacarga->carga->update([
+                'peso_guia' => $request->input('peso_guia'),
+                'guia_aerea' => $request->input('guia_aerea'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Fatura da Carga atualizada com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar a Fatura da Carga: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 
     /**

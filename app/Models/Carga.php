@@ -20,7 +20,10 @@ class Carga extends Model
         'observacoes',
         'despachante_id',
         'embarcador_id',
+        'transportadora_id',
         'fatura_carga_id',
+        'peso_guia',
+        'guia_aerea',
     ];
 
     public function pacotes()
@@ -36,6 +39,11 @@ class Carga extends Model
     public function embarcador()
     {
         return $this->belongsTo(Fornecedor::class, 'embarcador_id');
+    }
+
+    public function transportadora()
+    {
+        return $this->belongsTo(Fornecedor::class, 'transportadora_id');
     }
 
     public function invoices()

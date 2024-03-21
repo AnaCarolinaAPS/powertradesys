@@ -166,7 +166,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [FaturaCargaController::class, 'index'])->name('faturacargas.index');
             Route::post('/', [FaturaCargaController::class, 'store'])->name('faturacargas.store');
             Route::get('/{faturacarga}', [FaturaCargaController::class, 'show'])->name('faturacargas.show');
-            // Route::put('/{faturacarga}', [FaturaCargaController::class, 'update'])->name('faturacargas.update');
+            Route::put('/{faturacarga}', [FaturaCargaController::class, 'update'])->name('faturacargas.update');
             // Route::delete('/{faturacarga}', [FaturaCargaController::class, 'destroy'])->name('faturacargas.destroy');
         });
 

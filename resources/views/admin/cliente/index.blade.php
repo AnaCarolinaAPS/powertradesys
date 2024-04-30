@@ -131,7 +131,6 @@
                     @csrf
                     <div class="modal-body">
                         {{-- ADICIONAR MAIS TARDE O CONTATO POR TELEFONE + NOME COMPLETO TIPO DE DOCUMENTO E NRO DE DOCUMENTO --}}
-                        <input type="hidden" class="form-control" id="documento" name="documento" placeholder="CI 9.999.999" maxlength="40"> --}}
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">

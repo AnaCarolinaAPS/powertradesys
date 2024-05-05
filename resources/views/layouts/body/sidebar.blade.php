@@ -70,6 +70,7 @@
                             <li><a href="{{ route('entregas.index'); }}">Entrega de Carga</a></li>
                         </ul>
                     </li>
+                    @can('visualizar financeiro')
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="fas fa-dollar-sign"></i>
@@ -90,6 +91,8 @@
                             <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>
                         </ul>
                     </li>
+                    @endcan
+                    @can('visualizar financeiro')
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-briefcase-2-line"></i>
@@ -101,6 +104,7 @@
                             <li><a href="layouts-compact-sidebar.html">Salários</a></li>
                         </ul>
                     </li>
+                    @endcan
 
                 {{-- @elseif (Auth::user()->isLogistics()) --}}
                     {{-- <li>

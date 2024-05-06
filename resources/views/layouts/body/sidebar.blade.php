@@ -70,6 +70,7 @@
                             <li><a href="{{ route('entregas.index'); }}">Entrega de Carga</a></li>
                         </ul>
                     </li>
+
                     @can('visualizar financeiro')
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">

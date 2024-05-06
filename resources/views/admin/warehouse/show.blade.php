@@ -254,14 +254,14 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="qtd">Qtd</label>
-                                        <input class="form-control" type="number" value="1" id="qtd" name="qtd">
+                                        <label for="peso_aprox">Peso Aprox.</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="peso_aprox" name="peso_aprox">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="peso_aprox">Peso Aprox.</label>
-                                        <input class="form-control" type="number" value="0.0" step="0.10" id="peso_aprox" name="peso_aprox">
+                                        <label for="qtd">Qtd</label>
+                                        <input class="form-control" type="number" value="1" id="qtd" name="qtd">
                                     </div>
                                 </div>
                             </div>
@@ -355,14 +355,14 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="qtd">Qtd</label>
-                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
+                                        <label for="peso_aprox">Peso Aprox.</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" name="peso_aprox">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label for="peso_aprox">Peso Aprox.</label>
-                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" name="peso_aprox">
+                                        <label for="qtd">Qtd</label>
+                                        <input class="form-control" type="number" value="1" id="dQtd" name="qtd">
                                     </div>
                                 </div>
                             </div>

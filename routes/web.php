@@ -27,6 +27,7 @@ use App\Http\Controllers\FluxoCaixaController;
 use App\Http\Controllers\FechamentoCaixaController;
 use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\PDFController;
+use App\Http\Controllers\TextController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -281,6 +282,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/home', [ClientDashboardController::class, 'index'])->name('client.dashboard');
     });
 });
+
+
+Route::get('/processar-texto',  [TextController::class, 'showForm'])->name('text.form');
+Route::post('/processar-texto', [TextController::class, 'processText'])->name('text.process');
 
 // Route::get('/admin/client', function () {
 //     return view('admin.adm.client');

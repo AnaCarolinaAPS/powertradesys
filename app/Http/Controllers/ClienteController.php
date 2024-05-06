@@ -40,6 +40,7 @@ class ClienteController extends Controller
             // Valide os dados do formulário, se necessário
             $request->validate([
                 'caixa_postal' => 'required|string|max:6|unique:clientes',
+                'apelido' => 'string',
                 // Outras regras de validação para outros campos
             ]);
 
@@ -47,6 +48,7 @@ class ClienteController extends Controller
             Cliente::create([
                 'caixa_postal' => $request->input('caixa_postal'),
                 'user_id' => $request->input('user_id'),
+                'apelido' => $request->input('apelido'),
                 // Outros campos
             ]);
 

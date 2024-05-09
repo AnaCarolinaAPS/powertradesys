@@ -80,7 +80,7 @@ class PacoteController extends Controller
 
     public function show($id)
     {
-        $pacote = Pacote::find($id);
+        $pacote = Pacote::with('warehouse')->find($id);
         return response()->json($pacote);
     }
 

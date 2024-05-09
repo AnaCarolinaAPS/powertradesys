@@ -149,16 +149,18 @@
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>WR</th>
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
                                         <th>Qtd</th>
-                                        <th>Peso Aprox</th>
-                                        <th>Peso Recebido</th>
+                                        <th>KG Aprox</th>
+                                        <th>KG Recebido</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($carga->pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>WR-{{ $pacote->warehouse->wr; }}</td>
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
                                         <td>{{ $pacote->qtd }}</td>
@@ -463,10 +465,22 @@
                                             <div class="row">
                                                 <div class="col">
                                                     <div class="form-group">
+                                                        <label for="peso_aprox">WR</label>
+                                                        <input class="form-control" type="text" id="dwr" maxlength="6" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
                                                         <label for="peso_aprox">Peso Aprox.</label>
                                                         <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoAprox" readonly>
                                                     </div>
                                                 </div>
+                                                <!-- <div class="col">
+                                                    <div class="form-group">
+                                                        <label for="peso_aprox">Peso Cobrado</label>
+                                                        <input class="form-control" type="number" value="0.0" step="0.10" id="dPesoCobrado" name="pesocobrado">
+                                                    </div>
+                                                </div> -->
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col">
@@ -613,8 +627,12 @@
                     if (data.observacoes == null) {
                         document.getElementById('dObservacoes').value = "";
                     } else {
-                        document.getElementById('dProfundidade').value = data.observacoes;
+                        document.getElementById('dObservacoes').value = data.observacoes;
                     }
+
+                    document.getElementById('dwr').value = data.warehouse.wr;
+
+                    document.getElementById('dwr').value = data.warehouse.wr;
 
                     $('.selectpicker').selectpicker('refresh');
 

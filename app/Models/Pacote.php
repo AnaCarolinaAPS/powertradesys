@@ -49,4 +49,9 @@ class Pacote extends Model
     {
         return $this->belongsTo(EntregaPacote::class);
     }
+
+    public function invoice_pacote()
+    {
+        return $this->hasOne(InvoicePacote::class);
+    }
 }

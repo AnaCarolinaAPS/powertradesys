@@ -47,7 +47,7 @@ class EntregaPacoteController extends Controller
                         ->where('pacote_id', $pacote->id)
                         ->sum('peso');
 
-                    $pesoretirado = $pacote->peso - $pesoTotalEntregas;
+                    $pesoretirado = $pacote->invoice_pacote->peso - $pesoTotalEntregas;
 
                     $qtdretirado = 1;
                     if ($pacote->qtd > 1) {

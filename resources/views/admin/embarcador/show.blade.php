@@ -75,8 +75,8 @@
                                     <tr>
                                         <th>Data Inicio</th>
                                         <th>Data Fim</th>
-                                        <th>Tipo</th>
                                         <th>Descrição</th>
+                                        <th>Tipo</th>
                                         <th>Valor</th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -91,9 +91,9 @@
                                                 Vigente
                                             @endif
                                         </td>
-                                        <td>Tipo</td>
                                         <td>{{ $servico->descricao }}</td>
-                                        <td>Valor</td>
+                                        <td>{{ $servico->tipo_preco }}</td>
+                                        <td>{{ $servico->preco }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -143,13 +143,36 @@
                         <div class="modal-body">
                             <input type="hidden" name="fornecedor_id" value="{{ $embarcador->id }}">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="descricao">Descrição</label>
                                         <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição do Serviço Prestado" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="status">Tipo</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="tipo_preco" name="tipo_preco">
+                                            <option value="kgs guia"> Kgs Guia </option>
+                                            <option value="fixo"> Fixo </option>
+                                            <option value="outros"> Outros </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="valorkg">Valor</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">U$</span>
+                                            </div>
+                                            <input class="form-control" type="number" value="0.00" step="0.10" id="preco" name="preco">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="data_inicio">Data Inicio</label>
                                         <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_inicio" name="data_inicio">
@@ -205,13 +228,36 @@
                             <input type="hidden" name="id" value="" id="dId">
                             <!-- <input type="hidden" name="warehouse_id" value="{{ $embarcador->id }}"> -->
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="descricao">Descrição do Serviço</label>
                                         <input type="text" class="form-control" id="dDescricao" name="descricao" placeholder="Descrição do Serviço" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-3">
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="status">Tipo</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="dTipo_preco" name="tipo_preco">
+                                            <option value="kgs guia"> Kgs Guia </option>
+                                            <option value="fixo"> Fixo </option>
+                                            <option value="outros"> Outros </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="valorkg">Valor</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1">U$</span>
+                                            </div>
+                                            <input class="form-control" type="number" step="0.10" id="dPreco" name="preco">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="data_inicio">Data Inicio</label>
                                         <input class="form-control" type="date" id="dData_inicio" name="data_inicio">
@@ -249,14 +295,14 @@
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-
                     document.getElementById('tituloModal').innerText = data.descricao;
                     document.getElementById('dId').value = data.id;
                     document.getElementById('dDescricao').value = data.descricao;
                     document.getElementById('dData_inicio').value = data.data_inicio;
                     document.getElementById('dData_fim').value = data.data_fim;
-                    // document.getElementById('dQtd').value = data.qtd;
-                    // $('.selectpicker').selectpicker('refresh');
+                    document.getElementById('dPreco').value = data.preco;
+                    document.getElementById('dTipo_preco').value = data.tipo_preco;
+                    $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacao');
                     var novaAction = "{{ route('servicos_fornecedors.update', ['servico' => ':id']) }}".replace(':id', data.id);

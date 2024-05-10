@@ -22,6 +22,8 @@ class ServicosFornecedorController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'descricao' => 'required|string|max:255',
+                'preco' => 'required|numeric',
+                'tipo_preco' => 'required|in:kgs guia,fixo,outros',
                 'data_inicio' => 'required|date',
                 'data_fim' => 'nullable|date',
                 'fornecedor_id' => 'required|exists:fornecedors,id',
@@ -31,6 +33,8 @@ class ServicosFornecedorController extends Controller
             // Criação de um novo Shipper no banco de dados
             ServicosFornecedor::create([
                 'descricao' => $request->input('descricao'),
+                'preco' => $request->input('preco'),
+                'tipo_preco' => $request->input('tipo_preco'),
                 'data_inicio' => $request->input('data_inicio'),
                 'data_fim' => $request->input('data_fim'),
                 'fornecedor_id' => $request->input('fornecedor_id'),
@@ -62,6 +66,8 @@ class ServicosFornecedorController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'descricao' => 'required|string|max:255',
+                'preco' => 'required|numeric',
+                'tipo_preco' => 'required|in:kgs guia,fixo,outros',
                 'data_inicio' => 'required|date',
                 'data_fim' => 'nullable|date',
                 // Adicione outras regras de validação conforme necessário
@@ -76,12 +82,16 @@ class ServicosFornecedorController extends Controller
                     'descricao' => $request->input('descricao'),
                     'data_inicio' => $request->input('data_inicio'),
                     'data_fim' => $request->input('data_fim'),
+                    'preco' => $request->input('preco'),
+                    'tipo_preco' => $request->input('tipo_preco'),
                     // Adicione outros campos conforme necessário
                 ]);
             } else {
                 $servico->update([
                     'descricao' => $request->input('descricao'),
                     'data_inicio' => $request->input('data_inicio'),
+                    'preco' => $request->input('preco'),
+                    'tipo_preco' => $request->input('tipo_preco'),
                     // Adicione outros campos conforme necessário
                 ]);
             }

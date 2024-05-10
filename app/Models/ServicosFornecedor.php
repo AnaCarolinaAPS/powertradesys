@@ -16,6 +16,8 @@ class ServicosFornecedor extends Model
      */
     protected $fillable = [
         'descricao',
+        'preco',
+        'tipo_preco',
         'data_inicio',
         'data_fim',
         'fornecedor_id',

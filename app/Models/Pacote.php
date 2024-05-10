@@ -47,7 +47,7 @@ class Pacote extends Model
 
     public function entrega_pacote()
     {
-        return $this->belongsTo(EntregaPacote::class);
+        return $this->hasMany(EntregaPacote::class);
     }
 
     public function invoice_pacote()

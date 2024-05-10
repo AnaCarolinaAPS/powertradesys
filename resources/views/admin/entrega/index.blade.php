@@ -46,7 +46,7 @@
                                         <td>{{ \Carbon\Carbon::parse($entrega->data)->format('d/m/Y').' ('.\Carbon\Carbon::parse($entrega->hora)->format('H:i').')' }}</td>
                                         <td>{{ '('.$entrega->cliente->caixa_postal.')'.$entrega->cliente->apelido }}</td>
                                         <td>{{ $entrega->freteiro->nome }}</td>
-                                        <td>{{ 0 }}</td>
+                                        <td>{{ $entrega->entrega_pacotes->sum('qtd') }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

@@ -38,6 +38,7 @@
                                         <th>Qtd</th>
                                         <th>Peso Aprox</th>
                                         <th>Peso Recebido</th>
+                                        <th>Retirado</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -51,6 +52,17 @@
                                             <td>{{ $pacote->peso }}</td>
                                         @else
                                             <td>Aguardando</td>
+                                        @endif
+                                        @if ($pacote->retirado > 0)
+                                            <td>Retirado</td>
+                                        @elseif ($pacote->entrega_pacote->isEmpty())
+                                            @if ($pacote->carga)
+                                                <td>Em Miami</td>
+                                            @else
+                                                <td>Em Estoque</td>
+                                            @endif
+                                        @else
+                                            <td>Parcial</td>
                                         @endif
                                     </tr>
                                     @endforeach

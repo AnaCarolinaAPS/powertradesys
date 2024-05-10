@@ -75,7 +75,7 @@ class EntregaController extends Controller
         $all_clientes = Cliente::all();
         $all_freteiros = Freteiro::all();
         // Obter os pacotes do cliente que não foram entregues
-        $pacotesNaoEntregues = Pacote::where('cliente_id', $entrega->cliente_id)
+        $pacotesNaoEntregues = Pacote::with('warehouse')->where('cliente_id', $entrega->cliente_id)
             ->where('retirado', false)
             ->get();
 

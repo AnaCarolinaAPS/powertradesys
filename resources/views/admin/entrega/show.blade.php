@@ -109,6 +109,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Data Recebida</th>
+                                        {{-- <th>Warehouse</th> --}}
                                         <th>Rastreio</th>
                                         <th>Qtd</th>
                                         <th>Peso</th>
@@ -124,6 +125,7 @@
                                     @endphp --}}
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td>{{ \Carbon\Carbon::parse($pacote->pacote->carga->data_recebida)->format('d/m/Y') }}</td>
+                                        {{-- <td>WR-{{ $pacote->pacote->warehouse->wr }}</td> --}}
                                         <td><h6 class="mb-0">{{ $pacote->pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso }}</td>
@@ -192,7 +194,7 @@
                                         <label for="cliente_id">Pacote</label>
                                         <select class="selectpicker form-control" multiple data-live-search="true" id="pacote_id" name="pacote_id[]" required>
                                             @foreach ($pacotesNaoEntregues as $pacote)
-                                                <option value="{{ $pacote->id }}"> {{ $pacote->rastreio }} </option>
+                                                <option value="{{ $pacote->id }}"> [WR-{{ $pacote->warehouse->wr }}] {{ $pacote->rastreio }} </option>
                                             @endforeach
                                         </select>
                                     </div>

@@ -44,7 +44,7 @@
                                     @foreach ($all_items as $entrega)
                                     <tr data-href="{{ route('entregas.show', ['entrega' => $entrega->id]) }}">
                                         <td>{{ \Carbon\Carbon::parse($entrega->data)->format('d/m/Y').' ('.\Carbon\Carbon::parse($entrega->hora)->format('H:i').')' }}</td>
-                                        <td>{{ $entrega->cliente->apelido }}</td>
+                                        <td>{{ '('.$entrega->cliente->caixa_postal.')'.$entrega->cliente->apelido }}</td>
                                         <td>{{ $entrega->freteiro->nome }}</td>
                                         <td>{{ 0 }}</td>
                                     </tr>
@@ -96,7 +96,7 @@
                                     <label for="cliente_id">Cliente</label>
                                     <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id" >
                                         @foreach ($all_clientes as $cliente)
-                                            <option value="{{ $cliente->id }}"> {{ $cliente->apelido }} </option>
+                                            <option value="{{ $cliente->id }}"> {{ '('.$cliente->caixa_postal.')'.$cliente->apelido }} </option>
                                         @endforeach
                                     </select>
                                 </div>

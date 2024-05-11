@@ -18,7 +18,12 @@ class EntregaController extends Controller
     public function index()
     {
         $all_items = Entrega::all();
-        $all_clientes = Cliente::all();
+        // $all_clientes = Cliente::all();
+        $all_clientes = Cliente::whereHas('pacotes', function ($query) {
+            $query->where('retirado', 0)->whereHas('invoice_pacote', function ($query) {
+                $query->where('peso', '>', 0);
+            });
+        })->get();
         $all_freteiros = Freteiro::all();
         return view('admin.entrega.index', compact('all_items', 'all_clientes', 'all_freteiros'));
     }
@@ -72,11 +77,17 @@ class EntregaController extends Controller
     {
         $entrega = Entrega::find($id);
         $entregaId = $entrega->id;
-        $all_clientes = Cliente::all();
+        // $all_clientes = Cliente::all();
+        $all_clientes = Cliente::whereHas('pacotes', function ($query) {
+            $query->where('retirado', 0);
+        })->get();
         $all_freteiros = Freteiro::all();
         // Obter os pacotes do cliente que não foram entregues
         $pacotesNaoEntregues = Pacote::with('warehouse')->where('cliente_id', $entrega->cliente_id)
             ->where('retirado', false)
+            ->whereHas('invoice_pacote', function ($query) {
+                $query->where('peso', '>', 0);
+            })
             ->get();
 
         $totais = DB::table('entrega_pacotes')

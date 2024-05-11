@@ -56,10 +56,10 @@
                                         @if ($pacote->retirado > 0)
                                             <td>Retirado</td>
                                         @elseif ($pacote->entrega_pacote->isEmpty())
-                                            @if ($pacote->carga)
-                                                <td>Em Miami</td>
-                                            @else
+                                            @if ($pacote->carga && $pacote->carga->data_recebida !== null)
                                                 <td>Em Estoque</td>
+                                            @else
+                                                <td>Em Miami</td>
                                             @endif
                                         @else
                                             <td>Parcial</td>

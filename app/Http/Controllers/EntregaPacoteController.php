@@ -99,6 +99,7 @@ class EntregaPacoteController extends Controller
             $request->validate([
                 'qtd' => 'nullable|numeric',
                 'peso' => 'nullable|numeric',
+                'referencia' => 'nullable|string',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -111,6 +112,7 @@ class EntregaPacoteController extends Controller
             $entrega->update([
                 'qtd' => $request->input('qtd'),
                 'peso' => $request->input('peso'),
+                'referencia' => $request->input('referencia'),
                 // Adicione outros campos conforme necessário
             ]);
 

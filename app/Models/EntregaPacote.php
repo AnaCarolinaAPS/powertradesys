@@ -14,6 +14,7 @@ class EntregaPacote extends Model
         'qtd',
         'pacote_id',
         'entrega_id',
+        'referencia',
     ];
 
     public function entrega()

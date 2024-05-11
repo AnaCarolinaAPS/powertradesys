@@ -126,7 +126,7 @@
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td>{{ \Carbon\Carbon::parse($pacote->pacote->carga->data_recebida)->format('d/m/Y') }}</td>
                                         {{-- <td>WR-{{ $pacote->pacote->warehouse->wr }}</td> --}}
-                                        <td><h6 class="mb-0">{{ $pacote->pacote->rastreio }}</h6></td>
+                                        <td><h6 class="mb-0">{{ $pacote->pacote->rastreio." ".$pacote->referencia}} </h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso }}</td>
                                     </tr>
@@ -230,6 +230,12 @@
                                         <input type="text" class="form-control" id="dRastreio" placeholder="Numero de Rastreio" maxlength="255" readonly>
                                     </div>
                                 </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="referencia">Referencia</label>
+                                        <input type="text" class="form-control" id="dReferencia" name="referencia" placeholder="Referencia do Pacote" maxlength="255">
+                                    </div>
+                                </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <label for="qtd">Qtd</label>
@@ -298,6 +304,7 @@
                     document.getElementById('dId').value = data.id;
                     document.getElementById('dRastreio').value = data.rastreio;
                     document.getElementById('dQtd').value = data.qtd;
+                    document.getElementById('dReferencia').value = data.referencia;
                     if (data.peso == null) {
                         document.getElementById('dPeso').value = 0;
                     } else {

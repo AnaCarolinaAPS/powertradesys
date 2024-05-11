@@ -24,9 +24,10 @@
             }
 
             #cabecalho h3 {
-                font-family: Arial, Helvetica, sans-serif;
+                !important font-family: Arial, Helvetica, sans-serif;
+                font-size: 1.3em;
                 padding: 0px;
-                margin: 0px;
+                margin: 0px 0px 0px 80px;
             }
 
             #customers {
@@ -36,8 +37,16 @@
                 width: 100%;
             }
 
-            #customers td, #customers th {
+            #customers th {
                 border: 1px solid #ddd;
+                padding: 3px;
+            }
+
+            #customers td {
+                border-left: 1px solid #ddd;
+                border-right: 1px solid #ddd;
+                border-top: none;
+                border-bottom: none;
                 padding: 3px;
             }
 
@@ -56,6 +65,14 @@
                 color: black;
                 /* background-color: #04AA6D; */
                 /* color: white; */
+            }
+
+            #customers tr:last-child td {
+                border-bottom: 1px solid #ddd; /* Adicionar borda inferior na última linha */
+            }
+
+            #customers .dados {
+                border-bottom: 1px solid #ddd; /* Adicionar borda inferior na última linha */
             }
         </style>
     </head>

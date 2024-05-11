@@ -5,7 +5,7 @@
         <table id="cabecalho">
             <thead>
                 <tr>
-                    <th width="50%" colspan="2"><img src="http://powertrade.com.py/img/logo.png" alt="Logo da Empresa" width="50%"></th>
+                    <th width="50%" colspan="2"><img src="http://powertrade.com.py/img/logo.png" alt="Logo da Empresa" width="65%"></th>
                     <th colspan="2"><b><h3>Entrega de Carga</h3></b></th>
                 </tr>
             </thead>
@@ -53,7 +53,7 @@
                 <tr>
                     <td class="align-center" width="25px">{{$i}}</td>
                     <td class="align-center" width="80px">{{\Carbon\Carbon::parse($pacote->pacote->carga->data_recebida)->format('d/m/Y')}}</td>
-                    <td class="align-center">{{$pacote->pacote->rastreio}}</td>
+                    <td class="align-center">{{$pacote->pacote->rastreio." ".$pacote->referencia}}</td>
                     <td class="align-center">{{$pacote->qtd;}}</td>
                     <td class="align-center">{{$pacote->peso;}}</td>
                     <!-- Adicione mais colunas conforme necessário -->
@@ -80,17 +80,18 @@
             </tbody>
             <tfoot>
                 <td colspan="3" class="align-center" style="border-bottom: none;border-left: none;">Todos os itens mencionados acima foram entregues a {{$entrega->freteiro->nome;}}</td>
-                <td class="align-center">{{$qtd_total;}}</td>
-                <td class="align-center">{{$peso_total;}} kgs</td>
+                <td class="align-center dados">{{$qtd_total;}}</td>
+                <td class="align-center dados">{{$peso_total;}} kgs</td>
             </tfoot>
         </table>
-        {{-- <br>
-        <p style="padding-left: 100px;"> ________________________________________</p> --}}
+        <br>
+        <br>
+        <p style="padding-left: 100px;"> ________________________________________</p>
     </div>
     <div>
         <hr size="1" style="border:1px dashed gray;">
     </div>
-    <div class="" style="padding-bottom: 5px;">
+    {{-- <div class="" style="padding-bottom: 5px;">
         <table id="cabecalho">
             <thead>
                 <tr>
@@ -153,7 +154,6 @@
                     $qtd_total += $pacote->qtd;
                 @endphp
                 @endforeach
-                {{-- @if (count($categorias) < 15) --}}
                     @for ($i = $i; $i <= 15; $i++)
                         <tr class="font-white">
                             <td class="align-center">.</td>
@@ -165,7 +165,6 @@
                         </tr>
                         <!-- Adicione mais linhas conforme necessário -->
                     @endfor
-                {{-- @endif --}}
             </tbody>
             <tfoot>
                 <td colspan="3" class="align-center" style="border-bottom: none;border-left: none;">Todos os itens mencionados acima foram entregues a {{$entrega->freteiro->nome;}}</td>
@@ -175,5 +174,5 @@
         </table>
         <br>
         <p style="padding-left: 100px;"> ________________________________________</p>
-    </div>
+    </div> --}}
 @endsection

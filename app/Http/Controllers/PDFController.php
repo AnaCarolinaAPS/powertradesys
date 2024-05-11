@@ -34,8 +34,11 @@ class PDFController extends Controller
         // Renderize o PDF
         $dompdf->render();
 
+        $data = \Carbon\Carbon::parse($entrega->data)->format('d-m-Y');
+        $nome_documento = $entrega->cliente->caixa_postal." - ".$entrega->cliente->user->name." [".$entrega->freteiro->nome."] ".$data.".pdf";
+
         // Envie o PDF gerado para o navegador
-        return $dompdf->stream('documento.pdf');
+        return $dompdf->stream($nome_documento);
         // return view('admin.pdf.entregas', compact('entrega'));
     }
 }

@@ -77,10 +77,10 @@ class EntregaController extends Controller
     {
         $entrega = Entrega::find($id);
         $entregaId = $entrega->id;
-        // $all_clientes = Cliente::all();
-        $all_clientes = Cliente::whereHas('pacotes', function ($query) {
-            $query->where('retirado', 0);
-        })->get();
+        $all_clientes = Cliente::all();
+        // $all_clientes = Cliente::whereHas('pacotes', function ($query) {
+        //     $query->where('retirado', 0);
+        // })->get();
         $all_freteiros = Freteiro::all();
         // Obter os pacotes do cliente que não foram entregues
         $pacotesNaoEntregues = Pacote::with('warehouse')->where('cliente_id', $entrega->cliente_id)

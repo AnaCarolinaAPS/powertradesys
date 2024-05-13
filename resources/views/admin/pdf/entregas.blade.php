@@ -5,7 +5,7 @@
         <table id="cabecalho">
             <thead>
                 <tr>
-                    <th width="50%" colspan="2"><img src="http://powertrade.com.py/img/logo.png" alt="Logo da Empresa" width="65%"></th>
+                    <th width="20%" colspan="2"><img src="http://powertrade.com.py/img/logo.png" alt="Logo da Empresa" width="60%"></th>
                     <th colspan="2"><b><h3>Entrega de Carga</h3></b></th>
                 </tr>
             </thead>
@@ -30,7 +30,6 @@
             </tbody>
         </table>
     </div>
-
     <div>
         <table id="customers">
             <thead>
@@ -80,16 +79,15 @@
             </tbody>
             <tfoot>
                 <td colspan="3" class="align-center" style="border-bottom: none;border-left: none;">Todos os itens mencionados acima foram entregues a {{$entrega->freteiro->nome;}}</td>
-                <td class="align-center dados">{{$qtd_total;}}</td>
-                <td class="align-center dados">{{$peso_total;}} kgs</td>
+                <td class="align-center dados"><b>{{$qtd_total;}}</b></td>
+                <td class="align-center dados"><b>{{$peso_total;}} kgs</b></td>
             </tfoot>
         </table>
         <br>
-        <br>
-        <p style="padding-left: 100px;"> ________________________________________</p>
+        <p style="padding-left: 100px; margin-top:15px;"> ________________________________________</p>
     </div>
-    <div>
-        <hr size="1" style="border:1px dashed gray;">
+    <div style="">
+        <hr size="1" style="border:1px dashed gray;margin-top: 0px;">
     </div>
     {{-- <div class="" style="padding-bottom: 5px;">
         <table id="cabecalho">

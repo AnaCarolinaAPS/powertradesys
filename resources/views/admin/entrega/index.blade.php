@@ -37,7 +37,8 @@
                                         <th>Data (Hora)</th>
                                         <th>Cliente</th>
                                         <th>Freteiro</th>
-                                        <th>Qtd. Pacotes</th>
+                                        <th>Qtd.</th>
+                                        <th>Peso</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -47,6 +48,7 @@
                                         <td>{{ '('.$entrega->cliente->caixa_postal.')'.$entrega->cliente->apelido }}</td>
                                         <td>{{ $entrega->freteiro->nome }}</td>
                                         <td>{{ $entrega->entrega_pacotes->sum('qtd') }}</td>
+                                        <td>{{ $entrega->entrega_pacotes->sum('peso') }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

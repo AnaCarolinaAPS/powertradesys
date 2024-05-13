@@ -105,6 +105,8 @@ class FaturaCargaController extends Controller
             $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
             $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
             $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
+            $carga = $faturacarga->carga;
+            $all_fornecedors = Fornecedor::whereIn('id', [$carga->despachante_id, $carga->embarcador_id, $carga->transportadora_id])->get();
             $all_servicos = Servico::all();
 
             // Obtém a carga associada à fatura
@@ -140,7 +142,7 @@ class FaturaCargaController extends Controller
                         ->groupBy('invoices.fatura_carga_id')
                         ->first();
             // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'resumo'));
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'resumo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

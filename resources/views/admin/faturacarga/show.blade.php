@@ -193,7 +193,7 @@
                 <div class="card">
                     <div class="card-body">
                         <h4 class="card-title mb-4">Despesas</h4>
-                        <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddPacote">
+                        <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddDespesa">
                             <i class="fas fa-plus"></i> Add Despesa
                         </button>
                         <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
@@ -248,6 +248,47 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
                         <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovo">Adicionar</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    <!-- Adicionar Despesas -->
+    <div class="modal fade" tabindex="-1" aria-labelledby="ModalAddDespesa" aria-hidden="true" style="display: none;" id="ModalAddDespesa">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Adicionar Despesa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('invoices_pacotes.store') }}" id="formNovoPacote">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Campo hidden para armazenar o id da Warehouse -->
+                        <input type="hidden" name="fatura_carga_id" value="{{ $faturacarga->id }}">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="fornecedor_id">Fornecedor</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="fornecedor_id" name="fornecedor_id" required>
+                                        @foreach ($all_fornecedors as $fornecedor)
+                                            <option value="{{ $fornecedor->id }}"> {{ $fornecedor->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="data_recebida">Data</label>
+                                    <input class="form-control" type="date" value="{{  $faturacarga->carga->data_recebida; }}" id="data" name="data">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovoPacote">Adicionar</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->

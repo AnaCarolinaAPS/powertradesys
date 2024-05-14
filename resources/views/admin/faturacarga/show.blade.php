@@ -199,13 +199,19 @@
                         <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead class="table-light">
                                 <tr>
-                                    <th>Descrição</th>
-                                    <th>Valor Despesa</th>
+                                    <th>Fornececdor</th>
+                                    <th>Valor Total Despesa</th>
                                     <th>Pendente</th>
                                 </tr>
                             </thead><!-- end thead -->
                             <tbody>
-
+                                @foreach ($all_despesas as $depesa)
+                                <tr data-href="{{ route('despesas.show', ['despesa' => $depesa->id]) }}">
+                                    <td>{{ $depesa->fornecedor->nome }}</td>
+                                    <td>{{ $depesa->fornecedor->nome }}</td>
+                                    <td>{{ $depesa->fornecedor->nome }}</td>
+                                </tr>
+                                @endforeach
                             </tbody><!-- end tbody -->
                         </table> <!-- end table -->
                     </div><!-- end card -->
@@ -262,7 +268,7 @@
                     <h5 class="modal-title" id="myLargeModalLabel">Adicionar Despesa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="form-horizontal mt-3" method="POST" action="{{ route('invoices_pacotes.store') }}" id="formNovoPacote">
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('despesas.store') }}" id="formNovoPacote">
                     @csrf
                     <div class="modal-body">
                         <!-- Campo hidden para armazenar o id da Warehouse -->

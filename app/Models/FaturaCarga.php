@@ -31,11 +31,17 @@ class FaturaCarga extends Model
         return $this->belongsTo(Servico::class, 'servico_id', 'id');
     }
 
+    public function despesas()
+    {
+        return $this->hasMany(Despesa::class);
+    }
+
     public function valor_total(){
         return $this->invoices->sum(function ($invoice) {
             return $invoice->valor_total();
         });
     }
+
     public function invoicesPagas()
     {
         return $this->invoices->flatMap(function ($invoice) {

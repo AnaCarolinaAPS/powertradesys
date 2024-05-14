@@ -29,4 +29,9 @@ class Fornecedor extends Model
     {
         return $this->hasMany(Carga::class);
     }
+
+    public function despesas()
+    {
+        return $this->hasMany(Despesa::class);
+    }
 }

@@ -8,6 +8,7 @@ use App\Models\Carga;
 use App\Models\Invoice;
 use App\Models\Servico;
 use App\Models\Fornecedor;
+use App\Models\Despesa;
 use Illuminate\Support\Facades\DB;
 
 class FaturaCargaController extends Controller
@@ -141,8 +142,10 @@ class FaturaCargaController extends Controller
                         ->where('fatura_carga_id', $faturacarga->id)
                         ->groupBy('invoices.fatura_carga_id')
                         ->first();
+
+            $all_despesas = Despesa::where('fatura_carga_id', $faturacarga->id)->get();
             // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'resumo'));
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas', 'resumo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

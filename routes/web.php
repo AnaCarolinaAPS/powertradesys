@@ -26,6 +26,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\FluxoCaixaController;
 use App\Http\Controllers\FechamentoCaixaController;
 use App\Http\Controllers\PagamentoController;
+use App\Http\Controllers\DespesaController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TextController;
 use Illuminate\Support\Facades\Route;
@@ -269,6 +270,24 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{pagamento}', [PagamentoController::class, 'destroy'])->name('pagamentos.destroy');
             // Route::get('/', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
             Route::post('/', [PagamentoController::class, 'store'])->name('pagamentos.store');
+        });
+
+        // Despesa CRUD
+        Route::prefix('/admin/despesa')->group(function () {
+            Route::get('/{despesa}', [DespesaController::class, 'show'])->name('despesas.show');
+            // Route::put('/{despesa}', [DespesaController::class, 'update'])->name('despesas.update');
+            // Route::delete('/{despesa}', [DespesaController::class, 'destroy'])->name('despesas.destroy');
+            // Route::get('/', [DespesaController::class, 'index'])->name('despesas.index');
+            Route::post('/', [DespesaController::class, 'store'])->name('despesas.store');
+        });
+
+        // Despesa Servicos
+        Route::prefix('/admin/despesasservicos')->group(function () {
+            // Route::get('/', [InvoicePacoteController::class, 'index'])->name('invoices.index');
+            Route::post('/', [InvoicePacoteController::class, 'store'])->name('despesas_servicos.store');
+            Route::get('/{despesasservicos}', [InvoicePacoteController::class, 'show'])->name('despesas_servicos.show');
+            Route::put('/{despesasservicos}', [InvoicePacoteController::class, 'update'])->name('despesas_servicos.update');
+            Route::delete('/{despesasservicos}', [InvoicePacoteController::class, 'destroy'])->name('despesas_servicos.destroy');
         });
 
         Route::prefix('/admin/gerar-pdf')->group(function () {

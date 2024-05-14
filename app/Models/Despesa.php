@@ -15,9 +15,9 @@ class Despesa extends Model
         'fornecedor_id',
     ];
 
-    public function carga()
+    public function fatura_carga()
     {
-        return $this->belongsTo(Carga::class);
+        return $this->belongsTo(FaturaCarga::class);
     }
 
     public function fornecedor()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Despesa;
 use App\Models\ServicosFornecedor;
+use App\Models\DespesaItem;
 
 class DespesaController extends Controller
 {
@@ -64,9 +65,10 @@ class DespesaController extends Controller
             // Buscar o shipper pelo ID
             $despesa = Despesa::findOrFail($id);
             $all_servicos = ServicosFornecedor::where('fornecedor_id', $despesa->fornecedor_id)->get();
+            $all_items = DespesaItem::where('despesa_id', $despesa->id)->get();
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.despesa.show', compact('despesa', 'all_servicos'));
+            return view('admin.despesa.show', compact('despesa', 'all_servicos', 'all_items'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [
@@ -90,6 +92,24 @@ class DespesaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $despesa = Despesa::find($id);
+            $fatura_carga = $despesa->fatura_carga_id;
+            $despesa->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->route('faturacargas.show', ['faturacarga' => $fatura_carga])->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Despesa excluída com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir a Despesa: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 }

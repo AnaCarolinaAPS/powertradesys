@@ -205,11 +205,11 @@
                                 </tr>
                             </thead><!-- end thead -->
                             <tbody>
-                                @foreach ($all_despesas as $depesa)
-                                <tr data-href="{{ route('despesas.show', ['despesa' => $depesa->id]) }}">
-                                    <td>{{ $depesa->fornecedor->nome }}</td>
-                                    <td>{{ $depesa->fornecedor->nome }}</td>
-                                    <td>{{ $depesa->fornecedor->nome }}</td>
+                                @foreach ($all_despesas as $despesa)
+                                <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                    <td>{{ $despesa->fornecedor->nome }}</td>
+                                    <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
+                                    <td>{{ $despesa->fornecedor->nome }}</td>
                                 </tr>
                                 @endforeach
                             </tbody><!-- end tbody -->

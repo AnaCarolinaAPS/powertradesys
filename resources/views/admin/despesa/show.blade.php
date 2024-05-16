@@ -67,7 +67,7 @@
                                     Excluir
                                 </button>
                                 <a href="{{ route('faturacargas.show', ['faturacarga' => $despesa->fatura_carga->id]) }}" class="btn btn-light waves-effect">Voltar</a>
-                                <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
+                                {{-- <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button> --}}
                             </div>
                         </form>
                     </div><!-- end card -->
@@ -99,7 +99,17 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-
+                                    @foreach ($all_items as $item)
+                                    <tr class="abrirModal" data-id="{{ $item->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesServico">
+                                        <td>{{ $item->servico_fornecedor->descricao}}</td>
+                                        @if($item->servico_fornecedor->tipo_preco == 'kgs guia')
+                                            <td>{{ $despesa->fatura_carga->carga->peso_guia.'kgs x '.number_format($item->servico_fornecedor->preco, 2, ',', '.').' U$ ('.$item->servico_fornecedor->tipo_preco.')'}}</td>
+                                        @else
+                                            <td>{{ $item->servico_fornecedor->tipo_preco}}</td>
+                                        @endif
+                                        <td>{{ number_format($item->valor, 2, ',', '.') }}</td>
+                                    </tr>
+                                    @endforeach
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
@@ -142,6 +152,30 @@
             <!-- end col -->
         </div>
 
+        <!-- Modal de Confirmação -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmação de Exclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja excluir esta Despesa?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <!-- Adicionar o botão de exclusão no modal -->
+                        <form method="post" action="{{ route('despesas.destroy', ['despesa' => $despesa->id]) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger waves-effect waves-light">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Adicionar Servicos -->
         <div class="modal fade" tabindex="-1" aria-labelledby="ModalAddServico" aria-hidden="true" style="display: none;" id="ModalAddServico">
             <div class="modal-dialog modal-lg">
@@ -155,11 +189,12 @@
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id da Warehouse -->
                             <input type="hidden" name="despesa_id" value="{{ $despesa->id }}">
+                            <input type="hidden" name="peso_guia" value="{{ $despesa->fatura_carga->carga->peso_guia ?? '0.0'; }}">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="servico_id">Serviços</label>
-                                        <select class="selectpicker form-control" multiple data-live-search="true" id="servico_id" name="servico_id[]" required>
+                                        <select class="selectpicker form-control" multiple data-live-search="true" id="servico_fornecedor_id" name="servico_fornecedor_id[]" required>
                                             @foreach ($all_servicos as $servico)
                                                 <option value="{{ $servico->id }}"> {{ $servico->descricao }} </option>
                                             @endforeach
@@ -177,6 +212,84 @@
             </div><!-- /.modal-dialog -->
         </div>
 
+        <!-- Detalhes dos Servicos -->
+        <div class="modal fade" tabindex="-1" aria-labelledby="detalhesServico" aria-hidden="true" style="display: none;" id="detalhesServico">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloModalPacote">Despesa</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal" method="POST" id="formAtualizacaoPacote" action="">
+                        @csrf
+                        @method('PUT') <!-- Método HTTP para update -->
+                        <div class="modal-body">
+                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <input type="hidden" name="id" value="" id="dId">
+                            <div class="row mt-1">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="descricao">Descrição do Serviço</label>
+                                        <input type="text" class="form-control" id="dDescricao" maxlength="255" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="tipo">Tipo Cobrança</label>
+                                        <input type="text" class="form-control" id="dTipo" maxlength="255" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" id="colPeso">
+                                    <div class="form-group">
+                                        <label for="peso">Peso Guia</label>
+                                        <input class="form-control" type="number" value="{{$despesa->fatura_carga->carga->peso_guia}}" id="dPeso" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label for="valor">Valor</label>
+                                        <input class="form-control" type="number" value="0" step="0.10" id="dValor" name="valor">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <!-- Botão de Exclusão -->
+                            <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelPct">
+                                Excluir
+                            </button>
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacaoPacote">Atualizar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <!-- Modal de Exclusao Pacotes -->
+        <div class="modal fade" id="confirmDelPct" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmação de Exclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja excluir este Item da Despesa?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <!-- Adicionar o botão de exclusão no modal -->
+                        <form method="post" action="" id="formDeletePctModal">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger waves-effect waves-light" form="formDeletePctModal">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -188,6 +301,33 @@
             row.addEventListener('click', function() {
                 window.location.href = this.dataset.href;
             });
+        });
+    });
+
+    // JavaScript para abrir o modal ao clicar na linha da tabela
+    document.querySelectorAll('.abrirModal').forEach(item => {
+        item.addEventListener('click', event => {
+            const itemId = event.currentTarget.dataset.id;
+            const url = "{{ route('despesas_servicos.show', ':id') }}".replace(':id', itemId);
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+
+                    document.getElementById('tituloModalPacote').innerText = data.servico_fornecedor.descricao;
+                    document.getElementById('dId').value = data.id;
+                    document.getElementById('dDescricao').value = data.servico_fornecedor.descricao;
+                    document.getElementById('dTipo').value = data.servico_fornecedor.tipo_preco;
+                    document.getElementById('dValor').value = data.valor;
+
+                    var form = document.getElementById('formAtualizacaoPacote');
+                    var novaAction = "{{ route('despesas_servicos.update', ['despesasservicos' => ':id']) }}".replace(':id', data.id);
+                    form.setAttribute('action', novaAction);
+
+                    var form2 = document.getElementById('formDeletePctModal');
+                    var novaAction2 = "{{ route('despesas_servicos.destroy', ['despesasservicos' => ':id']) }}".replace(':id', data.id);
+                    form2.setAttribute('action', novaAction2);
+                })
+                .catch(error => console.error('Erro:', error));
         });
     });
 </script>

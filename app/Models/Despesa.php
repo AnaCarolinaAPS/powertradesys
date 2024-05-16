@@ -24,4 +24,10 @@ class Despesa extends Model
     {
         return $this->belongsTo(Fornecedor::class);
     }
+
+    public function despesa_items()
+    {
+        return $this->hasMany(DespesaItem::class);
+    }
+
 }

@@ -84,6 +84,15 @@
                             <div class="col">
                                 <h4 class="card-title mb-4">Serviços</h4>
                             </div>
+                            <div class="col">
+                                Peso Cobrado: <b>{{ $despesa->fatura_carga->carga->peso_guia ?? '0.0'; }}</b>
+                            </div>
+                            <div class="col">
+                                Valor Cobrado: <b>{{number_format($despesa->valor_total(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                <b>Valor PAGO: {{number_format($despesa->valor_pago(), 2, ',', '.');}} U$</b>
+                            </div>
                         </div>
 
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddServico">
@@ -142,6 +151,41 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
+                                    @php
+                                        $i = 0;
+                                    @endphp
+                                    @foreach ($despesa->pagamentos as $pagamento)
+                                    <tr class="abrirModalPgto" data-pgto-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalheModal">
+                                    {{-- <tr data-bs-toggle="collapse" data-bs-target="#r{{$i}}"> --}}
+                                        <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForDespesa($despesa->id), 2, ',', '.')." U$)" }}</td>
+                                        <td>
+                                            <!-- <a href="{{ route('pagamentos.destroy', ['pagamento' =>  $pagamento->id]) }}" class="link-danger">Excluir</a> -->
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamento->id]) }}" class="link-info">Ir p/ Caixa</a>
+                                        </td>
+                                    </tr>
+                                    <tr class="collapse accordion-collapse" id="r{{$i++}}" data-bs-parent=".table">
+                                        <td colspan="2">
+                                            @foreach ($pagamento->despesas as $inv)
+                                                <div class="row">
+                                                    <div class="col">
+                                                        Despesa de {{\Carbon\Carbon::parse($despesa->data)->format('d/m/Y')}} - Pago {{$inv->pivot->valor_recebido}} U$
+                                                        @if ($inv->id == $despesa->id)
+                                                            <b>[ATUAL]</b>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                            <div class="row">
+                                                <div class="col">
+                                                    <b>Total Pago: {{number_format($pagamento->valor, 2, ',', '.');}} U$</b>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    @endforeach
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
@@ -288,6 +332,64 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        {{-- Criação do Pagamento --}}
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNovo" aria-hidden="true" style="display: none;" id="novoModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Novo Pagamento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('pagamentos.store') }}">
+                        @csrf
+                        <div class="modal-body">
+                            {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
+                            <input type="hidden" name="fornecedor_id" value="{{  $despesa->fornecedor->id; }}" id="fornecedor_id">
+                            <input type="hidden" name="tipo" value="Despesa" id="tipo">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="nome">Data</label>
+                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_pagamento" name="data_pagamento" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="contato">Valor Pagamento</label>
+                                        {{-- <input class="form-control" type="number" value="" step="0.10" id="valor" name="valor" required> --}}
+                                        <input class="form-control" type="number" value="{{number_format($despesa->valor_total()-$despesa->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor" name="valor" required>
+                                    </div>
+                                </div>
+                            <!-- </div>
+                            <div class="row"> -->
+                                <div class="col" id="div_caixa_destino">
+                                    <div class="form-group">
+                                        <label for="caixa_origem_id">Caixa</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="caixa_origem_id" name="caixa_origem_id">
+                                            @foreach ($all_caixas as $caixa_destino)
+                                                <option value="{{ $caixa_destino->id }}"> {{ $caixa_destino->nome }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="contato">Saída em Caixa</label>
+                                        {{-- <input class="form-control" type="number" value="" step="0.10" id="valor_pgto" name="valor_pgto" required> --}}
+                                        <input class="form-control" type="number" value="{{number_format($despesa->valor_total()-$despesa->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Adicionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
         </div>
 
     </div>

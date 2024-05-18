@@ -68,6 +68,8 @@
                                         @foreach ($all_items as $fluxo)
                                         @if ($fluxo->tipo == 'entrada')
                                             <tr class="abrirModal table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                        @elseif ($fluxo->tipo == 'despesa')
+                                            <tr class="abrirModal table-danger" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         @else
                                             <tr class="abrirModal" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         @endif
@@ -77,6 +79,8 @@
                                                     {{ $fluxo->categoria->nome }}
                                                 @elseif ($fluxo->tipo == 'entrada')
                                                     {{ 'Pagamento' }}
+                                                @elseif ($fluxo->tipo == 'despesa')
+                                                    {{ 'Despesa' }}
                                                 @elseif ($fluxo->tipo == 'transferencia')
                                                     {{ 'Transferencia' }}
                                                 @elseif ($fluxo->tipo == 'cambio')
@@ -89,6 +93,8 @@
                                                     {{ $fluxo->subcategoria->nome }}
                                                 @elseif ($fluxo->tipo == 'entrada')
                                                     {{ 'Pagamento' }}
+                                                @elseif ($fluxo->tipo == 'despesa')
+                                                    {{ 'Despesa' }}
                                                 @elseif ($fluxo->tipo == 'transferencia')
                                                     {{ 'Transferencia' }}
                                                 @elseif ($fluxo->tipo == 'cambio')
@@ -448,6 +454,20 @@
                         document.getElementById('btnAtualizar').style.display = 'none';
                         document.getElementById('ddescricao').readOnly = true;
                     } else if (data.tipo === 'entrada') {
+                        if (data.categoria_id === null) {
+                            document.getElementById('div_categoria_detalhe').style.display = 'none';
+                            document.getElementById('div_subcategoria_detalhe').style.display = 'none';
+                            document.getElementById('ddata').readOnly = true;
+                            document.getElementById('ddescricao').readOnly = true;
+                            document.getElementById('btnAtualizar').style.display = 'none';
+                        } else {
+                            document.getElementById('div_categoria_detalhe').style.display = 'block';
+                            document.getElementById('div_subcategoria_detalhe').style.display = 'block';
+                            document.getElementById('ddata').readOnly = false;
+                            document.getElementById('ddescricao').readOnly = false;
+                            document.getElementById('btnAtualizar').style.display = 'block';
+                        }
+                    } else if (data.tipo === 'despesa') {
                         if (data.categoria_id === null) {
                             document.getElementById('div_categoria_detalhe').style.display = 'none';
                             document.getElementById('div_subcategoria_detalhe').style.display = 'none';

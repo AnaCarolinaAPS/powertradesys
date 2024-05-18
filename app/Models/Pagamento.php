@@ -25,6 +25,11 @@ class Pagamento extends Model
         return $this->belongsToMany(Invoice::class, 'invoice_pagamentos')->withPivot('valor_recebido');
     }
 
+    public function despesas()
+    {
+        return $this->belongsToMany(Despesa::class, 'despesa_pagamentos')->withPivot('valor_recebido');
+    }
+
     public function fluxo_caixa()
     {
         return $this->belongsTo(FluxoCaixa::class);
@@ -37,6 +42,18 @@ class Pagamento extends Model
         $invoice = $this->invoices()->find($invoiceId);
         if ($invoice) {
             return $invoice->pivot->valor_recebido;
+        } else {
+            return null; // Ou algum outro valor padrão, se preferir
+        }
+    }
+
+    //Para resgatar os valores dos pagamentos de DETERMINADA INVOICE
+    public function getValorPagoForDespesa($despesaId)
+    {
+        // Procurar a invoice pelo ID e retornar o valor pago associado a ela
+        $despesa = $this->despesas()->find($despesaId);
+        if ($despesa) {
+            return $despesa->pivot->valor_recebido;
         } else {
             return null; // Ou algum outro valor padrão, se preferir
         }

@@ -11,6 +11,7 @@ use App\Models\Carga;
 use App\Models\Pacote;
 use App\Models\Caixa;
 use App\Models\Pagamento;
+use App\Models\Cliente;
 
 class InvoiceController extends Controller
 {
@@ -225,5 +226,46 @@ class InvoiceController extends Controller
             // Exibir toastr de Erro
             return $e;
         }
+    }
+
+    public function distribuirPagamento(Cliente $cliente, Pagamento $pagamento)
+    {
+        // Filtra TODAS as invoices que tem valores em aberto
+        $invoicesEmAberto = $cliente->invoices()->get()->filter(function ($invoice) {
+            return $invoice->valor_pago() < $invoice->valor_total();
+        });
+
+        $valorRestante = $pagamento->valor;
+
+        // Distribuir o valor pago, entre as invoices ABERTAS
+        $invoicesEmAberto = $invoicesEmAberto->sortBy('data');
+
+        foreach ($invoicesEmAberto as $aberto) {
+            // Calcula o valor em ABERTO da Invoice
+            $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
+
+            // Verificar se o valor restante pode pagar totalmente a invoice atual
+            if ($valorRestante >= $saldoAberto) {
+                // O valor pago é suficiente para pagar totalmente esta invoice
+                $valorRestante -= $saldoAberto;
+                // Atualiza a coluna da invoice com o pagamento
+                // Registrar o pagamento para esta invoice
+                $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+
+            } else {
+                if ($valorRestante > 0) {
+                    // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
+                    // Registrar o pagamento para esta invoice
+                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+                    $valorRestante = 0;
+                } else {
+                    // Não existem mais valores para serem registrados (quebra o foreach)
+                    break;
+                }
+            }
+        }
+
+        // Retorna o valor restante
+        return $valorRestante;
     }
 }

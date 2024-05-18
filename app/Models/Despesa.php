@@ -30,4 +30,25 @@ class Despesa extends Model
         return $this->hasMany(DespesaItem::class);
     }
 
+    public function pagamentos()
+    {
+        return $this->belongsToMany(Pagamento::class, 'despesa_pagamentos')->withPivot('valor_recebido');;
+    }
+
+    //Para resgatar os valores dos itens (Total do Valor da Despesa)
+    public function valor_total()
+    {
+        return $this->despesa_items->sum('valor');
+    }
+
+    //Para resgatar todos os pagamentos associados a despesa
+    public function valor_pago()
+    {
+        $valor_pago = 0;
+        foreach ($this->pagamentos as $pgto) {
+            $valor_pago += $pgto->despesas->find($this->id)->pivot->valor_recebido;
+        }
+        return $valor_pago;
+    }
+
 }

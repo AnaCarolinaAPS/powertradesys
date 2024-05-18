@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\FluxoCaixa;
 use App\Models\FechamentoCaixa;
 use App\Models\Cliente;
+use App\Models\Fornecedor;
 use Illuminate\Http\Request;
 
 class PagamentoController extends Controller
@@ -17,9 +18,10 @@ class PagamentoController extends Controller
     public function store(Request $request)
     {
         try {
+
             // Validação dos dados do formulário
             $request->validate([
-                'cliente_id' => 'required|exists:clientes,id',
+                'tipo' => 'required|in:Pagamento,Despesa',
                 'data_pagamento' => 'required|date',
                 'valor' => 'required|numeric',
                 'observacoes' => 'nullable|string',
@@ -28,87 +30,114 @@ class PagamentoController extends Controller
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            $cliente = Cliente::findOrFail($request->input('cliente_id'));
-
-            // ************************************
-            // Cria o movimento de ENTRADA no CAIXA
-            // ************************************
-
             //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
             $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data_pagamento'));
             $ano = $data->year;
             $mes = $data->month;
             $fechamento = FechamentoCaixa::where('caixa_id', $request->input('caixa_origem_id'))->where('mes', $mes)->where('ano', $ano)->firstOrFail();
 
+            if ($request->input('tipo') == "Pagamento") {
+                // Validação dos dados do formulário
+                $request->validate([
+                    'cliente_id' => 'required|exists:clientes,id',
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+
+                $cliente = Cliente::findOrFail($request->input('cliente_id'));
+                $descricao = 'Pgto '.$cliente->user->name.' de '.$request->input('valor').' U$';
+                $tipo = 'entrada';
+                $valor_pgto = $request->input('valor_pgto');
+                $valor = $request->input('valor');
+
+            } else {
+                // Validação dos dados do formulário
+                $request->validate([
+                    'fornecedor_id' => 'required|exists:fornecedors,id',
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+
+                $fornecedor = Fornecedor::findOrFail($request->input('fornecedor_id'));
+                $descricao = 'Pago '.$request->input('valor').' U$ para '.$fornecedor->nome;
+                $tipo = 'despesa';
+                if ($request->input('valor_pgto') > 0) {
+                    $valor_pgto = $request->input('valor_pgto')*-1;
+                } else {
+                    $valor_pgto = $request->input('valor_pgto');
+                }
+                if ($valor = $request->input('valor') > 0) {
+                    $valor = $request->input('valor')*-1;
+                } else {
+                    $valor = $request->input('valor');
+                }
+            }
+
+            // ************************************
+            // Cria o movimento no CAIXA
+            // ************************************
+
             //Necessário criar um FLUXO_CAIXA (entrada de valores);
             $fluxo = FluxoCaixa::create([
                 'data' => $request->input('data_pagamento'),
-                'descricao' => 'Pgto '.$cliente->user->name.' de '.$request->input('valor').' U$',
-                'tipo' => 'entrada',
+                'descricao' => $descricao,
+                'tipo' => $tipo,
                 'caixa_origem_id' => $request->input('caixa_origem_id'),
-                'valor_origem' => $request->input('valor_pgto'),
+                'valor_origem' => $valor_pgto,
                 'fechamento_caixa_id' => $fechamento->id,
                 // Adicione outros campos conforme necessário
             ]);
 
-            $fechamento->atualizaSaldo($request->input('valor_pgto'));
+            $fechamento->atualizaSaldo($valor_pgto);
 
             // ************************************
             // Cria o PAGAMENTO para ser atrelado a(s) Invoice(s)
             // ************************************
-
-            //Cria o Pagamento
-            $pagamento = Pagamento::create([
-                'data_pagamento' => $request->input('data_pagamento'),
-                'valor' => $request->input('valor'),
-                'observacoes' => $request->input('observacoes'),
-                'fluxo_caixa_id' => $fluxo->id,
-                // Adicione outros campos conforme necessário
-            ]);
-
-            // Filtra TODAS as invoices que tem valores em aberto
-            $invoicesEmAberto = $cliente->invoices()->get()->filter(function ($invoice) {
-                return $invoice->valor_pago() < $invoice->valor_total();
-            });
-
-            $valorRestante = $request->input('valor');
-
-            //Distribuir o valor pago, entre as invoices ABERTAS
-            $invoicesEmAberto = $invoicesEmAberto->sortBy('data');
-
-            foreach ($invoicesEmAberto as $aberto) {
-                //Calcula o valor em ABERTO da Invoice
-                $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
-
-                // Verificar se o valor restante pode pagar totalmente a invoice atual
-                if ($valorRestante >= $saldoAberto) {
-                    // O valor pago é suficiente para pagar totalmente esta invoice
-                    $valorRestante -= $saldoAberto;
-                    // Atualiza a coluna da invoice com o pagamento
-                    // Registrar o pagamento para esta invoice
-                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
-
-                //Caso ainda existam invoices não pagas, e um valor em valorRestante, é possível fazer o pagamento PARCIAL
-                } else {
-                    if ($valorRestante > 0) {
-                        // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
-                        // Registrar o pagamento para esta invoice
-                        $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
-                        $valorRestante = 0;
-                    } else {
-                        //Não existem mais valores para serem registrado (quebra o foreach)
-                        break;
-                    }
-                }
-            }
-
-            //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
-            if ($valorRestante > 0) {
-                return redirect()->back()->with('toastr', [
-                    'type'    => 'info',
-                    'message' => 'CLIENTE GEROU UM CREDITO!',
-                    'title'   => 'Sucesso',
+            if ($request->input('tipo') == "Pagamento") {
+                //Cria o Pagamento
+                $pagamento = Pagamento::create([
+                    'data_pagamento' => $request->input('data_pagamento'),
+                    'valor' => $valor,
+                    'observacoes' => $request->input('observacoes'),
+                    'fluxo_caixa_id' => $fluxo->id,
+                    // Adicione outros campos conforme necessário
                 ]);
+
+                $valorRestante = 0;
+                // Chama o método distribuirPagamento no controlador de Invoice
+                $invoiceController = new InvoiceController();
+                $valorRestante = $invoiceController->distribuirPagamento($cliente, $pagamento);
+
+                //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
+                if ($valorRestante > 0) {
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'CLIENTE GEROU UM CREDITO!',
+                        'title'   => 'Sucesso',
+                    ]);
+                }
+            } else {
+                //Cria o Pagamento
+                $pagamento = Pagamento::create([
+                    'data_pagamento' => $request->input('data_pagamento'),
+                    'valor' => $valor*-1,
+                    'observacoes' => $request->input('observacoes'),
+                    'fluxo_caixa_id' => $fluxo->id,
+                    // Adicione outros campos conforme necessário
+                ]);
+
+                $valorRestante = 0;
+                // Chama o método distribuirPagamento no controlador de Despesa
+                $despesaController = new DespesaController();
+                $valorRestante = $despesaController->distribuirPagamento($fornecedor, $pagamento);
+
+                //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
+                if ($valorRestante > 0) {
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'A EMPRESA GEROU UM CREDITO!',
+                        'title'   => 'Sucesso',
+                    ]);
+                }
+
             }
 
             return redirect()->back()->with('toastr', [

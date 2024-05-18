@@ -342,6 +342,7 @@
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
                             <input type="hidden" name="cliente_id" value="{{  $invoice->cliente->id; }}" id="cliente_id">
+                            <input type="hidden" name="tipo" value="Pagamento" id="tipo">
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">

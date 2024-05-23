@@ -238,7 +238,7 @@ class InvoiceController extends Controller
         $valorRestante = $pagamento->valor;
 
         // Distribuir o valor pago, entre as invoices ABERTAS
-        $invoicesEmAberto = $invoicesEmAberto->sortBy('data');
+        $invoicesEmAberto = $invoicesEmAberto->sortByDesc('data');
 
         foreach ($invoicesEmAberto as $aberto) {
             // Calcula o valor em ABERTO da Invoice

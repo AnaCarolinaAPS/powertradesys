@@ -341,6 +341,7 @@
                         @csrf
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
+                            <input type="hidden" name="invoice_id" value="{{  $invoice->id; }}" id="invoice_id">
                             <input type="hidden" name="cliente_id" value="{{  $invoice->cliente->id; }}" id="cliente_id">
                             <input type="hidden" name="tipo" value="Pagamento" id="tipo">
                             <div class="row">

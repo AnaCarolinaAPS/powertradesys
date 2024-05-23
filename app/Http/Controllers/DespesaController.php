@@ -126,7 +126,7 @@ class DespesaController extends Controller
         $valorRestante = $pagamento->valor;
 
         // Distribuir o valor pago, entre as DESPESAS ABERTAS
-        $despesasEmAberto = $despesasEmAberto->sortBy('data');
+        $despesasEmAberto = $despesasEmAberto->sortByDesc('data');
 
         foreach ($despesasEmAberto as $aberto) {
             // Calcula o valor em ABERTO da DESPESAS

@@ -156,8 +156,18 @@ class FechamentoCaixaController extends Controller
             $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
             $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
 
+            $fechamentoExiste = FechamentoCaixa::where('start_date', $start_date)->where('end_date', $end_date)->where('caixa_id', $request->input('caixa_id'))->first();
+
+            if ($fechamentoExiste) {
+                return redirect()->route('registro_caixa.show', ['fechamento' => $fechamentoExiste->id])->with('toastr', [
+                    'type'    => 'warning',
+                    'message' => 'O Registro de Caixa já existe <br>',
+                    'title'   => 'Erro',
+                ]);
+            }
+
             // Criação de um novo Freteiro no banco de dados
-            FechamentoCaixa::create([
+            $fechamento = FechamentoCaixa::create([
                 // 'ano' => $ano,
                 // 'mes' => $mes,
                 'start_date' => $start_date,
@@ -169,7 +179,7 @@ class FechamentoCaixaController extends Controller
             ]);
 
             // Exibir toastr de sucesso
-            return redirect()->route('registro_caixa.index')->with('toastr', [
+            return redirect()->route('registro_caixa.show', ['fechamento' => $fechamento->id])->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Registro de Caixa criado com sucesso!',
                 'title'   => 'Sucesso',

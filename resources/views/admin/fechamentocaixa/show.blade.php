@@ -16,7 +16,7 @@
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('registro_caixa.index'); }}">Registro de Caixas</a></li>
-                            <li class="breadcrumb-item active">{{$fechamento->ano;}}/{{$fechamento->mes;}} - {{ $fechamento->caixa->nome;}}</li>
+                            <li class="breadcrumb-item active">{{ \Carbon\Carbon::parse($fechamento->start_date)->format('d/m/Y'); }} até {{ \Carbon\Carbon::parse($fechamento->end_date)->format('d/m/Y'); }} - {{ $fechamento->caixa->nome;}}</li>
                         </ol>
                     </div>
                 </div>

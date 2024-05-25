@@ -141,7 +141,33 @@
                         drawCallback: function() {
                             $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
                         },
-                        buttons: ["copy", "excel", "pdf"]
+                        buttons: ["excel", "pdf"]
+                    });
+
+                    dataTable.buttons().container().appendTo($("#" + idName + '_wrapper .col-md-6:eq(0)'));
+                    $(".dataTables_length select").addClass("form-select form-select-sm");
+                }
+
+                function initializeDataTableWithButtonsDate(idName) {
+                    var dataTable = $("#" + idName).DataTable({
+                        lengthChange: false,
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            }
+                        },
+                        drawCallback: function() {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                        },
+                        buttons: ["excel", "pdf"],
+                        columnDefs: [
+                            {
+                                targets: 0, // O índice da primeira coluna
+                                visible: false // Ocultar a coluna
+                            }
+                        ],
+                        order: [[0, 'desc']] // Ordenar a primeira coluna de forma decrescente
                     });
 
                     dataTable.buttons().container().appendTo($("#" + idName + '_wrapper .col-md-6:eq(0)'));
@@ -150,6 +176,7 @@
 
                 initializeDataTableWithButtons("datatable-buttons");
                 initializeDataTableWithButtons("datatable-totals");
+                initializeDataTableWithButtonsDate("datatable-date");
             });
         </script>
     </body>

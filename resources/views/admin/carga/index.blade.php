@@ -31,18 +31,28 @@
                             <i class="fas fa-plus"></i> Nova
                         </button>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data Recebida</th>
                                         <th>Data Enviada</th>
                                         <th>Data Recebida</th>
-                                        <th>Embarcador</th>
-                                        <th>Qtd. Pacotes</th>
+                                        <th>Despachante</th>
+                                        <th>Pacotes</th>
+                                        <th>Guia</th>
+                                        <th>Kgs Recebido</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_items as $carga)
                                     <tr data-href="{{ route('cargas.show', ['carga' => $carga->id]) }}">
+                                        <td>
+                                            @if ($carga->data_recebida)
+                                                {{ $carga->data_recebida }}
+                                            @else
+                                                Aguardando
+                                            @endif
+                                        </td>
                                         <td>{{ \Carbon\Carbon::parse($carga->data_enviada)->format('d/m/Y') }}</td>
                                         <td>
                                             @if ($carga->data_recebida)
@@ -51,9 +61,10 @@
                                                 Aguardando
                                             @endif
                                         </td>
-                                        <td>{{ $carga->embarcador->nome; }}</td>
+                                        <td>{{ $carga->despachante->nome; }}</td>
                                         <td>{{ $carga->pacotes->sum('qtd') }}</td>
-                                        {{-- <td>{{ $carga->quantidade_de_pacotes }}</td> --}}
+                                        <td>{{ $carga->peso_guia ?? '0.00' }}</td>
+                                        <td>{{ $carga->pacotes->sum('peso') }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

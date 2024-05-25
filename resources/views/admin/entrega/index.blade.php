@@ -31,9 +31,10 @@
                             <i class="fas fa-plus"></i> Nova
                         </button>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data (Hora)</th>
                                         <th>Data (Hora)</th>
                                         <th>Cliente</th>
                                         <th>Freteiro</th>
@@ -44,6 +45,7 @@
                                 <tbody>
                                     @foreach ($all_items as $entrega)
                                     <tr data-href="{{ route('entregas.show', ['entrega' => $entrega->id]) }}">
+                                        <td>{{ $entrega->data.' '.$entrega->hora }}</td>
                                         <td>{{ \Carbon\Carbon::parse($entrega->data)->format('d/m/Y').' ('.\Carbon\Carbon::parse($entrega->hora)->format('H:i').')' }}</td>
                                         <td>{{ '('.$entrega->cliente->caixa_postal.')'.$entrega->cliente->apelido }}</td>
                                         <td>{{ $entrega->freteiro->nome }}</td>

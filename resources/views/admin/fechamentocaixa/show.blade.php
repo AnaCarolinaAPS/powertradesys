@@ -54,9 +54,10 @@
 
                         <div class="row mt-3">
                             <div class="table-responsive">
-                                <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
+                                            <th>Data</th>
                                             <th>Data</th>
                                             <th>Categoria</th>
                                             <th>Descrição</th>
@@ -66,13 +67,14 @@
                                     </thead><!-- end thead -->
                                     <tbody>
                                         @foreach ($all_items as $fluxo)
-                                        @if ($fluxo->tipo == 'entrada')
-                                            <tr class="abrirModal table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                        @elseif ($fluxo->tipo == 'despesa')
-                                            <tr class="abrirModal table-danger" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                        @else
-                                            <tr class="abrirModal" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                        @endif
+                                            @if ($fluxo->tipo == 'entrada')
+                                                <tr class="abrirModal table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                            @elseif ($fluxo->tipo == 'despesa')
+                                                <tr class="abrirModal table-danger" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                            @else
+                                                <tr class="abrirModal" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                            @endif
+                                            <td>{{ $fluxo->data }}</td>
                                             <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
                                             <td>
                                                 @if ($fluxo->tipo == 'saida')
@@ -115,6 +117,7 @@
                                         </tr>
                                         @endforeach
                                         <tr>
+                                            <td>{{ $fechamento->ano.'-'.$fechamento->mes.'-'.'01' }}</td>
                                             <td><h6 class="mb-0">{{ '01/'.$fechamento->mes.'/'.$fechamento->ano }}</h6></td>
                                             <td>Saldo</td>
                                             <td>Saldo Inicial</td>

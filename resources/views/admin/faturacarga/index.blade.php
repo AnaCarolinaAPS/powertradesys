@@ -31,9 +31,10 @@
                             <i class="fas fa-plus"></i> Nova
                         </button>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data Recebida</th>
                                         <th>Data Recebida</th>
                                         <th>Carga</th>
                                         <th>Peso Guia</th>
@@ -44,6 +45,7 @@
                                 <tbody>
                                     @foreach ($all_items as $fatura)
                                     <tr data-href="{{ route('faturacargas.show', ['faturacarga' => $fatura->id]) }}">
+                                        <td>{{ $fatura->carga->data_recebida }}</td>
                                         <td>{{ \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td>{{ $fatura->numero; }}</td>
                                         <td>{{ $fatura->carga->peso_guia ?? '0,0' }}</td>

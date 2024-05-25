@@ -32,9 +32,10 @@
                         </button>
                         <div class="table-responsive">
                             {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data</th>
                                         <th>Data</th>
                                         <th>Warehouse</th>
                                         <th>Shipper</th>
@@ -44,6 +45,7 @@
                                 <tbody>
                                     @foreach ($all_items as $warehouse)
                                     <tr data-href="{{ route('warehouses.show', ['warehouse' => $warehouse->id]) }}">
+                                        <td>{{ $warehouse->data }}</td>
                                         <td>{{ \Carbon\Carbon::parse($warehouse->data)->format('d/m/Y') }}</td>
                                         <td><h6 class="mb-0">WR-{{ $warehouse->wr }}</h6></td>
                                         <td>{{ $warehouse->shipper->name }}</td>

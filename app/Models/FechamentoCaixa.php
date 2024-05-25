@@ -15,8 +15,10 @@ class FechamentoCaixa extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'ano',
-        'mes',
+        // 'ano',
+        // 'mes',
+        'start_date',
+        'end_date',
         'caixa_id',
         'saldo_inicial',
         'saldo_final',

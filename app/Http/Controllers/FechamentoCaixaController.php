@@ -149,13 +149,19 @@ class FechamentoCaixaController extends Controller
             $dataCarbon = \Carbon\Carbon::parse($request->input('data'));
 
             // Extrair o mês e o ano da data
-            $mes = $dataCarbon->format('m'); // Obtém o número do mês (01 para janeiro, 02 para fevereiro, etc.)
-            $ano = $dataCarbon->format('Y'); // Obtém o ano (ex: 2024)
+            // $mes = $dataCarbon->format('m'); // Obtém o número do mês (01 para janeiro, 02 para fevereiro, etc.)
+            // $ano = $dataCarbon->format('Y'); // Obtém o ano (ex: 2024)
+
+            // Calcular o domingo (início da semana) e o sábado (final da semana)
+            $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
+            $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
 
             // Criação de um novo Freteiro no banco de dados
             FechamentoCaixa::create([
-                'ano' => $ano,
-                'mes' => $mes,
+                // 'ano' => $ano,
+                // 'mes' => $mes,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
                 'caixa_id' => $request->input('caixa_id'),
                 'saldo_inicial' => $request->input('saldo_inicial'),
                 'saldo_final' => $request->input('saldo_inicial'),

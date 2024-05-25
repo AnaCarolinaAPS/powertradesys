@@ -35,7 +35,7 @@
                                 <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Ano/Mês</th>
+                                            <th>Intervalo</th>
                                             <th>Caixa</th>
                                             <th>Moeda</th>
                                             <th>Saldo Inicial</th>
@@ -45,7 +45,7 @@
                                     <tbody>
                                         @foreach ($all_items as $fechamentocaixa)
                                         <tr data-href="{{ route('registro_caixa.show', ['fechamento' =>  $fechamentocaixa->id]) }}">
-                                            <td>{{ $fechamentocaixa->ano; }}/{{ $fechamentocaixa->mes; }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($fechamentocaixa->start_date)->format('d/m/Y'); }} até {{ \Carbon\Carbon::parse($fechamentocaixa->end_date)->format('d/m/Y'); }}</td>
                                             <td><h6 class="mb-0">{{ $fechamentocaixa->caixa->nome; }}</h6></td>
                                             <td>{{ $fechamentocaixa->caixa->moeda; }}</td>
                                             <td>{{ $fechamentocaixa->saldo_inicial; }}</td>

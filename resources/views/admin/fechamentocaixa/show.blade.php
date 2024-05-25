@@ -117,8 +117,8 @@
                                         </tr>
                                         @endforeach
                                         <tr>
-                                            <td>{{ $fechamento->ano.'-'.$fechamento->mes.'-'.'01' }}</td>
-                                            <td><h6 class="mb-0">{{ '01/'.$fechamento->mes.'/'.$fechamento->ano }}</h6></td>
+                                            <td>{{ $fechamento->start_date; }}</td>
+                                            <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fechamento->start_date)->format('d/m/Y'); }}</h6></td>
                                             <td>Saldo</td>
                                             <td>Saldo Inicial</td>
                                             <td>Saldo</td>

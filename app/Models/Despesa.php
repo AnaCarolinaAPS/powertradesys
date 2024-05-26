@@ -44,11 +44,12 @@ class Despesa extends Model
     //Para resgatar todos os pagamentos associados a despesa
     public function valor_pago()
     {
-        $valor_pago = 0;
-        foreach ($this->pagamentos as $pgto) {
-            $valor_pago += $pgto->despesas->find($this->id)->pivot->valor_recebido;
-        }
-        return $valor_pago;
+        return $this->pagamentos->sum('pivot.valor_recebido');
+        // $valor_pago = 0;
+        // foreach ($this->pagamentos as $pgto) {
+        //     $valor_pago += $pgto->despesas->find($this->id)->pivot->valor_recebido;
+        // }
+        // return $valor_pago;
     }
 
 }

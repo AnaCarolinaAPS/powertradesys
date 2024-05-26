@@ -135,6 +135,15 @@
                             <div class="col">
                                 <h4 class="card-title mb-4">Pagamentos</h4>
                             </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col">
+                                Valor Cobrado: <b>{{number_format($despesa->valor_total(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                <b>Valor PENDENTE: {{number_format($despesa->valor_total()-$despesa->valor_pago(), 2, ',', '.');}} U$</b>
+                            </div>
                         </div>
 
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">

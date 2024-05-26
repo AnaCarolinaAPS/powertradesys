@@ -48,4 +48,17 @@ class FaturaCarga extends Model
             return $invoice->valor_pago();
         });
     }
+
+    public function despesas_total(){
+        return $this->despesas->sum(function ($despesa) {
+            return $despesa->valor_total();
+        });
+    }
+
+    public function despesas_pagas()
+    {
+        return $this->despesas->sum(function ($despesa) {
+            return $despesa->valor_pago();
+        });
+    }
 }

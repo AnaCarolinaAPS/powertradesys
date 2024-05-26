@@ -192,10 +192,23 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Despesas</h4>
-                        <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddDespesa">
-                            <i class="fas fa-plus"></i> Add Despesa
-                        </button>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Despesas</h4>
+                                <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddDespesa">
+                                    <i class="fas fa-plus"></i> Add Despesa
+                                </button>
+                            </div>
+                            <div class="col">
+                                {{-- Peso Total: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b> --}}
+                            </div>
+                            <div class="col">
+                                Valor Total: <b>{{number_format($faturacarga->despesas_total(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                Falta PAGAR : <b>{{number_format($faturacarga->despesas_total() - $faturacarga->despesas_pagas(), 2, ',', '.');}} U$</b>
+                            </div>
+                        </div>
                         <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead class="table-light">
                                 <tr>
@@ -209,7 +222,7 @@
                                 <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
                                     <td>{{ $despesa->fornecedor->nome }}</td>
                                     <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
-                                    <td>{{ $despesa->fornecedor->nome }}</td>
+                                    <td>{{ number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') }}</td>
                                 </tr>
                                 @endforeach
                             </tbody><!-- end tbody -->

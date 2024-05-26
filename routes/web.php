@@ -28,6 +28,8 @@ use App\Http\Controllers\FechamentoCaixaController;
 use App\Http\Controllers\PagamentoController;
 use App\Http\Controllers\DespesaController;
 use App\Http\Controllers\DespesaItemController;
+use App\Http\Controllers\FuncionarioController;
+use App\Http\Controllers\ServicosFuncionarioController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TextController;
 use Illuminate\Support\Facades\Route;
@@ -290,6 +292,25 @@ Route::middleware('auth')->group(function () {
             Route::put('/{despesasservicos}', [DespesaItemController::class, 'update'])->name('despesas_servicos.update');
             Route::delete('/{despesasservicos}', [DespesaItemController::class, 'destroy'])->name('despesas_servicos.destroy');
         });
+
+        // Funcionarios CRUD
+        Route::prefix('/admin/funcionario')->group(function () {
+            Route::get('/{funcionario}', [FuncionarioController::class, 'show'])->name('funcionarios.show');
+            Route::put('/{funcionario}', [FuncionarioController::class, 'update'])->name('funcionarios.update');
+            Route::delete('/{funcionario}', [FuncionarioController::class, 'destroy'])->name('funcionarios.destroy');
+            Route::get('/', [FuncionarioController::class, 'index'])->name('funcionarios.index');
+            Route::post('/', [FuncionarioController::class, 'store'])->name('funcionarios.store');
+        });
+
+        // Serviços Funcionarios CRUD
+        Route::prefix('/admin/servicosfuncionaios')->group(function () {
+            Route::post('/', [ServicosFuncionarioController::class, 'store'])->name('servicos_funcionarios.store');
+            Route::get('/{servico}', [ServicosFuncionarioController::class, 'show'])->name('servicos_funcionarios.show');
+            Route::put('/{servico}', [ServicosFuncionarioController::class, 'update'])->name('servicos_funcionarios.update');
+            Route::delete('/{servico}', [ServicosFuncionarioController::class, 'destroy'])->name('servicos_funcionarios.destroy');
+        });
+
+
 
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');

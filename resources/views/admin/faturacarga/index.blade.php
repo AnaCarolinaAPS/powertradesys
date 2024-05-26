@@ -50,7 +50,7 @@
                                         <td>{{ $fatura->numero; }}</td>
                                         <td>{{ $fatura->carga->peso_guia ?? '0,0' }}</td>
                                         <td>{{ number_format($fatura->valor_total(), 2, ',', '.'); }}</td>
-                                        <td>{{ number_format($fatura->valor_total() - $fatura->invoicesPagas(), 2, ',', '.'); }}</td>
+                                        <td>{{ number_format($fatura->valor_total() - $fatura->invoices_pagas(), 2, ',', '.'); }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

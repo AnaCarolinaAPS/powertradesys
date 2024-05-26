@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Servico;
 use App\Models\Fornecedor;
 use App\Models\Despesa;
+use App\Models\Cliente;
 use Illuminate\Support\Facades\DB;
 
 class FaturaCargaController extends Controller
@@ -66,19 +67,18 @@ class FaturaCargaController extends Controller
                 ]);
             }
 
-            try {
+            // try {
+            //     // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
+            //     $invoices = InvoiceController::criarInvoices($faturacarga);
+            // } catch (\Exception $e) {
+            //     // Exibir toastr de Erro
+            //     return redirect()->route('faturacargas.index')->with('toastr', [
+            //         'type'    => 'error',
+            //         'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga: <br>'. $e->getMessage(),
+            //         'title'   => 'Erro',
+            //     ]);
+            // }
 
-                // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
-                $invoices = InvoiceController::criarInvoices($faturacarga);
-
-            } catch (\Exception $e) {
-                // Exibir toastr de Erro
-                return redirect()->route('faturacargas.index')->with('toastr', [
-                    'type'    => 'error',
-                    'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga: <br>'. $e->getMessage(),
-                    'title'   => 'Erro',
-                ]);
-            }
             // Exibir toastr de sucesso
             return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
                 'type'    => 'success',
@@ -116,9 +116,9 @@ class FaturaCargaController extends Controller
             if ($carga) {
                 // Obtém todos os clientes associados aos pacotes da carga,
                 // excluindo aqueles cujos pacotes têm uma InvoicePacote associada
-                $all_clientes = $carga->clientes()
-                ->whereDoesntHave('pacotes', function ($query) {
-                    $query->whereHas('invoice_pacote');
+                $all_clientes = Cliente::whereHas('pacotes', function ($query) use ($carga) {
+                    $query->where('carga_id', $carga->id)
+                          ->whereDoesntHave('invoice_pacote');
                 })
                 ->distinct()
                 ->get();

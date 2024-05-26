@@ -30,11 +30,20 @@ class PagamentoController extends Controller
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
-            $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data_pagamento'));
-            $ano = $data->year;
-            $mes = $data->month;
-            $fechamento = FechamentoCaixa::where('caixa_id', $request->input('caixa_origem_id'))->where('mes', $mes)->where('ano', $ano)->firstOrFail();
+            //Data retira as das referentas a semana para buscar o fechamento do caixa de DESTINO
+            $dataCarbon = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data_pagamento'));
+            $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
+            $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+
+            $fechamento = FechamentoCaixa::where('caixa_id', $request->input('caixa_origem_id'))->where('start_date', $start_date)->where('end_date', $end_date)->first();
+
+            if ($fechamento == null) {
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'error',
+                    'message' => 'A Caixa escolhida NÃO está ABERTA.',
+                    'title'   => 'Erro',
+                ]);
+            }
 
             if ($request->input('tipo') == "Pagamento") {
                 // Validação dos dados do formulário

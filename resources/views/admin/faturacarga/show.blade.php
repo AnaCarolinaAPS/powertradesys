@@ -156,7 +156,7 @@
                                 Valor Total: <b>{{number_format($faturacarga->valor_total(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
-                                Falta COBRAR : <b>{{number_format($faturacarga->valor_total() - $faturacarga->invoicesPagas(), 2, ',', '.');}} U$</b>
+                                Falta COBRAR : <b>{{number_format($faturacarga->valor_total() - $faturacarga->invoices_pagas(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
                         <div class="table-responsive">

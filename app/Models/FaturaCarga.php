@@ -42,10 +42,10 @@ class FaturaCarga extends Model
         });
     }
 
-    public function invoicesPagas()
+    public function invoices_pagas()
     {
-        return $this->invoices->flatMap(function ($invoice) {
-            return $invoice->pagamentos->pluck('valor_recebido');
-        })->sum();
+        return $this->invoices->sum(function ($invoice) {
+            return $invoice->valor_pago();
+        });
     }
 }

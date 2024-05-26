@@ -114,8 +114,14 @@ class FaturaCargaController extends Controller
             $carga = $faturacarga->carga;
 
             if ($carga) {
-                // Obtém todos os clientes associados aos pacotes da carga
-                $all_clientes = $carga->clientes()->distinct()->get();
+                // Obtém todos os clientes associados aos pacotes da carga,
+                // excluindo aqueles cujos pacotes têm uma InvoicePacote associada
+                $all_clientes = $carga->clientes()
+                ->whereDoesntHave('pacotes', function ($query) {
+                    $query->whereHas('invoice_pacote');
+                })
+                ->distinct()
+                ->get();
             } else {
                 $all_clientes = collect(); // Retorna uma coleção vazia se não houver carga associada
             }

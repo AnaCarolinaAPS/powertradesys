@@ -244,7 +244,7 @@
                                     <label for="cliente_id">Cliente</label>
                                     <select class="selectpicker form-control" data-live-search="true" id="dCliente_id" name="cliente_id">
                                         @foreach ($all_clientes as $cliente)
-                                            <option value="{{ $cliente->id }}"> {{ $cliente->caixa_postal }} </option>
+                                            <option value="{{ $cliente->id }}"> {{ '('.$cliente->caixa_postal.')'.$cliente->apelido }} </option>
                                         @endforeach
                                     </select>
                                 </div>

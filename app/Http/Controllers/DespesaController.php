@@ -116,42 +116,87 @@ class DespesaController extends Controller
         }
     }
 
-    public function distribuirPagamento(Fornecedor $fornecedor, Pagamento $pagamento)
+    public function distribuirPagamento(Fornecedor $fornecedor, Pagamento $pagamento, Despesa $despesa)
     {
-        // Filtra TODAS as DESPESAS que tem valores em aberto
-        $despesasEmAberto = $fornecedor->despesas()->get()->filter(function ($despesa) {
-            return $despesa->valor_pago() < $despesa->valor_total();
-        });
+        //Calcula o valor do pagamento para poder distribuir entre as invoices
+        $valorRestante = $pagamento->valor;        
+        
+        // Calcula o valor em ABERTO da Invoice
+        $saldoAberto = $despesa->valor_total() - $despesa->valor_pago();
 
-        $valorRestante = $pagamento->valor;
+        // Verificar se o valor do pagamento pode pagar totalmente a invoice atual        
+        if ($valorRestante <= $saldoAberto) {
+            $despesa->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+        // Se o valor do pagamento for maior que o da despesa atual distribui entre invoices!
+        } else {
+            $despesa->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+            $valorRestante -= $saldoAberto;
+         
+            // Filtra TODAS as invoices que tem valores em aberto
+            $despesasEmAberto = $cliente->invoices()->get()->filter(function ($despesa) {
+                return $despesa->valor_pago() < $despesa->valor_total();
+            });
 
-        // Distribuir o valor pago, entre as DESPESAS ABERTAS
-        $despesasEmAberto = $despesasEmAberto->sortByDesc('data');
-
-        foreach ($despesasEmAberto as $aberto) {
-            // Calcula o valor em ABERTO da DESPESAS
-            $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
-
-            // Verificar se o valor restante pode pagar totalmente a DESPESAS atual
-            if ($valorRestante >= $saldoAberto) {
-                // O valor pago é suficiente para pagar totalmente esta DESPESAS
-                $valorRestante -= $saldoAberto;
-                // Atualiza a coluna da DESPESAS com o pagamento
-                // Registrar o pagamento para esta DESPESAS
-                $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
-
-            } else {
-                if ($valorRestante > 0) {
-                    // Atualiza a coluna da DESPESAS com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
-                    // Registrar o pagamento para esta DESPESAS
-                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
-                    $valorRestante = 0;
+            foreach ($despesasEmAberto as $aberto) {
+                // Calcula o valor em ABERTO da Invoice
+                $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
+    
+                // Verificar se o valor restante pode pagar totalmente a invoice atual
+                if ($valorRestante >= $saldoAberto) {
+                    // O valor pago é suficiente para pagar totalmente esta invoice
+                    $valorRestante -= $saldoAberto;
+                    // Atualiza a coluna da invoice com o pagamento
+                    // Registrar o pagamento para esta invoice
+                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+    
                 } else {
-                    // Não existem mais valores para serem registrados (quebra o foreach)
-                    break;
+                    if ($valorRestante > 0) {
+                        // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
+                        // Registrar o pagamento para esta invoice
+                        $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+                        $valorRestante = 0;
+                    } else {
+                        // Não existem mais valores para serem registrados (quebra o foreach)
+                        break;
+                    }
                 }
             }
         }
+
+        // Filtra TODAS as DESPESAS que tem valores em aberto
+        // $despesasEmAberto = $fornecedor->despesas()->get()->filter(function ($despesa) {
+        //     return $despesa->valor_pago() < $despesa->valor_total();
+        // });
+
+        // $valorRestante = $pagamento->valor;
+
+        // // Distribuir o valor pago, entre as DESPESAS ABERTAS
+        // $despesasEmAberto = $despesasEmAberto->sortByDesc('data');
+
+        // foreach ($despesasEmAberto as $aberto) {
+        //     // Calcula o valor em ABERTO da DESPESAS
+        //     $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
+
+        //     // Verificar se o valor restante pode pagar totalmente a DESPESAS atual
+        //     if ($valorRestante >= $saldoAberto) {
+        //         // O valor pago é suficiente para pagar totalmente esta DESPESAS
+        //         $valorRestante -= $saldoAberto;
+        //         // Atualiza a coluna da DESPESAS com o pagamento
+        //         // Registrar o pagamento para esta DESPESAS
+        //         $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+
+        //     } else {
+        //         if ($valorRestante > 0) {
+        //             // Atualiza a coluna da DESPESAS com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
+        //             // Registrar o pagamento para esta DESPESAS
+        //             $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+        //             $valorRestante = 0;
+        //         } else {
+        //             // Não existem mais valores para serem registrados (quebra o foreach)
+        //             break;
+        //         }
+        //     }
+        // }
 
         // Retorna o valor restante
         return $valorRestante;

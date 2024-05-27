@@ -355,6 +355,7 @@
                         @csrf
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
+                            <input type="hidden" name="despesa_id" value="{{ $despesa->id; }}" id="despesa_id">
                             <input type="hidden" name="fornecedor_id" value="{{  $despesa->fornecedor->id; }}" id="fornecedor_id">
                             <input type="hidden" name="tipo" value="Despesa" id="tipo">
                             <div class="row">

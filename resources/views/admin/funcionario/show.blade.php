@@ -54,7 +54,7 @@
                                 <div class="col-3">
                                     <div class="form-group">
                                         <label for="contato">Data da Desligamento</label>
-                                        <input class="form-control" type="date" value="" id="data_contratacao">
+                                        <input class="form-control" type="date" value="{{ $funcionario->data_desligamento }}" id="data_desligamento" name="data_desligamento">
                                     </div>
                                 </div>
                             </div>

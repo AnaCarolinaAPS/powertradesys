@@ -60,6 +60,7 @@ class ServicosFuncionarioController extends Controller
                 'moeda' => 'required|in:U$,G$,R$',
                 'frequencia' => 'required|in:mensal,quinzenal,semanal',
                 'data_inicio' => 'required|date',
+                'data_fim' => 'nullable|date',
                 // Adicione outras regras de validação conforme necessário
             ]);
 

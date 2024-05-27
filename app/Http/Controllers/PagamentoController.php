@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pagamento;
 use App\Models\Invoice;
+use App\Models\Despesa;
 use App\Models\FluxoCaixa;
 use App\Models\FechamentoCaixa;
 use App\Models\Cliente;

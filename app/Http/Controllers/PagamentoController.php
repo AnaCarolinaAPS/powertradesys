@@ -49,7 +49,7 @@ class PagamentoController extends Controller
                 // Validação dos dados do formulário
                 $request->validate([
                     'cliente_id' => 'required|exists:clientes,id',
-                    // 'invoice_id' => 'required|exists:invoices,id',
+                    'invoice_id' => 'required|exists:invoices,id',
                     // Adicione outras regras de validação conforme necessário
                 ]);
 
@@ -115,10 +115,10 @@ class PagamentoController extends Controller
 
                 //Faz o pagamento da INVOICE que foi inserido o pagamento
 
-
+                $invoice = Invoice::findOrFail($request->input('invoice_id'));
                 // Chama o método distribuirPagamento no controlador de Invoice
                 $invoiceController = new InvoiceController();
-                $valorRestante = $invoiceController->distribuirPagamento($cliente, $pagamento);
+                $valorRestante = $invoiceController->distribuirPagamento($cliente, $pagamento, $invoice);
 
                 //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
                 if ($valorRestante > 0) {

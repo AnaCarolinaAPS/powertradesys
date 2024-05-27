@@ -228,39 +228,49 @@ class InvoiceController extends Controller
         }
     }
 
-    public function distribuirPagamento(Cliente $cliente, Pagamento $pagamento)
+    public function distribuirPagamento(Cliente $cliente, Pagamento $pagamento, Invoice $invoice)
     {
-        // Filtra TODAS as invoices que tem valores em aberto
-        $invoicesEmAberto = $cliente->invoices()->get()->filter(function ($invoice) {
-            return $invoice->valor_pago() < $invoice->valor_total();
-        });
+        //Calcula o valor do pagamento para poder distribuir entre as invoices
+        $valorRestante = $pagamento->valor;        
+        
+        // Calcula o valor em ABERTO da Invoice
+        $saldoAberto = $invoice->valor_total() - $invoice->valor_pago();
 
-        $valorRestante = $pagamento->valor;
+        // Verificar se o valor do pagamento pode pagar totalmente a invoice atual        
+        if ($valorRestante <= $saldoAberto) {
+            $invoice->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+        // Se o valor do pagamento for maior que o da invoice atual distribui entre invoices!
+        } else {
+            $invoice->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+            $valorRestante -= $saldoAberto;
+         
+            // Filtra TODAS as invoices que tem valores em aberto
+            $invoicesEmAberto = $cliente->invoices()->get()->filter(function ($invoice) {
+                return $invoice->valor_pago() < $invoice->valor_total();
+            });
 
-        // Distribuir o valor pago, entre as invoices ABERTAS
-        $invoicesEmAberto = $invoicesEmAberto->sortByDesc('data');
-
-        foreach ($invoicesEmAberto as $aberto) {
-            // Calcula o valor em ABERTO da Invoice
-            $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
-
-            // Verificar se o valor restante pode pagar totalmente a invoice atual
-            if ($valorRestante >= $saldoAberto) {
-                // O valor pago é suficiente para pagar totalmente esta invoice
-                $valorRestante -= $saldoAberto;
-                // Atualiza a coluna da invoice com o pagamento
-                // Registrar o pagamento para esta invoice
-                $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
-
-            } else {
-                if ($valorRestante > 0) {
-                    // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
+            foreach ($invoicesEmAberto as $aberto) {
+                // Calcula o valor em ABERTO da Invoice
+                $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
+    
+                // Verificar se o valor restante pode pagar totalmente a invoice atual
+                if ($valorRestante >= $saldoAberto) {
+                    // O valor pago é suficiente para pagar totalmente esta invoice
+                    $valorRestante -= $saldoAberto;
+                    // Atualiza a coluna da invoice com o pagamento
                     // Registrar o pagamento para esta invoice
-                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
-                    $valorRestante = 0;
+                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+    
                 } else {
-                    // Não existem mais valores para serem registrados (quebra o foreach)
-                    break;
+                    if ($valorRestante > 0) {
+                        // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
+                        // Registrar o pagamento para esta invoice
+                        $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+                        $valorRestante = 0;
+                    } else {
+                        // Não existem mais valores para serem registrados (quebra o foreach)
+                        break;
+                    }
                 }
             }
         }

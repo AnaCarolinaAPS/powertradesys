@@ -141,9 +141,9 @@ class FluxoCaixaController extends Controller
 
                 //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
                 $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data'));
-                $ano = $data->year;
-                $mes = $data->month;
-                $fechamentoDestino = FechamentoCaixa::where('caixa_id', $request->input('caixa_destino_id'))->where('mes', $mes)->where('ano', $ano)->firstOrFail();
+                $start_date = $data->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
+                $end_date = $data->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+                $fechamentoDestino = FechamentoCaixa::where('caixa_id', $request->input('caixa_destino_id'))->where('start_date', $start_date)->where('end_date', $end_date)->firstOrFail();
 
                 //Cria um registro em "destino"
                 $fluxo = FluxoCaixa::create([
@@ -195,9 +195,9 @@ class FluxoCaixaController extends Controller
 
                 //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
                 $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data'));
-                $ano = $data->year;
-                $mes = $data->month;
-                $fechamentoDestino = FechamentoCaixa::where('caixa_id', $request->input('caixa_destino_id'))->where('mes', $mes)->where('ano', $ano)->firstOrFail();
+                $start_date = $data->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
+                $end_date = $data->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+                $fechamentoDestino = FechamentoCaixa::where('caixa_id', $request->input('caixa_destino_id'))->where('start_date', $start_date)->where('end_date', $end_date)->firstOrFail();
 
                 //Cria um registro em "destino"
                 $fluxo = FluxoCaixa::create([

@@ -74,7 +74,7 @@
                                             @else
                                                 <tr class="abrirModal" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                             @endif
-                                            <td>{{ $fluxo->data }}</td>
+                                            <td>{{ $fluxo->data.' '.$fluxo->id }}</td>
                                             <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
                                             <td>
                                                 @if ($fluxo->tipo == 'saida')

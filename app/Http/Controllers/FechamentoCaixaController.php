@@ -47,7 +47,8 @@ class FechamentoCaixaController extends Controller
                             ->get();
             $all_subcategorias = Categoria::where('tipo', 'subcategoria')
                             ->get();
-            $all_caixas = Caixa::where('id', '!=', $id)->get();//Caixa::all();
+            // $all_caixas = Caixa::where('id', '!=', $id)->get();//Caixa::all();
+            $all_caixas = Caixa::all();
 
             $soma_categorias = FluxoCaixa::select('categoria_id', DB::raw('SUM(valor_origem) as total_saida'))
                             ->where('tipo', 'saida')

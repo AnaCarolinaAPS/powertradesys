@@ -151,18 +151,17 @@
                                     <tr>
                                         <th>WR</th>
                                         <th>Rastreio</th>
-                                        <th>Cliente</th>
                                         <th>Qtd</th>
                                         <th>KG Aprox</th>
                                         <th>KG Recebido</th>
+                                        <th>Cliente</th>                                        
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($carga->pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td>WR-{{ $pacote->warehouse->wr; }}</td>
-                                        <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
-                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
+                                        <td><h6 class="mb-0">{{ "'".$pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso_aprox }}</td>
                                         @if ($pacote->peso > 0)
@@ -170,6 +169,7 @@
                                         @else
                                             <td>Aguardando</td>
                                         @endif
+                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

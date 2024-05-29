@@ -29,4 +29,9 @@ class ServicosFuncionario extends Model
     {
         return $this->belongsTo(Funcionario::class);
     }
+
+    public function folha_pagamento_items()
+    {
+        return $this->hasMany(FolhaPagamentoItem::class, 'servicos_funcionario_id');
+    }
 }

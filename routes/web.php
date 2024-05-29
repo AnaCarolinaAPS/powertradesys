@@ -30,6 +30,8 @@ use App\Http\Controllers\DespesaController;
 use App\Http\Controllers\DespesaItemController;
 use App\Http\Controllers\FuncionarioController;
 use App\Http\Controllers\ServicosFuncionarioController;
+use App\Http\Controllers\FolhaPagamentoController;
+use App\Http\Controllers\FolhaPagamentoItemController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TextController;
 use Illuminate\Support\Facades\Route;
@@ -303,11 +305,28 @@ Route::middleware('auth')->group(function () {
         });
 
         // Serviços Funcionarios CRUD
-        Route::prefix('/admin/servicosfuncionaios')->group(function () {
+        Route::prefix('/admin/servicosfuncionarios')->group(function () {
             Route::post('/', [ServicosFuncionarioController::class, 'store'])->name('servicos_funcionarios.store');
             Route::get('/{servico}', [ServicosFuncionarioController::class, 'show'])->name('servicos_funcionarios.show');
             Route::put('/{servico}', [ServicosFuncionarioController::class, 'update'])->name('servicos_funcionarios.update');
             Route::delete('/{servico}', [ServicosFuncionarioController::class, 'destroy'])->name('servicos_funcionarios.destroy');
+        });
+
+        // Funcionarios CRUD
+        Route::prefix('/admin/folhapagamentos')->group(function () {
+            Route::get('/{folha}', [FolhaPagamentoController::class, 'show'])->name('folhapagamentos.show');
+            Route::put('/{folha}', [FolhaPagamentoController::class, 'update'])->name('folhapagamentos.update');
+            Route::delete('/{folha}', [FolhaPagamentoController::class, 'destroy'])->name('folhapagamentos.destroy');
+            Route::get('/', [FolhaPagamentoController::class, 'index'])->name('folhapagamentos.index');
+            Route::post('/', [FolhaPagamentoController::class, 'store'])->name('folhapagamentos.store');
+        });
+
+        // Serviços Funcionarios CRUD
+        Route::prefix('/admin/folhapagamentoitems')->group(function () {
+            Route::post('/', [FolhaPagamentoItemController::class, 'store'])->name('folhas_items.store');
+            Route::get('/{folhaitem}', [FolhaPagamentoItemController::class, 'show'])->name('folhas_items.show');
+            Route::put('/{folhaitem}', [FolhaPagamentoItemController::class, 'update'])->name('folhas_items.update');
+            Route::delete('/{folhaitem}', [FolhaPagamentoItemController::class, 'destroy'])->name('folhas_items.destroy');
         });
 
 

@@ -22,4 +22,9 @@ class Funcionario extends Model
     {
         return $this->hasMany(ServicosFuncionario::class);
     }
+
+    public function folhas_pagamento()
+    {
+        return $this->hasMany(FolhaPagamento::class);
+    }
 }

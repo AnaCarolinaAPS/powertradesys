@@ -86,7 +86,7 @@
                                     <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
                                 </ul>
                             </li>
-                            <li><a href="{{ route('registro_caixa.index'); }}">Registro de Caixa</a></li>
+                            <li><a href="{{ route('registro_caixa.index', ['tipo' => 'ultimos']); }}">Registro de Caixa</a></li>
                             <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
                             <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
                             <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>
@@ -106,57 +106,18 @@
                         </ul>
                     </li>
                     @endcan
-
-                {{-- @elseif (Auth::user()->isLogistics()) --}}
-                    {{-- <li>
+                    <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="ri-pencil-line"></i>
-                            <span>Cadastros</span>
+                            <i class="ri-line-chart-line"></i>
+                            <span>Histórico</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Freteiros</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Shippers</a></li>
-                        </ul>
-                    </li> --}}
-                    {{-- <li>
-                        <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="fas fa-box-open"></i>
-                            <span>Logistica</span>
-                        </a>
-                        <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Warehouses</a></li>
                             <li><a href="layouts-dark-sidebar.html">Pacotes</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Estoque</a></li>
+                            @can('visualizar financeiro')
+                            <li><a href="{{ route('registro_caixa.index', ['tipo' => 'all']); }}">Histórico de Caixas</a></li>
+                            @endcan
                         </ul>
-                    </li> --}}
-                {{-- @elseif (Auth::user()->isFinancial()) --}}
-                    {{-- <li>
-                        <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="ri-pencil-line"></i>
-                            <span>Cadastros</span>
-                        </a>
-                        <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li>
-                            <li><a href="layouts-horizontal.html">Caixas</a></li>
-                            <li><a href="layouts-horizontal.html">Serviços</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Categorias</a></li>
-                        </ul>
-                    </li> --}}
-                    {{-- <li>
-                        <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>Financeiro</span>
-                        </a>
-                        <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Cargas</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Fluxo de Caixa</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>
-                        </ul>
-                    </li> --}}
+                    </li>
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-line-chart-line"></i>

@@ -14,23 +14,24 @@ class FechamentoCaixaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($tipo = null)
     {
-        // $all_items = DB::table('caixas')
-        //             ->select('caixas.id', 'caixas.nome', 'caixas.moeda',
-        //                 DB::raw('COALESCE(SUM(CASE WHEN fluxo_caixas.tipo = "entrada" THEN fluxo_caixas.valor_origem ELSE 0 END), 0) as saldo_entrada'),
-        //                 DB::raw('COALESCE(SUM(CASE WHEN fluxo_caixas.tipo = "saida" THEN fluxo_caixas.valor_origem ELSE 0 END), 0) as saldo_saida'),
-        //                 DB::raw('COALESCE(SUM(CASE WHEN fluxo_caixas.caixa_origem_id = caixas.id AND fluxo_caixas.tipo IN ("cambio", "transferencia") THEN fluxo_caixas.valor_origem ELSE 0 END), 0) as saida_transacao'),
-        //                 DB::raw('COALESCE(SUM(CASE WHEN fluxo_caixas.caixa_destino_id = caixas.id THEN fluxo_caixas.valor_destino ELSE 0 END), 0) as entrada_transacao')
-        //             )
-        //             ->leftJoin('fluxo_caixas', function ($join) {
-        //                 $join->on('caixas.id', '=', 'fluxo_caixas.caixa_origem_id')
-        //                     ->orOn('caixas.id', '=', 'fluxo_caixas.caixa_destino_id');
-        //             })
-        //             ->groupBy('caixas.id', 'caixas.nome', 'caixas.moeda')
-        //             ->get();
-        $all_items = FechamentoCaixa::all();
         $all_caixas = Caixa::all();
+
+        if ($tipo == 'all') {
+            $all_items = FechamentoCaixa::all();
+        } else {
+            // Para cada caixa, buscar a última entrada de FechamentoCaixa
+            foreach ($all_caixas as $caixa) {
+                $fechamento = FechamentoCaixa::where('caixa_id', $caixa->id)
+                    ->orderBy('start_date', 'desc')
+                    ->first();
+                if ($fechamento) {
+                    $all_items[] = $fechamento;
+                }
+            }
+        }
+        // $all_items = FechamentoCaixa::all();
         return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas'));
     }
 

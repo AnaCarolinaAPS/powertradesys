@@ -83,7 +83,7 @@ class FluxoCaixaController extends Controller
 
                 //atualiza fechamento
                 $fechamento = FechamentoCaixa::findOrFail($request->input('fechamento_caixa_id'));
-                $fechamento->atualizaSaldo($valor_origem);
+                // $fechamento->atualizaSaldo($valor_origem);
             } else if ($request->input('tipo') == 'saida') {
                 if ($request->input('valor_origem') < 0) {
                     $valor_origem = $request->input('valor_origem');
@@ -105,7 +105,7 @@ class FluxoCaixaController extends Controller
 
                 //atualiza fechamento
                 $fechamento = FechamentoCaixa::findOrFail($request->input('fechamento_caixa_id'));
-                $fechamento->atualizaSaldo($valor_origem);
+                // $fechamento->atualizaSaldo($valor_origem);
             } else if ($request->input('tipo') == 'transferencia') {
                 if ($request->input('valor_origem') < 0) {
                     $valor_origem = $request->input('valor_origem');
@@ -137,7 +137,7 @@ class FluxoCaixaController extends Controller
                 ]);
                 //atualiza fechamento
                 $fechamento = FechamentoCaixa::findOrFail($request->input('fechamento_caixa_id'));
-                $fechamento->atualizaSaldo($valor_origem);
+                // $fechamento->atualizaSaldo($valor_origem);
 
                 //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
                 $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data'));
@@ -158,7 +158,7 @@ class FluxoCaixaController extends Controller
                     // Adicione outros campos conforme necessário
                 ]);
 
-                $fechamentoDestino->atualizaSaldo($valor_destino);
+                // $fechamentoDestino->atualizaSaldo($valor_destino);
             } else if ($request->input('tipo') == 'cambio') {
                 //obrigatoriamente tem caixa_destino_id e o valor é DIFERENTE
                 if ($request->input('valor_origem') < 0) {
@@ -191,7 +191,7 @@ class FluxoCaixaController extends Controller
                 ]);
                 //atualiza fechamento
                 $fechamento = FechamentoCaixa::findOrFail($request->input('fechamento_caixa_id'));
-                $fechamento->atualizaSaldo($valor_origem);
+                // $fechamento->atualizaSaldo($valor_origem);
 
                 //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
                 $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data'));
@@ -212,7 +212,7 @@ class FluxoCaixaController extends Controller
                     // Adicione outros campos conforme necessário
                 ]);
 
-                $fechamentoDestino->atualizaSaldo($valor_destino);
+                // $fechamentoDestino->atualizaSaldo($valor_destino);
             }
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [
@@ -282,7 +282,7 @@ class FluxoCaixaController extends Controller
             //Encontra a qual fechamento o registro pertence
             $fechamento = FechamentoCaixa::findOrFail($fluxocaixa->fechamento_caixa_id);
             //Troca o valor + ou - do valor_origem para ajustar o saldo e Atualiza
-            $fechamento->atualizaSaldo($fluxocaixa->valor_origem*-1);
+            // $fechamento->atualizaSaldo($fluxocaixa->valor_origem*-1);
 
             if ($fluxocaixa->tipo == 'transferencia' || $fluxocaixa->tipo == 'cambio') {
                 //Busca a copia da transferencia / cambio
@@ -300,7 +300,7 @@ class FluxoCaixaController extends Controller
 
                 $fechamento_destino = FechamentoCaixa::findOrFail($fluxo_destino->fechamento_caixa_id);
                 //Troca o valor + ou - do valor_origem para ajustar o saldo e Atualiza
-                $fechamento_destino->atualizaSaldo($fluxo_destino->valor_destino*-1);
+                // $fechamento_destino->atualizaSaldo($fluxo_destino->valor_destino*-1);
                 $fluxo_destino->delete();
             }
 

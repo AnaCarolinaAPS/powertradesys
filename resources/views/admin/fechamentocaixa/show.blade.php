@@ -15,7 +15,7 @@
                     <div class="page-title-right">
                         <ol class="breadcrumb m-0">
                             <li class="breadcrumb-item"><a href="javascript: void(0);">Admin</a></li>
-                            <li class="breadcrumb-item"><a href="{{ url()->previous(); }}">Registro de Caixas</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('registro_caixa.index', ['tipo' => 'ultimos']); }}">Registro de Caixas</a></li>
                             <li class="breadcrumb-item active">{{ \Carbon\Carbon::parse($fechamento->start_date)->format('d/m/Y'); }} até {{ \Carbon\Carbon::parse($fechamento->end_date)->format('d/m/Y'); }} - {{ $fechamento->caixa->nome;}}</li>
                         </ol>
                     </div>
@@ -31,8 +31,11 @@
                             <div class="col">
                                 <h4 class="card-title mb-4">{{ $fechamento->caixa->nome }}</h4>
                             </div>
-                            <div class="col">
+                            {{-- <div class="col">
                                 <h4 class="card-title mb-4">Disponível: {{ $fechamento->saldo_final }} {{ $fechamento->caixa->moeda }}</h4>
+                            </div> --}}
+                            <div class="col">
+                                <h4 class="card-title mb-4">Disponível: {{ $fechamento->calculaSaldo() }} {{ $fechamento->caixa->moeda }}</h4>
                             </div>
                         </div>
                         <div class="row justify-content-between">

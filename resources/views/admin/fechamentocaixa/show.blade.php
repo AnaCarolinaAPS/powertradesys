@@ -110,7 +110,7 @@
                                                 @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
                                                     {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
                                                 @else
-                                                    @if ($fluxo->caixaOrigem->id == $fechamento->caixa->id)
+                                                    @if ($fluxo->fechamentoOrigem->id == $fechamento->id)
                                                         {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
                                                     @else
                                                         {{ number_format($fluxo->valor_destino, 2, ',', '.') }}
@@ -226,11 +226,21 @@
                                 <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição da Transação" maxlength="255">
                             </div>
                         </div>
-                        <div class="col" id="div_caixa_destino">
+                        <div class="col" id="div_caixa_destino_t">
                             <div class="form-group">
-                                <label for="caixa_destino_id">Destino</label>
-                                <select class="selectpicker form-control" data-live-search="true" id="caixa_destino_id" name="caixa_destino_id">
-                                    @foreach ($all_caixas as $caixa_destino)
+                                <label for="caixa_destino_id">Destino T</label>
+                                <select class="selectpicker form-control" data-live-search="true" id="caixa_destino_id" name="caixa_destino_id_t">
+                                    @foreach ($all_caixas_t as $caixa_destino)
+                                        <option value="{{ $caixa_destino->id }}"> {{ $caixa_destino->nome }} </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col" id="div_caixa_destino_c">
+                            <div class="form-group">
+                                <label for="caixa_destino_id">Destino C</label>
+                                <select class="selectpicker form-control" data-live-search="true" id="caixa_destino_id" name="caixa_destino_id_c">
+                                    @foreach ($all_caixas_c as $caixa_destino)
                                         <option value="{{ $caixa_destino->id }}"> {{ $caixa_destino->nome }} </option>
                                     @endforeach
                                 </select>
@@ -351,28 +361,32 @@
         // Preencher o input com base no tipo
         if (tipo === 'entrada') {
             document.getElementById('tipo').value = 'entrada';
-            document.getElementById('div_caixa_destino').style.display = 'none';
+            document.getElementById('div_caixa_destino_c').style.display = 'none';
+            document.getElementById('div_caixa_destino_t').style.display = 'none';
             document.getElementById('div_valor_destino').style.display = 'none';
             document.getElementById('div_categoria').style.display = 'block';
             document.getElementById('div_subcategoria').style.display = 'block';
             document.getElementById('div_descricao').style.display = 'block';
         } else if (tipo === 'saida') {
             document.getElementById('tipo').value = 'saida';
-            document.getElementById('div_caixa_destino').style.display = 'none';
+            document.getElementById('div_caixa_destino_c').style.display = 'none';
+            document.getElementById('div_caixa_destino_t').style.display = 'none';
             document.getElementById('div_valor_destino').style.display = 'none';
             document.getElementById('div_categoria').style.display = 'block';
             document.getElementById('div_subcategoria').style.display = 'block';
             document.getElementById('div_descricao').style.display = 'block';
         } else if (tipo === 'transferencia') {
             document.getElementById('tipo').value = 'transferencia';
-            document.getElementById('div_caixa_destino').style.display = 'block';
+            document.getElementById('div_caixa_destino_c').style.display = 'none';
+            document.getElementById('div_caixa_destino_t').style.display = 'block';
             document.getElementById('div_valor_destino').style.display = 'none';
             document.getElementById('div_categoria').style.display = 'none';
             document.getElementById('div_subcategoria').style.display = 'none';
             document.getElementById('div_descricao').style.display = 'none';
         } else if (tipo === 'cambio') {
             document.getElementById('tipo').value = 'cambio';
-            document.getElementById('div_caixa_destino').style.display = 'block';
+            document.getElementById('div_caixa_destino_c').style.display = 'block';
+            document.getElementById('div_caixa_destino_t').style.display = 'none';
             document.getElementById('div_valor_destino').style.display = 'block';
             document.getElementById('div_categoria').style.display = 'none';
             document.getElementById('div_subcategoria').style.display = 'none';

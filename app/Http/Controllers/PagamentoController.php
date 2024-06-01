@@ -92,13 +92,12 @@ class PagamentoController extends Controller
                 'data' => $request->input('data_pagamento'),
                 'descricao' => $descricao,
                 'tipo' => $tipo,
-                'caixa_origem_id' => $request->input('caixa_origem_id'),
+                // 'caixa_origem_id' => $request->input('caixa_origem_id'),
+                'fechamento_origem_id' => $fechamento->id,
                 'valor_origem' => $valor_pgto,
-                'fechamento_caixa_id' => $fechamento->id,
+                // 'fechamento_caixa_id' => $fechamento->id,
                 // Adicione outros campos conforme necessário
             ]);
-
-            $fechamento->atualizaSaldo($valor_pgto);
 
             // ************************************
             // Cria o PAGAMENTO para ser atrelado a(s) Invoice(s)

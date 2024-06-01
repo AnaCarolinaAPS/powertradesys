@@ -165,7 +165,7 @@
                                             <!-- <a href="{{ route('pagamentos.destroy', ['pagamento' =>  $pagamento->id]) }}" class="link-danger">Excluir</a> -->
                                         </td>
                                         <td>
-                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamento->id]) }}" class="link-info">Ir p/ Caixa</a>
+                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
                                         </td>
                                     </tr>
                                     <tr class="collapse accordion-collapse" id="r{{$i++}}" data-bs-parent=".table">

@@ -18,13 +18,15 @@ class FluxoCaixa extends Model
         'data',
         'descricao',
         'tipo',
-        'caixa_origem_id',
+        // 'caixa_origem_id',
+        'fechamento_origem_id',
         'valor_origem',
-        'caixa_destino_id',
+        // 'caixa_destino_id',
+        'fechamento_destino_id',
         'valor_destino',
         'categoria_id',
         'subcategoria_id',
-        'fechamento_caixa_id',
+        // 'fechamento_caixa_id',
     ];
 
     public function categoria()
@@ -37,20 +39,20 @@ class FluxoCaixa extends Model
         return $this->belongsTo(Categoria::class, 'subcategoria_id');
     }
 
-    public function caixaOrigem()
+    public function fechamentoOrigem()
     {
-        return $this->belongsTo(Caixa::class, 'caixa_origem_id');
+        return $this->belongsTo(FechamentoCaixa::class, 'fechamento_origem_id');
     }
 
-    public function caixaDestino()
+    public function fechamentoDestino()
     {
-        return $this->belongsTo(Caixa::class, 'caixa_destino_id');
+        return $this->belongsTo(FechamentoCaixa::class, 'fechamento_destino_id');
     }
 
-    public function fechamento()
-    {
-        return $this->belongsTo(FechamentoCaixa::class, 'fechamento_caixa_id');
-    }
+    // public function fechamento()
+    // {
+    //     return $this->belongsTo(FechamentoCaixa::class, 'fechamento_caixa_id');
+    // }
 
     public function pagamento()
     {

@@ -43,17 +43,19 @@ class FechamentoCaixaController extends Controller
         try {
             // Buscar o item pelo ID
             $fechamento = FechamentoCaixa::findOrFail($id);
-            $all_items = FluxoCaixa::where('fechamento_caixa_id', $id)->orderBy('data', 'desc')->get();
+            $all_items = FluxoCaixa::where('fechamento_origem_id', $id)->orWhere('fechamento_destino_id', $id)->get();
             $all_categorias = Categoria::where('tipo', 'categoria')
                             ->get();
             $all_subcategorias = Categoria::where('tipo', 'subcategoria')
                             ->get();
-            // $all_caixas = Caixa::where('id', '!=', $id)->get();//Caixa::all();
-            $all_caixas = Caixa::all();
+            //caixas para transação
+            $all_caixas_t = Caixa::where('id', '!=', $fechamento->caixa->id)->where('moeda', '=', $fechamento->caixa->moeda)->get();
+            //caixas para cambio
+            $all_caixas_c = Caixa::where('id', '!=', $fechamento->caixa->id)->where('moeda', '!=', $fechamento->caixa->moeda)->get();
 
             $soma_categorias = FluxoCaixa::select('categoria_id', DB::raw('SUM(valor_origem) as total_saida'))
                             ->where('tipo', 'saida')
-                            ->where('fechamento_caixa_id', $id)
+                            ->where('fechamento_origem_id', $id)
                             ->groupBy('categoria_id')
                             ->get();
 
@@ -88,7 +90,7 @@ class FechamentoCaixaController extends Controller
 
             $soma_subcategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'))
                             ->where('tipo', 'saida')
-                            ->where('fechamento_caixa_id', $id)
+                            ->where('fechamento_origem_id', $id)
                             ->groupBy('categoria_id', 'subcategoria_id')
                             ->get();
 
@@ -122,7 +124,7 @@ class FechamentoCaixaController extends Controller
             ];
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.fechamentocaixa.show', compact('fechamento', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas', 'data_grafico', 'data_grafico_sub'));
+            return view('admin.fechamentocaixa.show', compact('fechamento', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas_t', 'all_caixas_c', 'data_grafico', 'data_grafico_sub'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [
@@ -149,11 +151,6 @@ class FechamentoCaixaController extends Controller
 
             // Converter a data para um objeto Carbon
             $dataCarbon = \Carbon\Carbon::parse($request->input('data'));
-
-            // Extrair o mês e o ano da data
-            // $mes = $dataCarbon->format('m'); // Obtém o número do mês (01 para janeiro, 02 para fevereiro, etc.)
-            // $ano = $dataCarbon->format('Y'); // Obtém o ano (ex: 2024)
-
             // Calcular o domingo (início da semana) e o sábado (final da semana)
             $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
             $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
@@ -170,8 +167,6 @@ class FechamentoCaixaController extends Controller
 
             // Criação de um novo Freteiro no banco de dados
             $fechamento = FechamentoCaixa::create([
-                // 'ano' => $ano,
-                // 'mes' => $mes,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
                 'caixa_id' => $request->input('caixa_id'),

@@ -20,13 +20,13 @@ class Caixa extends Model
         'observacoes',
     ];
 
-    public function transacoesOrigem()
-    {
-        return $this->hasMany(FluxoCaixa::class, 'caixa_origem_id');
-    }
+    // public function transacoesOrigem()
+    // {
+    //     return $this->hasMany(FluxoCaixa::class, 'caixa_origem_id');
+    // }
 
-    public function transacoesDestino()
-    {
-        return $this->hasMany(FluxoCaixa::class, 'caixa_destino_id');
-    }
+    // public function transacoesDestino()
+    // {
+    //     return $this->hasMany(FluxoCaixa::class, 'caixa_destino_id');
+    // }
 }

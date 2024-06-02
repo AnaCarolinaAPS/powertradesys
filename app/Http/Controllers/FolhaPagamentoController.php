@@ -62,7 +62,7 @@ class FolhaPagamentoController extends Controller
     // Mostra os detalhes da entidade específica
     public function show(FolhaPagamento $folha)
     {
-        $all_servicos = ServicosFuncionario::where('funcionario_id', $folha->funcionario_id)->get();
+        $all_servicos = ServicosFuncionario::where('funcionario_id', $folha->funcionario_id)->whereNull('data_fim')->get();
         $all_items = FolhaPagamentoItem::where('folha_pagamento_id', $folha->id)->get();
         $all_caixas = Caixa::all();
         return view('admin.folhapagamento.show', compact('folha', 'all_servicos', 'all_items', 'all_caixas'));

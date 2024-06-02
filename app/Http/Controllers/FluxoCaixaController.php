@@ -41,14 +41,11 @@ class FluxoCaixaController extends Controller
                 'tipo' => 'required|in:entrada,saida,transferencia,cambio',
                 'categoria_id' => 'required_if:tipo,entrada,saida|exists:categorias,id',
                 'subcategoria_id' => 'required_if:tipo,entrada,saida|exists:categorias,id',
-                // 'caixa_origem_id' => 'required|exists:caixas,id',
                 'fechamento_caixa_id' => 'required|exists:fechamento_caixas,id',
                 'valor_origem' => 'required|numeric',
                 'caixa_destino_id_t' => 'required_if:tipo,transferencia|exists:caixas,id',
                 'caixa_destino_id_c' => 'required_if:tipo,cambio|exists:caixas,id',
-                // 'fechamento_destino_id' => 'required_if:tipo,transferencia,cambio|exists:fechamento_caixas,id',
                 'valor_destino' => 'required_if:tipo,cambio|numeric',
-                // 'fechamento_caixa_id' => 'required|exists:fechamento_caixas,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 

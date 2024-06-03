@@ -48,8 +48,20 @@
                                             <td>{{ \Carbon\Carbon::parse($fechamentocaixa->start_date)->format('d/m/Y'); }} até {{ \Carbon\Carbon::parse($fechamentocaixa->end_date)->format('d/m/Y'); }}</td>
                                             <td><h6 class="mb-0">{{ $fechamentocaixa->caixa->nome; }}</h6></td>
                                             <td>{{ $fechamentocaixa->caixa->moeda; }}</td>
-                                            <td>{{ $fechamentocaixa->saldo_inicial; }}</td>
-                                            <td>{{ $fechamentocaixa->saldo_final; }}</td>
+                                            <td>
+                                                @if ($fechamentocaixa->caixa->moeda == 'G$')
+                                                    {{ number_format($fechamentocaixa->saldo_inicial, 0, ',', '.') }}
+                                                @else
+                                                    {{ number_format($fechamentocaixa->saldo_inicial, 2, ',', '.') }}
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if ($fechamentocaixa->caixa->moeda == 'G$')
+                                                    {{ number_format($fechamentocaixa->calculaSaldo(), 0, ',', '.') }}
+                                                @else
+                                                    {{ number_format($fechamentocaixa->calculaSaldo(), 2, ',', '.') }}
+                                                @endif
+                                            </td>
                                         </tr>
                                         @endforeach
                                          <!-- end -->

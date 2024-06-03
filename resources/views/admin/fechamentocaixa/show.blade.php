@@ -35,7 +35,14 @@
                                 <h4 class="card-title mb-4">Disponível: {{ $fechamento->saldo_final }} {{ $fechamento->caixa->moeda }}</h4>
                             </div> --}}
                             <div class="col">
-                                <h4 class="card-title mb-4">Disponível: {{ $fechamento->calculaSaldo() }} {{ $fechamento->caixa->moeda }}</h4>
+                                <h4 class="card-title mb-4">Disponível:
+                                    @if ($fechamento->caixa->moeda == 'G$')
+                                        {{ number_format($fechamento->calculaSaldo(), 0, ',', '.') }}
+                                    @else
+                                        {{ number_format($fechamento->calculaSaldo(), 2, ',', '.') }}
+                                    @endif
+                                    {{ $fechamento->caixa->moeda }}
+                                </h4>
                             </div>
                         </div>
                         <div class="row justify-content-between">
@@ -108,12 +115,24 @@
                                             </td>
                                             <td>
                                                 @if ($fluxo->tipo == 'entrada' || $fluxo->tipo == 'saida')
-                                                    {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
+                                                    @if ($fechamento->caixa->moeda == 'G$')
+                                                        {{ number_format($fluxo->valor_origem, 0, ',', '.') }}
+                                                    @else
+                                                        {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
+                                                    @endif
                                                 @else
                                                     @if ($fluxo->fechamentoOrigem->id == $fechamento->id)
-                                                        {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
+                                                        @if ($fechamento->caixa->moeda == 'G$')
+                                                            {{ number_format($fluxo->valor_origem, 0, ',', '.') }}
+                                                        @else
+                                                            {{ number_format($fluxo->valor_origem, 2, ',', '.') }}
+                                                        @endif
                                                     @else
-                                                        {{ number_format($fluxo->valor_destino, 2, ',', '.') }}
+                                                        @if ($fechamento->caixa->moeda == 'G$')
+                                                            {{ number_format($fluxo->valor_destino, 0, ',', '.') }}
+                                                        @else
+                                                            {{ number_format($fluxo->valor_destino, 2, ',', '.') }}
+                                                        @endif
                                                     @endif
                                                 @endif
                                             </td>

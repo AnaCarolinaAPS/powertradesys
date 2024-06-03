@@ -150,10 +150,10 @@
                                 </button> --}}
                             </div>
                             <div class="col">
-                                Peso Total: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b>
+                                {{-- Peso Recebido: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b> --}}
                             </div>
                             <div class="col">
-                                Valor Total: <b>{{number_format($faturacarga->valor_total(), 2, ',', '.');}} U$</b>
+                                Lucro Previsto: <b>{{number_format($faturacarga->valor_total() - $faturacarga->despesas_total(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
                                 Falta COBRAR : <b>{{number_format($faturacarga->valor_total() - $faturacarga->invoices_pagas(), 2, ',', '.');}} U$</b>
@@ -172,17 +172,32 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_invoices as $invoice)
-                                    <tr data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
+                                    @if ($invoice->invoice_pacotes_sum_valor - $invoice->valor_pago() == 0)
+                                        <tr class="table-success" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
+                                    @else
+                                        <tr class="" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
+                                    @endif                                    
                                         <td>{{ '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name }}</td>
                                         <td>{{ $invoice->pacotes_sum_peso}}</td>
                                         <td>{{ $invoice->invoice_pacotes_sum_peso }}</td>
                                         <td>{{ $invoice->invoice_pacotes_sum_valor }} U$</td>
-                                        <td>{{ $invoice->invoice_pacotes_sum_valor - $invoice->valor_pago() }} U$</td>
+                                        <td>{{ number_format($invoice->invoice_pacotes_sum_valor - $invoice->valor_pago(), 2, ',', '.') }} U$</td>
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
+                        <div class="row">
+                            <div class="col"></div>
+                            <div class="col">                                
+                            </div>
+                             <div class="col">
+                                Peso Total: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b>
+                            </div>
+                            <div class="col">
+                                Valor Total: <b>{{number_format($faturacarga->valor_total(), 2, ',', '.');}} U$</b>
+                            </div>
+                       </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -219,7 +234,11 @@
                             </thead><!-- end thead -->
                             <tbody>
                                 @foreach ($all_despesas as $despesa)
-                                <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() == 0)
+                                    <tr class="table-success" data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                @else
+                                    <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                @endif 
                                     <td>{{ $despesa->fornecedor->nome }}</td>
                                     <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
                                     <td>{{ number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') }}</td>

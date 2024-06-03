@@ -17,12 +17,14 @@ return new class extends Migration
             $table->dropForeign(['caixa_origem_id']);
             $table->dropForeign(['caixa_destino_id']);
 
-            // Renaming the columns using change
-            $table->renameColumn('caixa_origem_id', 'fechamento_origem_id')->change();
-            $table->renameColumn('caixa_destino_id', 'fechamento_destino_id')->change();
+            // Renaming the columns using change            
+            $table->dropColumn('caixa_origem_id');
+            $table->dropColumn('caixa_destino_id');
             $table->dropColumn('fechamento_caixa_id');
 
             // Adding the new foreign keys
+            $table->unsignedBigInteger('fechamento_origem_id');
+            $table->unsignedBigInteger('fechamento_destino_id')->nullable();
             $table->foreign('fechamento_origem_id')->references('id')->on('fechamento_caixas')->onDelete('cascade');
             $table->foreign('fechamento_destino_id')->references('id')->on('fechamento_caixas')->onDelete('cascade');
         });
@@ -37,10 +39,12 @@ return new class extends Migration
             // Dropping the new foreign keys
             $table->dropForeign(['fechamento_origem_id']);
             $table->dropForeign(['fechamento_destino_id']);
+            $table->dropColumn('fechamento_origem_id');
+            $table->dropColumn('fechamento_destino_id');
 
             // Renaming the columns back to original
-            $table->renameColumn('fechamento_origem_id', 'caixa_origem_id');
-            $table->renameColumn('fechamento_destino_id', 'caixa_destino_id');
+            $table->unsignedBigInteger('caixa_origem_id');
+            $table->unsignedBigInteger('caixa_destino_id');
 
             // Adding the old foreign keys back
             $table->foreign('caixa_origem_id')->references('id')->on('caixas')->onDelete('cascade');

@@ -81,7 +81,7 @@ class PacoteController extends Controller
 
     public function show($id)
     {
-        $pacote = Pacote::with('warehouse')->find($id);
+        $pacote = Pacote::with('warehouse')->with('entrega_pacote.entrega')->find($id);
         return response()->json($pacote);
     }
 

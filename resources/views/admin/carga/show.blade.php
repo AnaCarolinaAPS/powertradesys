@@ -61,7 +61,7 @@
                             </div>
 
                             <!-- Acordeom -->
-                            <div class="accordion accordion-flush mt-2" id="accordionFlushExample">
+                            <div class="accordion accordion-flush mt-2" id="accordionDetalhes">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="flush-headingOne">
                                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseDetalhes" aria-expanded="false" aria-controls="flush-collapseDetalhes">
@@ -453,6 +453,32 @@
                             </div>
 
                             <!-- Acordeom -->
+                            <div class="accordion accordion-flush mt-2" id="accRetirados">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="flush-heading">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse" aria-expanded="false" aria-controls="flush-collapseOne">
+                                        Paquetes Retirados
+                                    </button>
+                                    </h2>
+                                    <div id="flush-collapse" class="accordion-collapse collapse" aria-labelledby="flush-heading" data-bs-parent="#accRetirados">
+                                        <div class="accordion-body">
+                                            <table id="datatable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;" id="link_retirados">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th>Data</th>
+                                                        <th>Link</th>
+                                                    </tr>
+                                                </thead><!-- end thead -->
+                                                <tbody id="datatable-tbody">
+                                                    
+                                                </tbody><!-- end tbody -->
+                                            </table> <!-- end table -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Acordeom -->
                             <div class="accordion accordion-flush mt-2" id="accordionObs">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="flush-headingObs">
@@ -494,6 +520,7 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                         <div class="modal-footer">
                             <!-- Botão de Exclusão -->
@@ -634,6 +661,8 @@
 
                     document.getElementById('dwr').value = data.warehouse.wr;
 
+                    // preencherTabela(data.entrega_pacote);
+
                     $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacaoPacote');
@@ -649,16 +678,62 @@
                     $('#wrBotao').show().on('click', function () {
                         window.location.href = link;
                     });
-                        // console.error('Erro:', data.carga_id);
 
                     document.getElementById('dPeso').focus();
-                    // console.error('Erro:', data);
+
                     // Preencha o conteúdo do modal com os dados do pacote recebido
-                    // Exemplo: document.getElementById('modalTitle').innerText = data.titulo;
+                    const tbody = document.getElementById('datatable-tbody');
+                    tbody.innerHTML = ''; // Limpa o conteúdo existente
+
+                    data.entrega_pacote.forEach(item => {
+                        const tr = document.createElement('tr');
+
+                        // Cria a célula para a data
+                        const tdData = document.createElement('td');
+                        tdData.textContent = new Date(item.created_at).toLocaleDateString(); // Ajuste a formatação da data conforme necessário
+                        tr.appendChild(tdData);
+
+                        // Cria a célula para o link
+                        const tdLink = document.createElement('td');
+                        const link = document.createElement('a');
+                        link.href = "{{ route('entregas.show', ['entrega' => ':id']) }}".replace(':id', item.entrega.id);
+                        link.textContent = "Ver Detalhes"; // Ajuste o texto do link conforme necessário
+                        tdLink.appendChild(link);
+                        tr.appendChild(tdLink);
+
+                        tbody.appendChild(tr);
+                    });
+
                 })
                 .catch(error => console.error('Erro:', error));
         });
     });
+
+    // Função para preencher a tabela
+    function preencherTabela(data) {
+        const tbody = document.getElementById('datatable-tbody');
+        tbody.innerHTML = ''; // Limpa o conteúdo existente
+
+        data.forEach(item => {
+            const tr = document.createElement('tr');
+
+            // Cria a célula para a data
+            const tdData = document.createElement('td');
+            tdData.textContent = item.data;
+            tr.appendChild(tdData);
+
+            // Cria a célula para o link
+            const tdLink = document.createElement('td');
+            const link = document.createElement('a');
+            link.href = item.link;
+            link.textContent = item.link;
+            link.target = '_blank'; // Abre o link em uma nova aba
+            tdLink.appendChild(link);
+            tr.appendChild(tdLink);
+
+            tbody.appendChild(tr);
+        });
+    }
 </script>
 <!-- End Page-content -->
 @endsection

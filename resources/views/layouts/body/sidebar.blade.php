@@ -139,9 +139,9 @@
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
                         {{-- <li><a href="layouts-dark-sidebar.html">Acompanhamento</a></li>--}}
-                        {{--     <li><a href="layouts-dark-sidebar.html">Previsões</a></li> --}}
+                            <li><a href="{{ route('pacotes.previsao'); }}">Previsões</a></li>
                         {{--     <li><a href="layouts-dark-sidebar.html">Disponíveis</a></li> --}}
-                            <li><a href="{{ route('pacotes.clienteIndex'); }}">Histórico</a></li>
+                            <li><a href="{{ route('pacotes.historico'); }}">Histórico</a></li>
                         </ul>
                     </li>
                     {{-- 

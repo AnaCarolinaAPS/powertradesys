@@ -294,11 +294,30 @@ class PacoteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function clienteIndex()
+    public function clienteHistorico()
     {        
         // Obtenha o usuário autenticado
         $user = Auth::user();
         $all_items = Pacote::where('cliente_id', $user->cliente->id)->get();
         return view('client.pacote.historico', compact('all_items'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function clientePrevisao()
+    {        
+        // Obtenha o usuário autenticado
+        $user = Auth::user();
+        $all_items = Pacote::with('carga')
+            ->where('cliente_id', $user->cliente->id)
+            ->where(function ($query) {
+                $query->whereNull('carga_id')
+                    ->orWhereHas('carga', function ($query) {
+                        $query->whereNull('data_recebida');
+                    });
+            })
+            ->get();
+        return view('client.pacote.previsao', compact('all_items'));
     }
 }

@@ -342,7 +342,8 @@ Route::middleware('auth')->group(function () {
 
         // Pacotes CRUD
         Route::prefix('/pacotes')->group(function () {
-            Route::get('/historico', [PacoteController::class, 'clienteIndex'])->name('pacotes.clienteIndex');
+            Route::get('/historico', [PacoteController::class, 'clienteHistorico'])->name('pacotes.historico');
+            Route::get('/previsao', [PacoteController::class, 'clientePrevisao'])->name('pacotes.previsao');
         });
     });
 });

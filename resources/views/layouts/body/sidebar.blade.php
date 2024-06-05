@@ -132,26 +132,25 @@
                     </li>
                 @endrole
                 @role('client')
-                {{-- @elseif (Auth::user()->isClient()) --}}
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="fas fa-box-open"></i>
                             <span>Logistica</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Acompanhamento</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Previsões</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Disponíveis</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Retirados</a></li>
+                        {{-- <li><a href="layouts-dark-sidebar.html">Acompanhamento</a></li>--}}
+                        {{--     <li><a href="layouts-dark-sidebar.html">Previsões</a></li> --}}
+                        {{--     <li><a href="layouts-dark-sidebar.html">Disponíveis</a></li> --}}
+                            <li><a href="{{ route('pacotes.clienteIndex'); }}">Histórico</a></li>
                         </ul>
                     </li>
+                    {{-- 
                     <li>
                         <a href="calendar.html" class=" waves-effect">
                             <i class="fas fa-dollar-sign"></i>
                             <span>Invoices</span>
                         </a>
-                    </li>
-                {{-- @endif --}}
+                    </li> --}}
                 @endrole
                 {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">

@@ -339,6 +339,11 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(['role:client'])->group(function () {
         Route::get('/home', [ClientDashboardController::class, 'index'])->name('client.dashboard');
+
+        // Pacotes CRUD
+        Route::prefix('/pacotes')->group(function () {
+            Route::get('/historico', [PacoteController::class, 'clienteIndex'])->name('pacotes.clienteIndex');
+        });
     });
 });
 

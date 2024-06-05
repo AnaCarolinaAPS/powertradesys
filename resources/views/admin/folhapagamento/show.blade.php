@@ -314,7 +314,7 @@
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
                             <input type="hidden" name="folha_pagamento_id" value="{{ $folha->id; }}" id="folha_pagamento_id">
-                            <input type="hidden" name="tipo" value="Funcionario" id="tipo">
+                            <input type="hidden" name="tipo" value="Salario" id="tipo">
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">

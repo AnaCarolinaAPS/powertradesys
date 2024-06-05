@@ -6,6 +6,7 @@ use App\Models\Pacote;
 use App\Models\Warehouse;
 use App\Models\Cliente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PacoteController extends Controller
 {
@@ -288,5 +289,16 @@ class PacoteController extends Controller
                 'title'   => 'Erro',
             ]);
         }
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function clienteIndex()
+    {        
+        // Obtenha o usuário autenticado
+        $user = Auth::user();
+        $all_items = Pacote::where('cliente_id', $user->cliente->id)->get();
+        return view('client.pacote.historico', compact('all_items'));
     }
 }

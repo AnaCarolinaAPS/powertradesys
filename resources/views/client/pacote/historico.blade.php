@@ -27,9 +27,11 @@
                     <div class="card-body">
                         <h4 class="card-title mb-4">Pacotes</h4>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data</th>
+                                        <th>Data Recebida (CDE)</th>
                                         <th>Rastreio</th>
                                         <th>Qtd</th>
                                         <th>Peso Aprox (Miami)</th>
@@ -39,6 +41,16 @@
                                 <tbody>
                                     @foreach ($all_items as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{ optional($pacote->carga)->data_recebida ? optional($pacote->carga)->data_recebida : 'Aguardando' }}</td>
+                                        @if ($pacote->carga)
+                                            @if ($pacote->carga->data_recebida !== null)
+                                                <td>{{ \Carbon\Carbon::parse($pacote->carga->data_recebida)->format('d/m/Y') }}</td>
+                                            @else 
+                                                <td>Aguardando</td>
+                                            @endif
+                                        @else
+                                            <td>Aguardando</td>
+                                        @endif
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso_aprox }}</td>

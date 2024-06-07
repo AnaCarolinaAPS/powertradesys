@@ -49,6 +49,14 @@
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
+                        <div class="row text-center">
+                            <div class="col">
+                                <p><h6 class="mb-0">Total Pacotes: {{$all_items->sum('qtd') ?? '0'}} cxs</h6></p>
+                            </div>
+                            <div class="col">
+                                <p><h6 class="mb-0">Total Previsto: {{$all_items->sum('peso_aprox') ?? '0'}} kgs</h6></p>
+                            </div>
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

@@ -140,21 +140,21 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    {{-- @php
+                                    @php
                                         $i = 0;
                                     @endphp
-                                    @foreach ($despesa->pagamentos as $pagamento)
+                                    @foreach ($folha->pagamentos as $pagamento)
                                     <tr class="abrirModalPgto" data-pgto-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalheModal">
                                         <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
-                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForDespesa($despesa->id), 2, ',', '.')." U$)" }}</td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForFolha($folha->id), 2, ',', '.')." U$)" }}</td>
                                         <td>
                                             <!-- <a href="{{ route('pagamentos.destroy', ['pagamento' =>  $pagamento->id]) }}" class="link-danger">Excluir</a> -->
                                         </td>
                                         <td>
-                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamento->id]) }}" class="link-info">Ir p/ Caixa</a>
+                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
                                         </td>
                                     </tr>
-                                    @endforeach --}}
+                                    @endforeach
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
@@ -314,6 +314,7 @@
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
                             <input type="hidden" name="folha_pagamento_id" value="{{ $folha->id; }}" id="folha_pagamento_id">
+                            <input type="hidden" name="funcionario_id" value="{{ $folha->funcionario->id; }}" id="funcionario_id">
                             <input type="hidden" name="tipo" value="Salario" id="tipo">
                             <div class="row">
                                 <div class="col">

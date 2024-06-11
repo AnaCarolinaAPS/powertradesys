@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Pagamento;
 use App\Models\Invoice;
 use App\Models\Despesa;
+use App\Models\FolhaPagamento;
 use App\Models\FluxoCaixa;
 use App\Models\FechamentoCaixa;
 use App\Models\Cliente;
 use App\Models\Fornecedor;
+use App\Models\Funcionario;
 use Illuminate\Http\Request;
 
 class PagamentoController extends Controller
@@ -18,11 +21,12 @@ class PagamentoController extends Controller
      */
     public function store(Request $request)
     {
+        // DB::beginTransaction();
         try {
 
             // Validação dos dados do formulário
             $request->validate([
-                'tipo' => 'required|in:Pagamento,Despesa',
+                'tipo' => 'required|in:Pagamento,Despesa,Salario',
                 'data_pagamento' => 'required|date',
                 'valor' => 'required|numeric',
                 'observacoes' => 'nullable|string',
@@ -60,6 +64,27 @@ class PagamentoController extends Controller
                 $valor_pgto = $request->input('valor_pgto');
                 $valor = $request->input('valor');
 
+            } else if ($request->input('tipo') == "Salario") {
+                // Validação dos dados do formulário
+                $request->validate([
+                    'funcionario_id' => 'required|exists:funcionarios,id',
+                    'folha_pagamento_id' => 'required|exists:folha_pagamentos,id',
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+
+                $funcionario = Funcionario::findOrFail($request->input('funcionario_id'));
+                $descricao = 'Pago '.$request->input('valor').' '.$fechamento->caixa->moeda.' para '.$funcionario->nome;
+                $tipo = 'salario';
+                if ($request->input('valor_pgto') > 0) {
+                    $valor_pgto = $request->input('valor_pgto')*-1;
+                } else {
+                    $valor_pgto = $request->input('valor_pgto');
+                }
+                if ($valor = $request->input('valor') > 0) {
+                    $valor = $request->input('valor')*-1;
+                } else {
+                    $valor = $request->input('valor');
+                }
             } else {
                 // Validação dos dados do formulário
                 $request->validate([
@@ -92,10 +117,8 @@ class PagamentoController extends Controller
                 'data' => $request->input('data_pagamento'),
                 'descricao' => $descricao,
                 'tipo' => $tipo,
-                // 'caixa_origem_id' => $request->input('caixa_origem_id'),
                 'fechamento_origem_id' => $fechamento->id,
                 'valor_origem' => $valor_pgto,
-                // 'fechamento_caixa_id' => $fechamento->id,
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -128,6 +151,33 @@ class PagamentoController extends Controller
                         'title'   => 'Sucesso',
                     ]);
                 }
+            } else if ($request->input('tipo') == "Salario") {
+                //Cria o Pagamento
+                $pagamentoS = Pagamento::create([
+                    'data_pagamento' => $request->input('data_pagamento'),
+                    'valor' => $valor*-1,
+                    'observacoes' => $request->input('observacoes'),
+                    'fluxo_caixa_id' => $fluxo->id,
+                    'tipo' => 'Salario'
+                    // Adicione outros campos conforme necessário
+                ]);
+
+                $valorRestante = 0;
+
+                //Faz o pagamento da DESPESA que foi inserido o pagamento
+                $folha = FolhaPagamento::findOrFail($request->input('folha_pagamento_id'));
+                // Chama o método distribuirPagamento no controlador de Despesa
+                $folhaController = new FolhaPagamentoController();
+                $valorRestante = $folhaController->distribuirPagamento($funcionario, $pagamentoS, $folha);
+
+                //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
+                if ($valorRestante > 0) {
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'A EMPRESA GEROU UM CREDITO!',
+                        'title'   => 'Sucesso',
+                    ]);
+                }
             } else {
                 //Cria o Pagamento
                 $pagamento = Pagamento::create([
@@ -135,6 +185,7 @@ class PagamentoController extends Controller
                     'valor' => $valor*-1,
                     'observacoes' => $request->input('observacoes'),
                     'fluxo_caixa_id' => $fluxo->id,
+                    'tipo' => 'Despesa'
                     // Adicione outros campos conforme necessário
                 ]);
 
@@ -157,12 +208,16 @@ class PagamentoController extends Controller
 
             }
 
+            // Commit da transação
+            // DB::commit();
+
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Pagamento criado com sucesso!',
                 'title'   => 'Sucesso',
             ]);
         } catch (\Exception $e) {
+            // DB::rollBack();
             // Exibir toastr de Erro
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',

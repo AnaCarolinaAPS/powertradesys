@@ -8,6 +8,7 @@ use App\Models\Funcionario;
 use App\Models\FolhaPagamento;
 use App\Models\FolhaPagamentoItem;
 use App\Models\ServicosFuncionario;
+use App\Models\Pagamento;
 
 class FolhaPagamentoController extends Controller
 {
@@ -25,7 +26,7 @@ class FolhaPagamentoController extends Controller
         try {
             // Validação dos dados do formulário
             $validatedData = $request->validate([
-                'funcionario_id' => 'required|exists:fornecedors,id',
+                'funcionario_id' => 'required|exists:funcionarios,id',
                 'data' => 'required|date',
             ]);
 
@@ -126,5 +127,56 @@ class FolhaPagamentoController extends Controller
                 'title'   => 'Erro',
             ]);
         }
+    }
+
+    public function distribuirPagamento(Funcionario $funcionario, Pagamento $pagamento, FolhaPagamento $folha)
+    {
+        //Calcula o valor do pagamento para poder distribuir entre as invoices
+        $valorRestante = $pagamento->valor;
+
+        // Calcula o valor em ABERTO da Invoice
+        $saldoAberto = $folha->valor_total() - $folha->valor_pago();
+
+        // Verificar se o valor do pagamento pode pagar totalmente a invoice atual
+        if ($valorRestante <= $saldoAberto) {
+            $folha->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+        // Se o valor do pagamento for maior que o da folha atual distribui entre invoices!
+        } else {
+            $folha->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+            $valorRestante -= $saldoAberto;
+
+            // Filtra TODAS as invoices que tem valores em aberto
+            $folhasEmAberto = $funcionario->folhas_pagamento()->get()->filter(function ($folha) {
+                return $folha->valor_pago() < $folha->valor_total();
+            });
+
+            foreach ($folhasEmAberto as $aberto) {
+                // Calcula o valor em ABERTO da Invoice
+                $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
+
+                // Verificar se o valor restante pode pagar totalmente a invoice atual
+                if ($valorRestante >= $saldoAberto) {
+                    // O valor pago é suficiente para pagar totalmente esta invoice
+                    $valorRestante -= $saldoAberto;
+                    // Atualiza a coluna da invoice com o pagamento
+                    // Registrar o pagamento para esta invoice
+                    $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+
+                } else {
+                    if ($valorRestante > 0) {
+                        // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
+                        // Registrar o pagamento para esta invoice
+                        $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+                        $valorRestante = 0;
+                    } else {
+                        // Não existem mais valores para serem registrados (quebra o foreach)
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Retorna o valor restante
+        return $valorRestante;
     }
 }

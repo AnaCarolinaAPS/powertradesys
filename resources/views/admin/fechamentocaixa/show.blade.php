@@ -93,6 +93,8 @@
                                                     {{ 'Pagamento' }}
                                                 @elseif ($fluxo->tipo == 'despesa')
                                                     {{ 'Despesa' }}
+                                                @elseif ($fluxo->tipo == 'salario')
+                                                    {{ 'Empresa' }}
                                                 @elseif ($fluxo->tipo == 'transferencia')
                                                     {{ 'Transferencia' }}
                                                 @elseif ($fluxo->tipo == 'cambio')
@@ -107,6 +109,8 @@
                                                     {{ 'Pagamento' }}
                                                 @elseif ($fluxo->tipo == 'despesa')
                                                     {{ 'Despesa' }}
+                                                @elseif ($fluxo->tipo == 'salario')
+                                                    {{ 'Salario' }}
                                                 @elseif ($fluxo->tipo == 'transferencia')
                                                     {{ 'Transferencia' }}
                                                 @elseif ($fluxo->tipo == 'cambio')

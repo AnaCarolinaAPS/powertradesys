@@ -107,17 +107,19 @@
                                     <tr>
                                         <th>Rastreio</th>
                                         <th>Peso Recebido</th>
-                                        <th>Peso Cobrado</th>
+                                        <th>Peso</th>
                                         <th>Valor (U$)</th>
+                                        <th>Cliente</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($invoice->invoice_pacotes as $invoicep)
                                     <tr class="abrirModal" data-pacote-id="{{ $invoicep->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
-                                        <td>{{ $invoicep->pacote->rastreio}}</td>
+                                        <td>'{{ $invoicep->pacote->rastreio}}</td>
                                         <td>{{ $invoicep->pacote->peso}}</td>
                                         <td>{{ $invoicep->peso }}</td>
                                         <td>{{ number_format($invoicep->valor, 2, ',', '.') }}</td>
+                                        <td>{{ '('.$invoicep->pacote->cliente->caixa_postal.') '.$invoicep->pacote->cliente->apelido }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

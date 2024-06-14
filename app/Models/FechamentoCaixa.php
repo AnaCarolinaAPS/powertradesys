@@ -42,6 +42,7 @@ class FechamentoCaixa extends Model
         $entradas = $this->transacoesOrigem()->where('tipo', 'entrada')->sum('valor_origem');
         $saidas = $this->transacoesOrigem()->where('tipo', 'saida')->sum('valor_origem');
         $despesas = $this->transacoesOrigem()->where('tipo', 'despesa')->sum('valor_origem');
+        $salarios = $this->transacoesOrigem()->where('tipo', 'salario')->sum('valor_origem');
 
         // // Processando transferências
         $transferenciasSaida = $this->transacoesOrigem()->where('tipo', 'transferencia')->sum('valor_origem');
@@ -51,7 +52,7 @@ class FechamentoCaixa extends Model
         $cambiosSaida = $this->transacoesOrigem()->where('tipo', 'cambio')->sum('valor_origem');
         $cambiosEntrada = $this->transacoesDestino()->where('tipo', 'cambio')->sum('valor_destino');
 
-        $saldo = $this->saldo_inicial + $entradas + $transferenciasEntrada + $cambiosEntrada + ($saidas + $transferenciasSaida + $cambiosSaida + $despesas);
+        $saldo = $this->saldo_inicial + $entradas + $transferenciasEntrada + $cambiosEntrada + ($saidas + $transferenciasSaida + $cambiosSaida + $despesas + $salarios);
 
         return $saldo;
     }

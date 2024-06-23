@@ -179,12 +179,13 @@ Route::middleware('auth')->group(function () {
 
         // INVOICES CRUD
         Route::prefix('/admin/invoices')->group(function () {
-            // Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index');
+            Route::get('/', [InvoiceController::class, 'index'])->name('invoices.index');
             Route::post('/', [InvoiceController::class, 'store'])->name('invoices.store');
             Route::get('/criar-invoices/{faturaCarga}', [InvoiceController::class, 'criarInvoices'])->name('invoices.criar');
             Route::get('/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
             Route::put('/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
             Route::delete('/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+            Route::get('/cliente/{cliente}', [InvoiceController::class, 'indexcli'])->name('invoices.cliente');
         });
 
         // INVOICES CRUD

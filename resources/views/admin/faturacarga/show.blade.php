@@ -176,7 +176,7 @@
                                         <tr class="table-success" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
                                     @else
                                         <tr class="" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
-                                    @endif                                    
+                                    @endif
                                         <td>{{ '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name }}</td>
                                         <td>{{ $invoice->pacotes_sum_peso}}</td>
                                         <td>{{ $invoice->invoice_pacotes_sum_peso }}</td>
@@ -189,7 +189,7 @@
                         </div>
                         <div class="row">
                             <div class="col"></div>
-                            <div class="col">                                
+                            <div class="col">
                             </div>
                              <div class="col">
                                 Peso Total: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b>
@@ -238,7 +238,7 @@
                                     <tr class="table-success" data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
                                 @else
                                     <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
-                                @endif 
+                                @endif
                                     <td>{{ $despesa->fornecedor->nome }}</td>
                                     <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
                                     <td>{{ number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') }}</td>

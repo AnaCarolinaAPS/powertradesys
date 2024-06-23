@@ -20,8 +20,18 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $all_items = Carga::all();
-        return view('admin.invoice.index', compact('all_items'));
+        // $all_items = Carga::all();
+        $all_items = Cliente::all()->filter(function ($cliente) {
+            return $cliente->invoicesPendentes()->isNotEmpty();
+        });
+
+        $totalPendente = $all_items->sum(function($cliente) {
+            return $cliente->invoices->sum(function($invoice) {
+                return $invoice->valor_pendente();
+            });
+        });
+
+        return view('admin.invoice.index', compact('all_items', 'totalPendente'));
     }
 
     /**
@@ -231,19 +241,19 @@ class InvoiceController extends Controller
     public function distribuirPagamento(Cliente $cliente, Pagamento $pagamento, Invoice $invoice)
     {
         //Calcula o valor do pagamento para poder distribuir entre as invoices
-        $valorRestante = $pagamento->valor;        
-        
+        $valorRestante = $pagamento->valor;
+
         // Calcula o valor em ABERTO da Invoice
         $saldoAberto = $invoice->valor_total() - $invoice->valor_pago();
 
-        // Verificar se o valor do pagamento pode pagar totalmente a invoice atual        
+        // Verificar se o valor do pagamento pode pagar totalmente a invoice atual
         if ($valorRestante <= $saldoAberto) {
             $invoice->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
         // Se o valor do pagamento for maior que o da invoice atual distribui entre invoices!
         } else {
             $invoice->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
             $valorRestante -= $saldoAberto;
-         
+
             // Filtra TODAS as invoices que tem valores em aberto
             $invoicesEmAberto = $cliente->invoices()->get()->filter(function ($invoice) {
                 return $invoice->valor_pago() < $invoice->valor_total();
@@ -252,7 +262,7 @@ class InvoiceController extends Controller
             foreach ($invoicesEmAberto as $aberto) {
                 // Calcula o valor em ABERTO da Invoice
                 $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
-    
+
                 // Verificar se o valor restante pode pagar totalmente a invoice atual
                 if ($valorRestante >= $saldoAberto) {
                     // O valor pago é suficiente para pagar totalmente esta invoice
@@ -260,7 +270,7 @@ class InvoiceController extends Controller
                     // Atualiza a coluna da invoice com o pagamento
                     // Registrar o pagamento para esta invoice
                     $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
-    
+
                 } else {
                     if ($valorRestante > 0) {
                         // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
@@ -277,5 +287,26 @@ class InvoiceController extends Controller
 
         // Retorna o valor restante
         return $valorRestante;
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexcli($id)
+    {
+        try {
+            // Buscar o shipper pelo ID
+            $cliente = Cliente::findOrFail($id);
+            session(['previous_url' => url()->previous()]);
+
+            return view('admin.invoice.cliente', compact('cliente'));
+        } catch (\Exception $e) {
+            // Exibir uma mensagem de erro ou redirecionar para uma página de erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao exibir os detalhes do Cliente: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 }

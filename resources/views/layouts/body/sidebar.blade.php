@@ -89,7 +89,7 @@
                             <li><a href="{{ route('registro_caixa.index', ['tipo' => 'ultimos']); }}">Registro de Caixa</a></li>
                             <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
                             <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Contas a Receber</a></li>
+                            <li><a href="{{ route('invoices.index'); }}">Contas a Receber</a></li>
                         </ul>
                     </li>
                     @endcan
@@ -144,7 +144,7 @@
                             <li><a href="{{ route('pacotes.historico'); }}">Histórico</a></li>
                         </ul>
                     </li>
-                    {{-- 
+                    {{--
                     <li>
                         <a href="calendar.html" class=" waves-effect">
                             <i class="fas fa-dollar-sign"></i>

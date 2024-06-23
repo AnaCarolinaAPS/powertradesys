@@ -70,7 +70,8 @@
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir
                                 </button>
-                                <a href="{{ route('faturacargas.show', ['faturacarga' => $invoice->fatura_carga->id]) }}" class="btn btn-light waves-effect">Voltar</a>
+                                <a href="{{ session('previous_url') }}" class="btn btn-light waves-effect">Voltar</a>
+                                {{-- <a href="{{ route('faturacargas.show', ['faturacarga' => $invoice->fatura_carga->id]) }}" class="btn btn-light waves-effect">Voltar</a> --}}
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formWarehouse">Salvar</button>
                             </div>
                         </form>
@@ -88,13 +89,13 @@
                                 <h4 class="card-title mb-4">Pacotes</h4>
                             </div>
                             <div class="col">
-                                Peso Cobrado: <b>{{$invoice->invoice_pacotes->sum('peso');}}</b>
+                                Peso Cobrado: {{$invoice->invoice_pacotes->sum('peso');}}
                             </div>
                             <div class="col">
-                                Valor Cobrado: <b>{{number_format($invoice->valor_total(), 2, ',', '.');}} U$</b>
+                                Valor Cobrado: {{number_format($invoice->valor_total(), 2, ',', '.');}} U$
                             </div>
                             <div class="col">
-                                <b>Valor PAGO: {{number_format($invoice->valor_pago(), 2, ',', '.');}} U$</b>
+                                <b>Valor PENDENTE: {{number_format($invoice->valor_pendente(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
 
@@ -138,6 +139,12 @@
                         <div class="row">
                             <div class="col">
                                 <h4 class="card-title mb-4">Pagamentos</h4>
+                            </div>
+                            <div class="col">
+                                Valor PAGADO: <b>{{number_format($invoice->valor_pago(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                <b>Valor PENDENTE: {{number_format($invoice->valor_pendente(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
 

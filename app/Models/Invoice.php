@@ -46,10 +46,11 @@ class Invoice extends Model
     public function valor_pago()
     {
         return $this->pagamentos->sum('pivot.valor_recebido');
-        // $valor_pago = 0;
-        // foreach ($this->pagamentos as $pgto) {
-        //     $valor_pago += $pgto->invoices->find($this->id)->pivot->valor_recebido;
-        // }
-        // return $valor_pago;
+    }
+
+    //Para retirar o valor pendente
+    public function valor_pendente()
+    {
+        return $this->valor_total() - $this->valor_pago();
     }
 }

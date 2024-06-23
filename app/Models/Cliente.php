@@ -41,4 +41,11 @@ class Cliente extends Model
     {
         return $this->hasMany(Entrega::class);
     }
+
+    public function invoicesPendentes()
+    {
+        return $this->invoices->filter(function ($invoice) {
+            return $invoice->valor_pendente() > 0;
+        });
+    }
 }

@@ -37,6 +37,14 @@ class FechamentoCaixa extends Model
         return $this->hasMany(FluxoCaixa::class, 'fechamento_destino_id', 'id');
     }
 
+    public function totalGastos()
+    {
+        $saidas = $this->transacoesOrigem()->where('tipo', 'saida')->sum('valor_origem');
+        $despesas = $this->transacoesOrigem()->where('tipo', 'despesa')->sum('valor_origem');
+        $total = $saidas + $despesas;
+        return $total;
+    }
+
     // Calcula o Saldo do Caixa sem precisar fazer (atualizaSaldo)
     public function calculaSaldo(){
         $entradas = $this->transacoesOrigem()->where('tipo', 'entrada')->sum('valor_origem');

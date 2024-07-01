@@ -34,6 +34,7 @@ use App\Http\Controllers\FolhaPagamentoController;
 use App\Http\Controllers\FolhaPagamentoItemController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TextController;
+use App\Http\Controllers\RelatorioController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -330,6 +331,14 @@ Route::middleware('auth')->group(function () {
         });
 
 
+        // Controlador de Relatórios
+        Route::prefix('/admin/relatorios')->group(function () {
+            // Route::post('/', [FolhaPagamentoItemController::class, 'store'])->name('folhas_items.store');
+            // Route::get('/carga/{folhaitem}', [FolhaPagamentoItemController::class, 'show'])->name('folhas_items.show');
+            // Route::put('/{folhaitem}', [FolhaPagamentoItemController::class, 'update'])->name('folhas_items.update');
+            // Route::delete('/{folhaitem}', [FolhaPagamentoItemController::class, 'destroy'])->name('folhas_items.destroy');
+            Route::get('carga/', [RelatorioController::class, 'indexCarga'])->name('relatorioCarga.index');
+        });
 
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');

@@ -155,6 +155,18 @@
                                 </table> <!-- end table -->
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Total GASTO:
+                                    @if ($fechamento->caixa->moeda == 'G$')
+                                        {{ number_format($fechamento->totalGastos(), 0, ',', '.') }}
+                                    @else
+                                        {{ number_format($fechamento->totalGastos(), 2, ',', '.') }}
+                                    @endif
+                                    {{ $fechamento->caixa->moeda }}
+                                </h4>
+                            </div>
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

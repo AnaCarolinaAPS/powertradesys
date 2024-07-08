@@ -35,7 +35,7 @@
 
     <div class="p-3">
         {{-- <x-auth-validation-errors class="mb-4" :errors="$errors" /> --}}
-        <form class="form-horizontal mt-3" method="POST" action="{{ route('register') }}">
+        <form class="form-horizontal mt-3" method="POST" action="{{ route('password.email') }}">
             @csrf
 
             <div class="alert alert-info alert-dismissible fade show" role="alert">

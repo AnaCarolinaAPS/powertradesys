@@ -344,7 +344,6 @@ Route::middleware('auth')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
         });
 
-
     });
 
     Route::middleware(['role:client'])->group(function () {
@@ -362,28 +361,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/processar-texto',  [TextController::class, 'showForm'])->name('text.form');
 Route::post('/processar-texto', [TextController::class, 'processText'])->name('text.process');
 
-// Route::get('/admin/client', function () {
-//     return view('admin.adm.client');
-// })->middleware(['auth'])->name('admin.client');
-
-// Route::middleware('auth')->group(function () {
-//     // Rotas protegidas por autenticação aqui
-
-//     // Exemplo de rota para listar todos os clientes
-//     Route::get('/admin/clientes', [ClienteController::class, 'index'])->name('admin.client');
-
-//     // Exemplo de rota para exibir um cliente específico
-//     Route::get('/admin/clientes/{id}', [ClienteController::class, 'show'])->name('admin.client.show');
-
-//     // Exemplo de rota para criar um novo cliente
-//     Route::post('/clientes', [ClienteController::class, 'store'])->name('admin.client.new');
-
-//     // Exemplo de rota para atualizar um cliente
-//     Route::put('/clientes/{id}', 'ClienteController@update');
-
-//     // Exemplo de rota para excluir um cliente
-//     Route::delete('/clientes/{id}', 'ClienteController@destroy');
-// });
 
 // Route::middleware(['auth', ''])->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

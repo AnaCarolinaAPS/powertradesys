@@ -126,35 +126,35 @@ class FaturaCargaController extends Controller
                 $all_clientes = collect(); // Retorna uma coleção vazia se não houver carga associada
             }
 
-            // $all_invoices = Invoice::where('fatura_carga_id', $faturacarga->id)->get();
+            $all_invoices = Invoice::where('fatura_carga_id', $faturacarga->id)->get();
 
-            $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-                            ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
-                            ->select(
-                                'invoices.*',
-                                DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'),
-                                DB::raw('SUM(pacotes.peso) as pacotes_sum_peso'),
-                                DB::raw('SUM(invoice_pacotes.valor) as invoice_pacotes_sum_valor')
-                            )
-                            ->where('fatura_carga_id', $faturacarga->id)
-                            ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
-                            ->get();
+            // $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
+            //                 ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
+            //                 ->select(
+            //                     'invoices.*',
+            //                     DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'),
+            //                     DB::raw('SUM(pacotes.peso) as pacotes_sum_peso'),
+            //                     DB::raw('SUM(invoice_pacotes.valor) as invoice_pacotes_sum_valor')
+            //                 )
+            //                 ->where('fatura_carga_id', $faturacarga->id)
+            //                 ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
+            //                 ->get();
 
-            $resumo = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-                        ->select(
-                            DB::raw('COALESCE(SUM(invoice_pacotes.peso),0) as soma_peso'),
-                            DB::raw('COALESCE(SUM(invoice_pacotes.valor),0) as soma_valor'),
-                        )
-                        ->where('fatura_carga_id', $faturacarga->id)
-                        ->groupBy('invoices.fatura_carga_id')
-                        ->first();
+            // $resumo = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
+            //             ->select(
+            //                 DB::raw('COALESCE(SUM(invoice_pacotes.peso),0) as soma_peso'),
+            //                 DB::raw('COALESCE(SUM(invoice_pacotes.valor),0) as soma_valor'),
+            //             )
+            //             ->where('fatura_carga_id', $faturacarga->id)
+            //             ->groupBy('invoices.fatura_carga_id')
+            //             ->first();
 
             $all_despesas = Despesa::where('fatura_carga_id', $faturacarga->id)->get();
 
             session(['previous_url' => route('faturacargas.show', ['faturacarga' => $faturacarga->id])]);
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas', 'resumo'));
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

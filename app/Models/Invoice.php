@@ -53,4 +53,18 @@ class Invoice extends Model
     {
         return $this->valor_total() - $this->valor_pago();
     }
+
+    //Para resgatar os valores dos pacotes (Total do Valor da Invoice)
+    public function peso_pacote()
+    {
+        return $this->invoice_pacotes->sum('peso');
+    }
+
+    //Para resgatar os valores dos pacotes (Total do Valor da Invoice)
+    public function peso_pacote_orig()
+    {
+        return $this->invoice_pacotes->sum(function($invoicePacote) {
+            return $invoicePacote->pacote->peso ?? 0;
+        });
+    }
 }

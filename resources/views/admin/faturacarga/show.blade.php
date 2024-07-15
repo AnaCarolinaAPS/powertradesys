@@ -178,10 +178,10 @@
                                         <tr class="" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
                                     @endif
                                         <td>{{ '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name }}</td>
-                                        <td>{{ $invoice->pacotes_sum_peso}}</td>
-                                        <td>{{ $invoice->invoice_pacotes_sum_peso }}</td>
-                                        <td>{{ $invoice->invoice_pacotes_sum_valor }} U$</td>
-                                        <td>{{ number_format($invoice->invoice_pacotes_sum_valor - $invoice->valor_pago(), 2, ',', '.') }} U$</td>
+                                        <td>{{ number_format($invoice->peso_pacote_orig(), 1, ',', '.')}}</td>
+                                        <td>{{ number_format($invoice->peso_pacote(), 1, ',', '.') }}</td>
+                                        <td>{{ number_format($invoice->valor_total(), 2, ',', '.') }} U$</td>
+                                        <td>{{ number_format($invoice->valor_pendente(), 2, ',', '.') }} U$</td>
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->
@@ -190,9 +190,10 @@
                         <div class="row">
                             <div class="col"></div>
                             <div class="col">
+                                Peso: <b>{{$faturacarga->invoices_pesos_orig() ? $faturacarga->invoices_pesos_orig() : '0'}} kgs</b>
                             </div>
-                             <div class="col">
-                                Peso Total: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b>
+                            <div class="col">
+                                Peso Cobrado: <b>{{$faturacarga->invoices_pesos_total() ? $faturacarga->invoices_pesos_total() : '0'}} kgs</b>
                             </div>
                             <div class="col">
                                 Valor Total: <b>{{number_format($faturacarga->valor_total(), 2, ',', '.');}} U$</b>

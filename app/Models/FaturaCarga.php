@@ -61,4 +61,18 @@ class FaturaCarga extends Model
             return $despesa->valor_pago();
         });
     }
+
+    public function invoices_pesos_total()
+    {
+        return $this->invoices->sum(function ($invoice) {
+            return $invoice->peso_pacote();
+        });
+    }
+
+    public function invoices_pesos_orig()
+    {
+        return $this->invoices->sum(function ($invoice) {
+            return $invoice->peso_pacote_orig();
+        });
+    }
 }

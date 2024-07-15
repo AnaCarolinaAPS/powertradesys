@@ -40,8 +40,8 @@ class FechamentoCaixa extends Model
     public function totalGastos()
     {
         $saidas = $this->transacoesOrigem()->where('tipo', 'saida')->sum('valor_origem');
-        $despesas = $this->transacoesOrigem()->where('tipo', 'despesa')->sum('valor_origem');
-        $total = $saidas + $despesas;
+        $salarios = $this->transacoesOrigem()->where('tipo', 'salario')->sum('valor_origem');
+        $total = $saidas + $salarios;
         return $total;
     }
 
@@ -63,5 +63,15 @@ class FechamentoCaixa extends Model
         $saldo = $this->saldo_inicial + $entradas + $transferenciasEntrada + $cambiosEntrada + ($saidas + $transferenciasSaida + $cambiosSaida + $despesas + $salarios);
 
         return $saldo;
+    }
+
+    public function somaSaldos($fechamentos){
+        $totalSaldo = 0;
+
+        foreach ($fechamentos as $fechamento) {
+            $totalSaldo += $fechamento->calculaSaldo();
+        }
+
+        return $totalSaldo;
     }
 }

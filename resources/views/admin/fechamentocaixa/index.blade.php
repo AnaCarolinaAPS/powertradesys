@@ -26,10 +26,24 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Registro de Caixa</h4>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Registro de Caixa</h4>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalSaldoRS === null ? "" : "Total R$: ".number_format($totalSaldoRS, 2, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalSaldoGS === null ? "" : "Total G$: ".number_format($totalSaldoGS, 0, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalSaldoUS === null ? "" : "Total U$: ".number_format($totalSaldoUS, 2, ',', '.');}}</b>
+                            </div>
+                        </div>
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
                             <i class="fas fa-plus"></i> Novo
                         </button>
+
                         <div class="row mt-3">
                             <div class="table-responsive">
                                 <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">

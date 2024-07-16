@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pacote;
 use App\Models\Warehouse;
 use App\Models\Cliente;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -309,15 +310,26 @@ class PacoteController extends Controller
     {        
         // Obtenha o usuário autenticado
         $user = Auth::user();
+        // $all_items = Pacote::with('carga')
+        //     ->where('cliente_id', $user->cliente->id)
+        //     ->where(function ($query) {
+        //         $query->whereNull('carga_id')
+        //             ->orWhereHas('carga', function ($query) {
+        //                 $query->whereNull('data_recebida');
+        //             });
+        //     })
+        //     ->get();
+
         $all_items = Pacote::with('carga')
             ->where('cliente_id', $user->cliente->id)
             ->where(function ($query) {
                 $query->whereNull('carga_id')
                     ->orWhereHas('carga', function ($query) {
-                        $query->whereNull('data_recebida');
+                        $query->where('data_enviada', '>', Carbon::now());
                     });
             })
             ->get();
+        
         return view('client.pacote.previsao', compact('all_items'));
     }
 }

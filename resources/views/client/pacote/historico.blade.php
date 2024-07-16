@@ -34,7 +34,7 @@
                                         <th>Data Recebida (CDE)</th>
                                         <th>Rastreio</th>
                                         <th>Qtd</th>
-                                        <th>Peso Aprox (Miami)</th>
+                                        <th>Peso</th>
                                         <th>Retirado</th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -53,7 +53,7 @@
                                         @endif
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>
-                                        <td>{{ $pacote->peso_aprox }}</td>
+                                        <td>{{ $pacote->invoice_pacote ? $pacote->invoice_pacote->peso : 'Aguardando' }}</td>
                                         @if ($pacote->retirado > 0)
                                             <td>Retirado</td>
                                         @elseif ($pacote->entrega_pacote->isEmpty())

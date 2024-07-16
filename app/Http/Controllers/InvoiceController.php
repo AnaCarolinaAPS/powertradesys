@@ -95,31 +95,31 @@ class InvoiceController extends Controller
                                 ->first();
 
             //Já existe uma invoice nessa fatura e com o mesmo código de cliente
-            if ($invoice_cliente->count() > 0) {
-                // IDs dos pacotes associados à fatura (invoice)
-                $pacotesAssociadosFatura = $invoice_cliente->invoice_pacotes()->pluck('pacote_id')->toArray();
-                // Consulta para obter pacotes do cliente, excluindo os pacotes associados à fatura
-                $pacotesCliente = $invoice->fatura_carga->carga->pacotes()
-                                ->where('cliente_id', $request->input('cliente_id'))
-                                ->whereNotIn('id', $pacotesAssociadosFatura)
-                                ->get();
-            } else {
-                $pacotesCliente = $invoice->fatura_carga->carga->pacotes()
-                                ->where('cliente_id', $request->input('cliente_id'))
-                                ->get();
-            }
+            // if ($invoice_cliente->count() > 0) {
+            //     // IDs dos pacotes associados à fatura (invoice)
+            //     $pacotesAssociadosFatura = $invoice_cliente->invoice_pacotes()->pluck('pacote_id')->toArray();
+            //     // Consulta para obter pacotes do cliente, excluindo os pacotes associados à fatura
+            //     $pacotesCliente = $invoice->fatura_carga->carga->pacotes()
+            //                     ->where('cliente_id', $request->input('cliente_id'))
+            //                     ->whereNotIn('id', $pacotesAssociadosFatura)
+            //                     ->get();
+            // } else {
+            //     $pacotesCliente = $invoice->fatura_carga->carga->pacotes()
+            //                     ->where('cliente_id', $request->input('cliente_id'))
+            //                     ->get();
+            // }
 
             //Adicionar a criação de "invoicepacotes" para carga pacote marcado na carga
-            foreach ($pacotesCliente as $pacote) {
-                $valor = $pacote->peso*$invoice->fatura_carga->servico->preco;
-                InvoicePacote::create([
-                    'peso' => $pacote->peso,
-                    'invoice_id' => $invoice->id,
-                    'pacote_id' => $pacote->id,
-                    'valor' => $valor,
-                    // Adicione outros campos conforme necessário
-                ]);
-            }
+            // foreach ($pacotesCliente as $pacote) {
+            //     $valor = $pacote->peso*$invoice->fatura_carga->servico->preco;
+            //     InvoicePacote::create([
+            //         'peso' => $pacote->peso,
+            //         'invoice_id' => $invoice->id,
+            //         'pacote_id' => $pacote->id,
+            //         'valor' => $valor,
+            //         // Adicione outros campos conforme necessário
+            //     ]);
+            // }
 
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [

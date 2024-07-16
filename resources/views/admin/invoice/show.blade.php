@@ -89,13 +89,13 @@
                                 <h4 class="card-title mb-4">Pacotes</h4>
                             </div>
                             <div class="col">
+                                Peso Origem: {{$invoice->peso_pacote_orig();}}
+                            </div>
+                            <div class="col">
                                 Peso Cobrado: {{$invoice->invoice_pacotes->sum('peso');}}
                             </div>
                             <div class="col">
                                 Valor Cobrado: {{number_format($invoice->valor_total(), 2, ',', '.');}} U$
-                            </div>
-                            <div class="col">
-                                <b>Valor PENDENTE: {{number_format($invoice->valor_pendente(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
 
@@ -107,7 +107,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Rastreio</th>
-                                        <th>Peso Recebido</th>
+                                        <th>Peso Origem</th>
                                         <th>Peso</th>
                                         <th>Valor (U$)</th>
                                         <th>Cliente</th>
@@ -503,12 +503,17 @@
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-
+                    var valorkg = parseFloat(document.getElementById('valorkg').value) || 0;
                     document.getElementById('tituloModalPacote').innerText = data.rastreio + " - Peso Origem: " + data.peso_origem + " kgs" ;
                     document.getElementById('dId').value = data.id;
                     document.getElementById('dRastreio').value = data.rastreio;
-                    document.getElementById('dPeso').value = data.peso;
-                    document.getElementById('dValor').value = data.valor;
+                    if (data.peso > 0) {
+                        document.getElementById('dPeso').value = data.peso;
+                        document.getElementById('dValor').value = data.valor;
+                    } else {
+                        document.getElementById('dPeso').value = data.peso_origem;
+                        document.getElementById('dValor').value = (data.peso_origem * valorkg).toFixed(2);
+                    }                
 
                     var form = document.getElementById('formAtualizacaoPacote');
                     var novaAction = "{{ route('invoices_pacotes.update', ['invoicespacotes' => ':id']) }}".replace(':id', data.id);

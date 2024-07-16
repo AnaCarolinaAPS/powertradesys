@@ -107,13 +107,16 @@ class InvoicePacoteController extends Controller
 
                 if ($pacote) {
                     //Adicionar a criação de "invoicepacotes" para carga pacote marcado na carga
-                    $valor = $pacote->peso*$invoice->fatura_carga->servico->preco;
+                    // $valor = $pacote->peso*$invoice->fatura_carga->servico->preco;
 
                     InvoicePacote::create([
-                        'peso' => $pacote->peso,
+                        // 'peso' => $pacote->peso,
+                        'peso' => 0,
+                        'peso' => 0,
                         'invoice_id' => $invoice->id,
                         'pacote_id' => $pacote->id,
-                        'valor' => $valor,
+                        // 'valor' => $valor,
+                        'valor' => 0,
                         // Adicione outros campos conforme necessário
                     ]);
                 }

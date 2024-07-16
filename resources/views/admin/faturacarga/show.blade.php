@@ -172,7 +172,7 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_invoices as $invoice)
-                                    @if ($invoice->invoice_pacotes_sum_valor - $invoice->valor_pago() == 0)
+                                    @if ($invoice->valor_total() - $invoice->valor_pago() == 0)
                                         <tr class="table-success" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
                                     @else
                                         <tr class="" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">

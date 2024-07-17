@@ -53,11 +53,7 @@
                                         @if ($pacote->retirado > 0)
                                             <td>Retirado</td>
                                         @elseif ($pacote->entrega_pacote->isEmpty())
-                                            @if ($pacote->carga && $pacote->carga->data_recebida !== null)
-                                                <td>Em Estoque</td>
-                                            @else
-                                                <td>Em Miami</td>
-                                            @endif
+                                            <td>{{ $pacote->invoice_pacote ? 'Em Estoque' : 'Em Processo' }}</td>
                                         @else
                                             <td>Parcial</td>
                                         @endif

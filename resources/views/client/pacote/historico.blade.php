@@ -42,14 +42,10 @@
                                     @foreach ($all_items as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td>{{ optional($pacote->carga)->data_recebida ? optional($pacote->carga)->data_recebida : 'Aguardando' }}</td>
-                                        @if ($pacote->carga)
-                                            @if ($pacote->carga->data_recebida !== null)
-                                                <td>{{ \Carbon\Carbon::parse($pacote->carga->data_recebida)->format('d/m/Y') }}</td>
-                                            @else 
-                                                <td>Aguardando</td>
-                                            @endif
+                                        @if ($pacote->carga->data_recebida !== null)
+                                            <td>{{ \Carbon\Carbon::parse($pacote->carga->data_recebida)->format('d/m/Y') }}</td>
                                         @else
-                                            <td>Aguardando</td>
+                                            <td>Em Processo</td>
                                         @endif
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>

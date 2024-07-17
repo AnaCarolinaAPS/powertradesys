@@ -299,7 +299,12 @@ class PacoteController extends Controller
     {        
         // Obtenha o usuário autenticado
         $user = Auth::user();
-        $all_items = Pacote::where('cliente_id', $user->cliente->id)->get();
+        $all_items = Pacote::with('carga')
+                    ->where('cliente_id', $user->cliente->id)
+                    ->whereHas('carga', function ($query) {
+                        $query->where('data_enviada', '<=', Carbon::now());
+                    })
+                    ->get();
         return view('client.pacote.historico', compact('all_items'));
     }
 
@@ -310,16 +315,6 @@ class PacoteController extends Controller
     {        
         // Obtenha o usuário autenticado
         $user = Auth::user();
-        // $all_items = Pacote::with('carga')
-        //     ->where('cliente_id', $user->cliente->id)
-        //     ->where(function ($query) {
-        //         $query->whereNull('carga_id')
-        //             ->orWhereHas('carga', function ($query) {
-        //                 $query->whereNull('data_recebida');
-        //             });
-        //     })
-        //     ->get();
-
         $all_items = Pacote::with('carga')
             ->where('cliente_id', $user->cliente->id)
             ->where(function ($query) {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Invoice;
 use App\Models\InvoicePacote;
@@ -295,7 +296,6 @@ class InvoiceController extends Controller
     public function indexcli($id)
     {
         try {
-            // Buscar o shipper pelo ID
             $cliente = Cliente::findOrFail($id);
             session(['previous_url' => url()->previous()]);
 
@@ -307,6 +307,32 @@ class InvoiceController extends Controller
                 'message' => 'Ocorreu um erro ao exibir os detalhes do Cliente: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
+        }
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cliCargaIndex()
+    {
+        // Obtenha o usuário autenticado
+        $user = Auth::user();
+        $all_items = Invoice::where('cliente_id', $user->cliente->id)->get();
+        return view('client.carga.index', compact('all_items'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function cliCargaShow($id)
+    {
+        // Buscar o invoice pelo ID
+        $invoice = Invoice::findOrFail($id);
+        // Obtenha o usuário autenticado
+        $user = Auth::user();
+
+        if ($invoice->cliente_id == $user->cliente->id) {
+            return view('client.carga.show', compact('invoice'));
         }
     }
 }

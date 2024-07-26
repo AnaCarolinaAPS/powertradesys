@@ -354,6 +354,12 @@ Route::middleware('auth')->group(function () {
             Route::get('/historico', [PacoteController::class, 'clienteHistorico'])->name('pacotes.historico');
             Route::get('/previsao', [PacoteController::class, 'clientePrevisao'])->name('pacotes.previsao');
         });
+
+        // Pacotes Carga
+        Route::prefix('/cliente/cargas')->group(function () {
+            Route::get('/', [InvoiceController::class, 'cliCargaIndex'])->name('cargas.cliente.index');
+            Route::get('/{invoice}', [InvoiceController::class, 'cliCargaShow'])->name('cargas.cliente.show');
+        });
     });
 });
 

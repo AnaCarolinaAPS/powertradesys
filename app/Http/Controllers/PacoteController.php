@@ -327,4 +327,23 @@ class PacoteController extends Controller
         
         return view('client.pacote.previsao', compact('all_items'));
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function clienteProcesso()
+    {        
+        // Obtenha o usuário autenticado
+        $user = Auth::user();
+        $all_items = Pacote::with('carga')
+            ->where('cliente_id', $user->cliente->id)
+            ->where(function ($query) {
+                $query->whereHas('carga', function ($query) {
+                        $query->where('data_enviada', '<=', Carbon::now())->whereNull('data_recebida');
+                    });
+            })
+            ->get();
+        
+        return view('client.pacote.previsao', compact('all_items'));
+    }
 }

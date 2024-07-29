@@ -353,6 +353,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/pacotes')->group(function () {
             Route::get('/historico', [PacoteController::class, 'clienteHistorico'])->name('pacotes.historico');
             Route::get('/previsao', [PacoteController::class, 'clientePrevisao'])->name('pacotes.previsao');
+            Route::get('/emprocesso', [PacoteController::class, 'clienteProcesso'])->name('pacotes.processo');
         });
 
         // Pacotes Carga

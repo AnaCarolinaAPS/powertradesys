@@ -32,7 +32,8 @@
                                     <tr>
                                         <th>Rastreio</th>
                                         <th>Qtd</th>
-                                        <th>Peso Aprox (Miami)</th>
+                                        <th>Peso Aprox</th>
+                                        <th>Status</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -41,6 +42,7 @@
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso_aprox }}</td>
+                                        <td>Em Processo</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

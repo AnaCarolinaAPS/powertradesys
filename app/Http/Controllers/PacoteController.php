@@ -320,7 +320,7 @@ class PacoteController extends Controller
             ->where(function ($query) {
                 $query->whereNull('carga_id')
                     ->orWhereHas('carga', function ($query) {
-                        $query->where('data_enviada', '>', Carbon::now());
+                        $query->where('data_enviada', '>=', Carbon::now());
                     });
             })
             ->get();
@@ -339,7 +339,7 @@ class PacoteController extends Controller
             ->where('cliente_id', $user->cliente->id)
             ->where(function ($query) {
                 $query->whereHas('carga', function ($query) {
-                        $query->where('data_enviada', '<=', Carbon::now())->whereNull('data_recebida');
+                        $query->where('data_enviada', '<', Carbon::now())->whereNull('data_recebida');
                     });
             })
             ->get();

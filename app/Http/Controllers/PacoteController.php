@@ -344,6 +344,6 @@ class PacoteController extends Controller
             })
             ->get();
         
-        return view('client.pacote.previsao', compact('all_items'));
+        return view('client.pacote.processo', compact('all_items'));
     }
 }

@@ -13,6 +13,7 @@ use App\Models\Pacote;
 use App\Models\Caixa;
 use App\Models\Pagamento;
 use App\Models\Cliente;
+use App\Models\Credito;
 
 class InvoiceController extends Controller
 {
@@ -91,9 +92,9 @@ class InvoiceController extends Controller
                 // Adicione outros campos conforme necessário
             ]);
 
-            $invoice_cliente = Invoice::where('fatura_carga_id', $request->input('fatura_carga_id'))
-                                ->where('cliente_id', $request->input('cliente_id'))
-                                ->first();
+            // $invoice_cliente = Invoice::where('fatura_carga_id', $request->input('fatura_carga_id'))
+            //                     ->where('cliente_id', $request->input('cliente_id'))
+            //                     ->first();
 
             //Já existe uma invoice nessa fatura e com o mesmo código de cliente
             // if ($invoice_cliente->count() > 0) {
@@ -244,7 +245,7 @@ class InvoiceController extends Controller
         //Calcula o valor do pagamento para poder distribuir entre as invoices
         $valorRestante = $pagamento->valor;
 
-        // Calcula o valor em ABERTO da Invoice
+        // Calcula o valor em ABERTO da Invoice Recebida
         $saldoAberto = $invoice->valor_total() - $invoice->valor_pago();
 
         // Verificar se o valor do pagamento pode pagar totalmente a invoice atual
@@ -252,7 +253,9 @@ class InvoiceController extends Controller
             $invoice->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
         // Se o valor do pagamento for maior que o da invoice atual distribui entre invoices!
         } else {
+            //Paga o Saldo em ABERTO da invoice ATUAL
             $invoice->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
+            //Verifica quanto sobra para repartir entre outras invoices
             $valorRestante -= $saldoAberto;
 
             // Filtra TODAS as invoices que tem valores em aberto
@@ -260,30 +263,44 @@ class InvoiceController extends Controller
                 return $invoice->valor_pago() < $invoice->valor_total();
             });
 
+            //Distribuir o valorRestante entre os valores das invoices
             foreach ($invoicesEmAberto as $aberto) {
-                // Calcula o valor em ABERTO da Invoice
+                // Calcula o valor em ABERTO da Invoice da Iteração
                 $saldoAberto = $aberto->valor_total() - $aberto->valor_pago();
 
                 // Verificar se o valor restante pode pagar totalmente a invoice atual
                 if ($valorRestante >= $saldoAberto) {
                     // O valor pago é suficiente para pagar totalmente esta invoice
-                    $valorRestante -= $saldoAberto;
+                    $valorRestante -= $saldoAberto; // Atualiza o valor que pode ser pago para proxima invoice
                     // Atualiza a coluna da invoice com o pagamento
                     // Registrar o pagamento para esta invoice
                     $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $saldoAberto]);
 
                 } else {
+                    //O valor pago vai ser menor que a invoice Iterada
                     if ($valorRestante > 0) {
                         // Atualiza a coluna da invoice com o pagamento do valor RESTANTE (o que sobrou dos pagamentos)
                         // Registrar o pagamento para esta invoice
                         $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
-                        $valorRestante = 0;
+                        $valorRestante -= $valorRestante; // ZERO
+                        break;
                     } else {
-                        // Não existem mais valores para serem registrados (quebra o foreach)
+                        // Não existem mais invoices para serem feito pagamento (quebra o foreach)
                         break;
                     }
                 }
             }
+        }
+
+        // Não tem mais invoices para descontar
+        if ($valorRestante > 0) {
+            //CRIA um Crédito
+            Credito::create([
+                'valor_credito' => $valorRestante,
+                'pagamento_id' => $pagamento->id,
+                'cliente_id' => $invoice->cliente->id,
+                // Adicione outros campos conforme necessário
+            ]);
         }
 
         // Retorna o valor restante

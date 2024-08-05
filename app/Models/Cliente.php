@@ -48,4 +48,15 @@ class Cliente extends Model
             return $invoice->valor_pendente() > 0;
         });
     }
+
+    public function creditos()
+    {
+        return $this->hasMany(Credito::class);
+    }
+
+    //Para resgatar os valores dos pacotes (Total do Valor da Invoice)
+    public function total_creditos()
+    {
+        return $this->creditos->sum('valor_credito');
+    }
 }

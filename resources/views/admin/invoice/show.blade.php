@@ -141,16 +141,24 @@
                                 <h4 class="card-title mb-4">Pagamentos</h4>
                             </div>
                             <div class="col">
-                                Valor PAGADO: <b>{{number_format($invoice->valor_pago(), 2, ',', '.');}} U$</b>
+                                Valor PAGO: <b>{{number_format($invoice->valor_pago(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                <b>Valor CRÉDITO: {{number_format($invoice->cliente->total_creditos(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
                                 <b>Valor PENDENTE: {{number_format($invoice->valor_pendente(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
-                            <i class="fas fa-plus"></i> Add Pagamento
-                        </button>
+                            <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
+                                <i class="fas fa-plus"></i> Add Pagamento
+                            </button>                        
+
+                            <button type="button" class="btn btn-info waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#credConfirm">
+                                <i class="fas fa-plus"></i> Converter Crédito
+                            </button>      
+
                         <div class="table-responsive table accordion">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -470,6 +478,30 @@
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger waves-effect waves-light">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmação -->
+        <div class="modal fade" id="credConfirm" tabindex="-1" role="dialog" aria-labelledby="credConfirm" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmação de Utilização de Crédito</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja utilizar o crédito disponível ({{number_format($invoice->cliente->total_creditos(), 2, ',', '.');}} U$) para fazer o pagamento desta Invoice?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <!-- Adicionar o botão de exclusão no modal -->
+                        <form method="post" action="{{ route('creditos.converter')}}">
+                            @csrf
+                            <input type="hidden" name="invoice_id" value="{{  $invoice->id; }}" id="invoice_id">
+                            <button type="submit" class="btn btn-success waves-effect waves-light">Pagar</button>
                         </form>
                     </div>
                 </div>

@@ -41,6 +41,7 @@
                                     <tr>
                                         <th>Pendentes</th>
                                         <th>Cliente</th>
+                                        <th>Créditos</th>
                                         <th>Total Pendente</th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -53,6 +54,9 @@
                                             }) }}
                                         </td>
                                         <td>{{ $cliente->user->name}}</td>
+                                        <td>
+                                            {{ number_format($cliente->total_creditos(), 2, ',', '.') }} U$
+                                        </td>
                                         <td>
                                             {{ number_format($cliente->invoices->sum(function($invoice) {
                                                 return $invoice->valor_pendente();

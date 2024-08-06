@@ -22,10 +22,10 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        // $all_items = Carga::all();
-        $all_items = Cliente::all()->filter(function ($cliente) {
-            return $cliente->invoicesPendentes()->isNotEmpty();
-        });
+        $all_items = Cliente::all();
+        // $all_items = Cliente::all()->filter(function ($cliente) {
+        //     return $cliente->invoicesPendentes()->isNotEmpty();
+        // });
 
         $totalPendente = $all_items->sum(function($cliente) {
             return $cliente->invoices->sum(function($invoice) {
@@ -207,7 +207,6 @@ class InvoiceController extends Controller
             $carga = Carga::with('clientes')->find($faturacarga->carga_id);
             $clientes = $carga->clientes->unique(); // Para obter uma coleção única de clientes
 
-            // return "OKAY Aqui";
             foreach ($clientes as $cliente) {
                 // Cria uma nova invoice para cada cliente
                 $invoice = Invoice::create([

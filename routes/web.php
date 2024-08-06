@@ -35,6 +35,7 @@ use App\Http\Controllers\FolhaPagamentoItemController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TextController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\CreditoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -330,6 +331,12 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{folhaitem}', [FolhaPagamentoItemController::class, 'destroy'])->name('folhas_items.destroy');
         });
 
+        // Serviços Funcionarios CRUD
+        Route::prefix('/admin/creditos')->group(function () {
+            Route::get('/{credito}', [CreditoController::class, 'show'])->name('creditos.show');
+            // Route::get('/converter/{invoice}', [CreditoController::class, 'show'])->name('creditos.converter');
+            Route::post('/', [CreditoController::class, 'converter'])->name('creditos.converter');
+        });
 
         // Controlador de Relatórios
         Route::prefix('/admin/relatorios')->group(function () {

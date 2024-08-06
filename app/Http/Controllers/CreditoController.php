@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Credito;
+use App\Models\Invoice;
 
 class CreditoController extends Controller
 {
@@ -19,36 +21,7 @@ class CreditoController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            // Validação dos dados do formulário
-            $request->validate([
-                'nome' => 'required|string|max:255',
-                'tipo' => 'required|in:categoria,subcategoria',
-                'observacoes' => 'nullable|string',
-                // Adicione outras regras de validação conforme necessário
-            ]);
-
-            Credito::create([
-                'nome' => $request->input('nome'),
-                'tipo' => $request->input('tipo'),
-                'observacoes' => $request->input('observacoes'),
-                // Adicione outros campos conforme necessário
-            ]);
-
-            // Exibir toastr de sucesso
-            return redirect()->route('categorias.index')->with('toastr', [
-                'type'    => 'success',
-                'message' => 'Categoria criada com sucesso!',
-                'title'   => 'Sucesso',
-            ]);
-        } catch (\Exception $e) {
-            // Exibir toastr de Erro
-            return redirect()->back()->with('toastr', [
-                'type'    => 'error',
-                'message' => 'Ocorreu um erro ao criar um Crédito: <br>'. $e->getMessage(),
-                'title'   => 'Erro',
-            ]);
-        }
+        //
     }
 
     /**
@@ -66,5 +39,41 @@ class CreditoController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function converter(Request $request)
+    {
+        try {
+            // Validação dos dados do formulário
+            $request->validate([
+                'invoice_id' => 'required|exists:invoices,id',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            $invoice = Invoice::findOrFail($request->input('invoice_id'));
+            $creditos = $invoice->cliente->creditos;
+
+            foreach ($creditos as $credito) {           
+                $invoice->pagamentos()->attach($credito->pagamento->id, ['valor_recebido' => $credito->valor_credito]);
+            }
+
+            
+
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Crédito convertido em Pagamento com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir uma mensagem de erro ou redirecionar para uma página de erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao converter os Créditos em Pagamento: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 }

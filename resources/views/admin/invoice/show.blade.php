@@ -141,13 +141,12 @@
                                 <h4 class="card-title mb-4">Pagamentos</h4>
                             </div>
                             <div class="col">
-                                Valor PAGO: <b>{{number_format($invoice->valor_pago(), 2, ',', '.');}} U$</b>
-                            </div>
-                            <div class="col">
                                 <b>Valor CRÉDITO: {{number_format($invoice->cliente->total_creditos(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
-                                <b>Valor PENDENTE: {{number_format($invoice->valor_pendente(), 2, ',', '.');}} U$</b>
+                                <b>TOTAL PENDENTE: {{number_format($invoice->cliente->invoices->sum(function($invoice) {
+                                                return $invoice->valor_pendente();
+                                            }), 2, ',', '.')}} U$</b>
                             </div>
                         </div>
 
@@ -174,10 +173,10 @@
                                         $i = 0;
                                     @endphp
                                     @foreach ($invoice->pagamentos as $pagamento)
-                                    <tr class="abrirModalPgto" data-pgto-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalheModal">
-                                    {{-- <tr data-bs-toggle="collapse" data-bs-target="#r{{$i}}"> --}}
-                                        <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
-                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForInvoice($invoice->id), 2, ',', '.')." U$)" }}</td>
+                                    {{-- <tr class="abrirModalPgto" data-pgto-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalheModal"> --}}
+                                    <tr> 
+                                        <td data-bs-toggle="collapse" data-bs-target="#r{{$i}}">{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
+                                        <td data-bs-toggle="collapse" data-bs-target="#r{{$i}}">{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForInvoice($invoice->id), 2, ',', '.')." U$)" }}</td>
                                         <td>
                                             <!-- <a href="{{ route('pagamentos.destroy', ['pagamento' =>  $pagamento->id]) }}" class="link-danger">Excluir</a> -->
                                         </td>
@@ -194,6 +193,9 @@
                                                         @if ($inv->id == $invoice->id)
                                                             <b>[ATUAL]</b>
                                                         @endif
+                                                        @if ($inv->pivot->valor_recebido == 0)
+                                                            <b>[CRÉDITO]</b>
+                                                        @endif
                                                     </div>
                                                 </div>
                                             @endforeach
@@ -208,6 +210,17 @@
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
+                        </div>
+                        <div class="row">
+                            <div class="col">
+
+                            </div>
+                            <div class="col">
+                                Valor PAGO (desta invoice): <b>{{number_format($invoice->valor_pago(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                <b>Valor PENDENTE (desta invoice): {{number_format($invoice->valor_pendente(), 2, ',', '.');}} U$</b>
+                            </div>
                         </div>
                     </div><!-- end card -->
                 </div><!-- end card -->

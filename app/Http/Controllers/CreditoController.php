@@ -53,15 +53,21 @@ class CreditoController extends Controller
                 // Adicione outras regras de validação conforme necessário
             ]);
 
+            //Invoice em que foi pedida a conversão
             $invoice = Invoice::findOrFail($request->input('invoice_id'));
+            //Todos os créditos disponíveis
             $creditos = $invoice->cliente->creditos;
 
-            foreach ($creditos as $credito) {           
+            //Adiciona TODOS os créditos para a invoice atual
+            foreach ($creditos as $credito) {  
+                //Adiciona o pagamento na invoice (baseado no valor do crédito)
                 $invoice->pagamentos()->attach($credito->pagamento->id, ['valor_recebido' => $credito->valor_credito]);
+                //exclui o crédito
+                $credito->delete();
+                // Se existirem pagamentos numa invoice (que geraram crédito) mas que não devem mais pertencer a essa invoice (valor_recebido = 0 U$) "exclui"
+                $credito->pagamento->invoices()->wherePivot('valor_recebido', 0)->detach(); 
             }
-
             
-
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Crédito convertido em Pagamento com sucesso!',

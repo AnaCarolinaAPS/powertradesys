@@ -70,7 +70,7 @@
                                 <h4 class="card-title mb-4">Pagamentos</h4>
                             </div>
                             <div class="col">
-                                {{-- <b>Valor CRÉDITO: {{number_format($invoice->cliente->total_creditos(), 2, ',', '.');}} U$</b> --}}
+                                <b>Valor CRÉDITO: {{number_format($invoice->cliente->total_creditos(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
                                 <b>PENDENTE ATUAL: {{number_format($invoice->valor_pendente(), 2, ',', '.');}} U$</b>
@@ -83,8 +83,6 @@
                                     <tr>
                                         <th>Data</th>
                                         <th>Valor Recebido</th>
-                                        <th></th>
-                                        <th></th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -104,6 +102,9 @@
                                                         Invoice de {{\Carbon\Carbon::parse($inv->data)->format('d/m/Y')}} - Pago {{$inv->pivot->valor_recebido}} U$
                                                         @if ($inv->id == $invoice->id)
                                                             <b>[ATUAL]</b>
+                                                        @endif
+                                                        @if ($inv->pivot->valor_recebido == 0)
+                                                            <b>[CRÉDITO]</b>
                                                         @endif
                                                     </div>
                                                 </div>

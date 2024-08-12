@@ -31,6 +31,9 @@
                                 <h4 class="card-title mb-4">Cargas</h4>
                             </div>
                             <div class="col">
+                                <b>Valor CRÉDITO: {{number_format($cliente->total_creditos(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
                                 Pendente Total: {{number_format($cliente->invoices->sum(function($invoice) {
                                                 return $invoice->valor_pendente();
                                             }), 2, ',', '.')}} U$

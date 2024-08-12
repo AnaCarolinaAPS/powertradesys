@@ -151,13 +151,13 @@
                             </div>
                         </div>
 
-                            <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
-                                <i class="fas fa-plus"></i> Add Pagamento
-                            </button>                        
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
+                            <i class="fas fa-plus"></i> Add Pagamento
+                        </button>                        
 
-                            <button type="button" class="btn btn-info waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#credConfirm">
-                                <i class="fas fa-plus"></i> Converter Crédito
-                            </button>      
+                        <button type="button" class="btn btn-info waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#credConfirm">
+                            <i class="fas fa-plus"></i> Converter Crédito
+                        </button>      
 
                         <div class="table-responsive table accordion">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">

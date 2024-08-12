@@ -334,7 +334,8 @@ class InvoiceController extends Controller
         // Obtenha o usuário autenticado
         $user = Auth::user();
         $all_items = Invoice::where('cliente_id', $user->cliente->id)->get();
-        return view('client.carga.index', compact('all_items'));
+        $cliente = Cliente::findOrFail($user->cliente->id);
+        return view('client.carga.index', compact('all_items', 'cliente'));
     }
 
     /**

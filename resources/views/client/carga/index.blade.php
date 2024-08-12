@@ -26,7 +26,17 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Cargas</h4>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Cargas</h4>
+                            </div>
+                            <div class="col">
+                                Pendente Total: {{number_format($cliente->invoices->sum(function($invoice) {
+                                                return $invoice->valor_pendente();
+                                            }), 2, ',', '.')}} U$
+                            </div>
+                        </div>
+                        
                         <div class="table-responsive">
                             <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -35,6 +45,7 @@
                                         <th>Data Recebida</th>
                                         <th>Pacotes</th>
                                         <th>Kgs Recebido</th>
+                                        <th>Valor Pendente</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -56,6 +67,7 @@
                                         </td>
                                         <td>{{ $invoice->qtd_pacote_orig(); }}</td>
                                         <td>{{ $invoice->invoice_pacotes->sum('peso') }}</td>
+                                        <td>{{number_format($invoice->valor_pendente(), 2, ',', '.');}}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

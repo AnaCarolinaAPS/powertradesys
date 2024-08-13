@@ -40,7 +40,9 @@
                                         <th>Peso Guia</th>
                                         <th>Valor Cobrado</th>
                                         <th>Falta COBRAR</th>
+                                        @can('visualizar financeiro')
                                         <th>Falta PAGAR</th>
+                                        @endcan
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -52,7 +54,9 @@
                                         <td>{{ $fatura->carga->peso_guia ?? '0,0' }}</td>
                                         <td>{{ number_format($fatura->valor_total(), 2, ',', '.'); }}</td>
                                         <td>{{ number_format($fatura->valor_total() - $fatura->invoices_pagas(), 2, ',', '.'); }}</td>
+                                        @can('visualizar financeiro')
                                         <td>{{ number_format($fatura->despesas_total() - $fatura->despesas_pagas(), 2, ',', '.'); }}</td>
+                                        @endcan
                                     </tr>
                                     @endforeach
                                      <!-- end -->

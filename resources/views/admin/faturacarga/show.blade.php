@@ -152,9 +152,11 @@
                             <div class="col">
                                 {{-- Peso Recebido: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b> --}}
                             </div>
+                            @can('visualizar financeiro')
                             <div class="col">
                                 Lucro Previsto: <b>{{number_format($faturacarga->valor_total() - $faturacarga->despesas_total(), 2, ',', '.');}} U$</b>
                             </div>
+                            @endcan
                             <div class="col">
                                 Falta COBRAR : <b>{{number_format($faturacarga->valor_total() - $faturacarga->invoices_pagas(), 2, ',', '.');}} U$</b>
                             </div>
@@ -204,6 +206,7 @@
             </div>
             <!-- end col -->
         </div>
+        @can('visualizar financeiro')
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">
@@ -252,6 +255,7 @@
             </div>
             <!-- end col -->
         </div>
+        @endcan
     </div>
     <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNewInvoice" aria-hidden="true" style="display: none;" id="ModalNewInvoice">
         <div class="modal-dialog modal-lg">

@@ -96,6 +96,9 @@
                                     </tr>
                                     <tr class="collapse accordion-collapse" id="r{{$i++}}" data-bs-parent=".table">
                                         <td colspan="2">
+                                            @php
+                                                $total = 0
+                                            @endphp
                                             @foreach ($pagamento->invoices as $inv)
                                                 <div class="row">
                                                     <div class="col">
@@ -106,9 +109,15 @@
                                                         @if ($inv->pivot->valor_recebido == 0)
                                                             <b>[CRÉDITO]</b>
                                                         @endif
+                                                        @php
+                                                            $total += $inv->pivot->valor_recebido;
+                                                        @endphp
                                                     </div>
                                                 </div>
                                             @endforeach
+                                            @if ($total < $pagamento->valor)
+                                                CRÉDITO para próxima INVOICE - <b> {{number_format($pagamento->valor-$total, 2, ',', '.');}} U$ [CRÉDITO]</b>
+                                            @endif
                                             <div class="row">
                                                 <div class="col">
                                                     <b>Total Pago: {{number_format($pagamento->valor, 2, ',', '.');}} U$</b>

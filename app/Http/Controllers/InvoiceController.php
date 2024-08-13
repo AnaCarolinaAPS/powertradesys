@@ -250,6 +250,7 @@ class InvoiceController extends Controller
         // Verificar se o valor do pagamento pode pagar totalmente a invoice atual
         if ($valorRestante <= $saldoAberto) {
             $invoice->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
+            $valorRestante -= $valorRestante; 
         // Se o valor do pagamento for maior que o da invoice atual distribui entre invoices!
         } else {
             //Paga o Saldo em ABERTO da invoice ATUAL
@@ -282,7 +283,7 @@ class InvoiceController extends Controller
                         // Registrar o pagamento para esta invoice
                         $aberto->pagamentos()->attach($pagamento->id, ['valor_recebido' => $valorRestante]);
                         $valorRestante -= $valorRestante; // ZERO
-                        break;
+                        // break;
                     } else {
                         // Não existem mais invoices para serem feito pagamento (quebra o foreach)
                         break;

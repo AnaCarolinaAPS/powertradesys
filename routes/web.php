@@ -376,6 +376,12 @@ Route::get('/processar-texto',  [TextController::class, 'showForm'])->name('text
 Route::post('/processar-texto', [TextController::class, 'processText'])->name('text.process');
 
 
+Route::get('/reset-cache', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    
+    return "Cache de permissões limpo!";
+});
+
 // Route::middleware(['auth', ''])->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 //     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

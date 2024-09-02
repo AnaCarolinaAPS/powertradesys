@@ -31,24 +31,24 @@
                             <i class="fas fa-plus"></i> Novo
                         </button>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Período</th>
-                                        <th>CI</th>
+                                        <th>Período</th>
                                         <th>Nome</th>
                                         <th>Valor Total</th>
-                                        <th>Valor Pago</th>
+                                        <th>Valor Pendente</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_folhas as $folha)
                                     <tr data-href="{{ route('folhapagamentos.show', ['folha' =>  $folha->id]) }}">
+                                        <td>{{ $folha->periodo }}</td>
                                         <td><h6 class="mb-0">{{ $folha->periodo }}</h6></td>
-                                        <td>{{ $folha->funcionario->ci }}</td>
-                                        <td>{{ $folha->funcionario->nome }}</td>
-                                        <td>{{ $folha->valor_total() }}</td>
-                                        <td>{{ $folha->valor_pago() }}</td>
+                                        <td>{{ $folha->funcionario->nome ." [".$folha->funcionario->ci."]" ;}}</td>
+                                        <td>{{ $folha->valor_total(); }}</td>
+                                        <td>{{ $folha->valor_pendente(); }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

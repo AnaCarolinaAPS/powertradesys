@@ -44,15 +44,6 @@
                                         <input type="text" class="form-control" id="periodo" name="periodo" placeholder="Período" value="{{ $folha->periodo; }}" maxlength="255" readonly>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="status">Status</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="" name="" disabled>
-                                            <option value="0"> Pendente </option>
-                                            <option value="0"> Pagado </option>
-                                        </select>
-                                    </div>
-                                </div>
                             </div>
                             <div class="modal-footer">
                                 <!-- Botão de Exclusão -->
@@ -83,17 +74,19 @@
                             <i class="fas fa-plus"></i> Add Concepto
                         </button>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-data" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data</th>
                                         <th>Concepto</th>
                                         <th>Moeda</th>
                                         <th>Valor</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @foreach ($all_items as $item)
+                                    @foreach ($all_items->sortBy('data') as $item)
                                     <tr class="abrirModal" data-id="{{ $item->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesServico">
+                                        <td>{{ \Carbon\Carbon::parse($item->data)->format('d/m/Y') }}</td>
                                         <td>{{ $item->servicosF->descricao}}</td>
                                         <td>{{ $item->servicosF->moeda}}</td>
                                         <td>{{ number_format($item->valor, 2, ',', '.') }}</td>
@@ -136,20 +129,13 @@
                                         <th>Data</th>
                                         <th>Valor Recebido</th>
                                         <th></th>
-                                        <th></th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @php
-                                        $i = 0;
-                                    @endphp
-                                    @foreach ($folha->pagamentos as $pagamento)
+                                    @foreach ($folha->pagamentos->sortBy('data_pagamento') as $pagamento)
                                     <tr class="abrirModalPgto" data-pgto-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalheModal">
                                         <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
                                         <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForFolha($folha->id), 2, ',', '.')." U$)" }}</td>
-                                        <td>
-                                            <!-- <a href="{{ route('pagamentos.destroy', ['pagamento' =>  $pagamento->id]) }}" class="link-danger">Excluir</a> -->
-                                        </td>
                                         <td>
                                             <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
                                         </td>
@@ -241,9 +227,15 @@
                         @csrf
                         @method('PUT') <!-- Método HTTP para update -->
                         <div class="modal-body">
-                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <!-- Campo hidden para armazenar o id da Folha de Pagamento -->
                             <input type="hidden" name="id" value="" id="dId">
                             <div class="row mt-1">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="data">Data</label>
+                                        <input class="form-control" type="date" id="dData" name="data">
+                                    </div>
+                                </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="descricao">Descrição do Serviço</label>
@@ -382,6 +374,7 @@
                 .then(data => {
                     document.getElementById('tituloModalPacote').innerText = data.servicos_f.descricao;
                     document.getElementById('dId').value = data.id;
+                    document.getElementById('dData').value = data.data;
                     document.getElementById('dDescricao').value = data.servicos_f.descricao;
                     document.getElementById('dMoeda').value = data.servicos_f.moeda;
                     document.getElementById('dValor').value = data.valor;

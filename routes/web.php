@@ -36,6 +36,7 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TextController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CreditoController;
+use App\Http\Controllers\PacotesPendentesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -345,6 +346,15 @@ Route::middleware('auth')->group(function () {
             // Route::put('/{folhaitem}', [FolhaPagamentoItemController::class, 'update'])->name('folhas_items.update');
             // Route::delete('/{folhaitem}', [FolhaPagamentoItemController::class, 'destroy'])->name('folhas_items.destroy');
             Route::get('carga/', [RelatorioController::class, 'indexCarga'])->name('relatorioCarga.index');
+        });
+
+        // Pacotes Pendentes CRUD
+        Route::prefix('/admin/pacotespendentes')->group(function () {
+            Route::get('/', [PacotesPendentesController::class, 'index'])->name('pacotes_pendentes.index');
+            Route::post('/', [PacotesPendentesController::class, 'store'])->name('pacotes_pendentes.store');
+            Route::get('/{pacotependente}', [PacotesPendentesController::class, 'show'])->name('pacotes_pendentes.show');
+            Route::put('/{pacotependente}', [PacotesPendentesController::class, 'update'])->name('pacotes_pendentes.update');
+            Route::delete('/{pacotependente}', [PacotesPendentesController::class, 'destroy'])->name('pacotes_pendentes.destroy');
         });
 
         Route::prefix('/admin/gerar-pdf')->group(function () {

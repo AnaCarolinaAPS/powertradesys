@@ -54,6 +54,7 @@
                             <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
                             <li><a href="{{ route('pacotes.index'); }}">Pacotes</a></li>
                             <li><a href="{{ route('entregas.index'); }}">Entrega de Carga</a></li>
+                            <li><a href="{{ route('pacotes_pendentes.index'); }}">Pacotes Pendentes<span class="badge rounded-pill bg-success float-end">3</span></a></li>
                         </ul>
                     </li>
 

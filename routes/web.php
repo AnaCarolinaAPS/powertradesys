@@ -371,6 +371,10 @@ Route::middleware('auth')->group(function () {
             Route::get('/historico', [PacoteController::class, 'clienteHistorico'])->name('pacotes.historico');
             Route::get('/previsao', [PacoteController::class, 'clientePrevisao'])->name('pacotes.previsao');
             Route::get('/emprocesso', [PacoteController::class, 'clienteProcesso'])->name('pacotes.processo');
+            Route::get('/pendentes', [PacotesPendentesController::class, 'clientePendentes'])->name('pacotes.pendentes');
+            Route::post('/pendentes', [PacotesPendentesController::class, 'clientePendentesStore'])->name('pacotes.pendentes.store');
+            Route::get('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesShow'])->name('pacotes.pendentes.show');
+            Route::delete('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesDestroy'])->name('pacotes.pendentes.destroy');
         });
 
         // Pacotes Carga

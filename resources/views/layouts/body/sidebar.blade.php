@@ -54,7 +54,12 @@
                             <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
                             <li><a href="{{ route('pacotes.index'); }}">Pacotes</a></li>
                             <li><a href="{{ route('entregas.index'); }}">Entrega de Carga</a></li>
-                            <li><a href="{{ route('pacotes_pendentes.index'); }}">Pacotes Pendentes<span class="badge rounded-pill bg-success float-end">3</span></a></li>
+                            <li><a href="{{ route('pacotes_pendentes.index'); }}">Pacotes Pendentes
+                                @if($pendingPacotesCount > 0)
+                                    <span class="badge rounded-pill bg-success float-end">{{ $pendingPacotesCount }}</span>
+                                @endif
+                                </a>
+                            </li>
                         </ul>
                     </li>
 
@@ -138,6 +143,11 @@
                             <span>Logistica</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">                        
+                            <li><a href="{{ route('pacotes.pendentes'); }}">Pendentes
+                                @if($pendingPacotesCount > 0)
+                                    <span class="badge rounded-pill bg-success float-end">{{ $pendingPacotesCount }}</span>
+                                @endif
+                            </a></li>
                             <li><a href="{{ route('pacotes.previsao'); }}">Previsões</a></li>
                             <li><a href="{{ route('pacotes.processo'); }}">Em Processo</a></li>
                             <li><a href="{{ route('cargas.cliente.index'); }}">Carga</a></li>

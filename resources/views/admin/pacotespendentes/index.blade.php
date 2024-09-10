@@ -49,7 +49,7 @@
                                     @foreach ($all_items as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td>{{ $pacote->data_pedido }}</td>
-                                        <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y')}}</td>
+                                        <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y').' ('.\Carbon\Carbon::parse($pacote->data_pedido)->diffInDays(now()).' dias)' }}</td>
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
                                         @if ($pacote->data_miami)

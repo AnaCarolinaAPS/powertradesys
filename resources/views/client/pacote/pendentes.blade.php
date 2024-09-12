@@ -40,7 +40,7 @@
                                         <th>Data Pedido</th>    
                                         <th>Data Pedido</th>    
                                         <th>Rastreio</th>
-                                        <th>Cliente</th>                                 
+                                        <!-- <th>Cliente</th>                                  -->
                                         <th>Status</th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -50,7 +50,7 @@
                                         <td>{{ $pacote->data_pedido }}</td>
                                         <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y')}}</td>
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
-                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
+                                        <!-- <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td> -->
                                         <td>{{ $pacote->status }}</td>
                                     </tr>
                                     @endforeach

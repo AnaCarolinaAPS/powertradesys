@@ -31,7 +31,11 @@ class AppServiceProvider extends ServiceProvider
             if ($user->hasRole('admin')) {
                 $pendingPacotesCount = Cache::remember('pending_pacotes_count', 60, function() {
                     return PacotesPendentes::where('status', '!=', 'encontrado')->count();
-                });  
+                }); 
+            } elseif ($user->hasRole('guest')) {
+                $pendingPacotesCount = Cache::remember('pending_pacotes_count'. 'guest', 60, function() {
+                    return 0;
+                }); 
             } else {
                 $clienteId = $user->cliente->id;
                 $pendingPacotesCount = Cache::remember('pending_pacotes_count'. $clienteId, 60, function() use ($clienteId) {

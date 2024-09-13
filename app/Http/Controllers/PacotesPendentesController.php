@@ -93,7 +93,7 @@ class PacotesPendentesController extends Controller
                 'data_pedido' => 'required|date',
                 'cliente_id' => 'nullable|exists:clientes,id',
                 'data_recebido' => 'nullable|date',
-                'status' => 'required|in:aguardando,solicitado,buscando,em sistema,encontrado',
+                'status' => 'required|in:aguardando,solicitado,buscando,em sistema,encontrado,naorecebido',
                 // Adicione outras regras de validação conforme necessário
             ]);
 

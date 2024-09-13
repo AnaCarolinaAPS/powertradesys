@@ -51,7 +51,21 @@
                                         <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y')}}</td>
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <!-- <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td> -->
-                                        <td>{{ $pacote->status }}</td>
+                                        <td>
+                                            @if($pacote->status == 'aguardando')
+                                                <i class="ri-checkbox-blank-circle-line font-size-10 text-secondary align-middle me-2"></i> Aguardando Entrega
+                                            @elseif($pacote->status == 'solicitado')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-secondary align-middle me-2"></i> Solicitado
+                                            @elseif($pacote->status == 'buscando')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i> Buscando
+                                            @elseif($pacote->status == 'em sistema')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-info align-middle me-2"></i> Em Sistema
+                                            @elseif($pacote->status == 'encontrado')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i> Encontrado
+                                            @elseif($pacote->status == 'naorecebido')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-danger align-middle me-2"></i> Não Recebido
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

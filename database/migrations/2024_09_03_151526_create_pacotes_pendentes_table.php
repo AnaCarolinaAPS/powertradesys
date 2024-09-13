@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
             $table->date('data_pedido');
             $table->date('data_miami')->nullable();
-            $table->enum('status', ['aguardando', 'solicitado', 'buscando', 'em sistema', 'encontrado'])->default('aguardando');
+            $table->enum('status', ['aguardando', 'solicitado', 'buscando', 'em sistema', 'encontrado', 'naorecebido'])->default('aguardando');
             $table->timestamps();
         });
     }

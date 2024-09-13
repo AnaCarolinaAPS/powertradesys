@@ -57,7 +57,21 @@
                                         @else
                                         <td>Aguardando</td>
                                         @endif
-                                        <td>{{ $pacote->status }}</td>
+                                        <td>
+                                            @if($pacote->status == 'aguardando')
+                                                <i class="ri-checkbox-blank-circle-line font-size-10 text-secondary align-middle me-2"></i> Aguardando Entrega
+                                            @elseif($pacote->status == 'solicitado')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-secondary align-middle me-2"></i> Solicitado
+                                            @elseif($pacote->status == 'buscando')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i> Buscando
+                                            @elseif($pacote->status == 'em sistema')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-info align-middle me-2"></i> Em Sistema
+                                            @elseif($pacote->status == 'encontrado')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i> Encontrado
+                                            @elseif($pacote->status == 'naorecebido')
+                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-danger align-middle me-2"></i> Não Recebido
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -191,6 +205,7 @@
                                         <select class="selectpicker form-control" data-live-search="true" id="dStatus" name="status">
                                             <option value="aguardando"> Aguardando </option>
                                             <option value="solicitado"> Solicitado </option>
+                                            <option value="naorecebido"> Não Recebido </option>
                                             <option value="buscando"> Buscando </option>
                                             <option value="em sistema"> Em Sistema </option>
                                             <option value="encontrado"> Encontrado </option>

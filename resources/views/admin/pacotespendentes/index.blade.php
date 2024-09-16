@@ -41,8 +41,8 @@
                                         <th>Data Pedido</th>    
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
-                                        <th>Data Entregado</th>                                    
                                         <th>Status</th>
+                                        <th>Pacote</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -52,14 +52,9 @@
                                         <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y').' ('.\Carbon\Carbon::parse($pacote->data_pedido)->diffInDays(now()).' dias)' }}</td>
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
-                                        @if ($pacote->data_miami)
-                                        <td>{{\Carbon\Carbon::parse($pacote->data_miami)->format('d/m/Y')}}</td>
-                                        @else
-                                        <td>Aguardando</td>
-                                        @endif
                                         <td>
                                             @if($pacote->status == 'aguardando')
-                                                <i class="ri-checkbox-blank-circle-line font-size-10 text-secondary align-middle me-2"></i> Aguardando Entrega
+                                                <i class="ri-checkbox-blank-circle-line font-size-10 text-secondary align-middle me-2"></i> Aguardando
                                             @elseif($pacote->status == 'solicitado')
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-secondary align-middle me-2"></i> Solicitado
                                             @elseif($pacote->status == 'buscando')
@@ -70,6 +65,13 @@
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i> Encontrado
                                             @elseif($pacote->status == 'naorecebido')
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-danger align-middle me-2"></i> Não Recebido
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($pacote->pacote)
+                                                <a href="{{ route('warehouses.show', ['warehouse' =>  $pacote->pacote->warehouse->id]) }}" class="link-info">Ver Pacote</a>
+                                            @else 
+                                                Aguardando
                                             @endif
                                         </td>
                                     </tr>

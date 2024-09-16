@@ -74,6 +74,7 @@ class PacoteController extends Controller
                     if ($pacotePendente->cliente->id == $pacote->cliente->id) {
                         $pacotePendente->update([
                             'status' => 'encontrado',
+                            'pacote_id' => $pacote->id,
                         ]);
                     } else { //se não for o mesmo id de cliente, colocar "em sistema"
                         $pacotePendente->update([
@@ -182,6 +183,7 @@ class PacoteController extends Controller
                 if ($pacotePendente->cliente->id == $pacote->cliente->id) {
                     $pacotePendente->update([
                         'status' => 'encontrado',
+                        'pacote_id' => $pacote->id,
                     ]);
                 } else { //se não for o mesmo id de cliente, colocar "em sistema"
                     $pacotePendente->update([
@@ -194,7 +196,7 @@ class PacoteController extends Controller
                 // Exibir toastr de INFO para sinalizar 
                 return redirect()->back()->with('toastr', [
                     'type'    => 'info',
-                    'message' => 'Pacote atualizado foi pedido por um cliente!<br>[Revisar Pacotes Pendentes]'.$pacotePendente->status,
+                    'message' => 'Pacote atualizado foi pedido por um cliente!<br>[Revisar Pacotes Pendentes] '.$pacotePendente->status,
                     'title'   => 'Sucesso',
                 ]);         
             } else {

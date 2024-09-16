@@ -1,6 +1,6 @@
 
 @extends('layouts.admin_master')
-@section('titulo', 'Pacotes | PowerTrade.Py')
+@section('titulo', 'Pacotes Pendentes | PowerTrade.Py')
 
 @section('admin')
 <div class="page-content">
@@ -42,6 +42,7 @@
                                         <th>Rastreio</th>
                                         <!-- <th>Cliente</th>                                  -->
                                         <th>Status</th>
+                                        <th>Pacote</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -64,6 +65,27 @@
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i> Encontrado
                                             @elseif($pacote->status == 'naorecebido')
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-danger align-middle me-2"></i> Não Recebido
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if($pacote->pacote)
+                                                @if (isset($pacote->pacote->carga->data_recebida))
+                                                    @if (isset($pacote->pacote->invoice_pacote->peso))
+                                                        <a href="{{ route('cargas.cliente.show', ['invoice' =>  $pacote->pacote->invoice_pacote->invoice->id]) }}" class="link-info">Ver Pacote</a>
+                                                    @endif
+                                                @else
+                                                    @if (isset($pacote->pacote->carga->data_enviada))
+                                                        @if (\Carbon\Carbon::parse($pacote->pacote->carga->data_enviada) < \Carbon\Carbon::now())
+                                                            <a href="{{ route('pacotes.processo') }}" class="link-info">Em Processo</a>
+                                                        @else 
+                                                            <a href="{{ route('pacotes.previsao') }}" class="link-info">Previsão</a>
+                                                        @endif 
+                                                    @else 
+                                                        <a href="{{ route('pacotes.previsao') }}" class="link-info">Previsão</a>
+                                                    @endif
+                                                @endif
+                                            @else 
+                                                Aguardando
                                             @endif
                                         </td>
                                     </tr>

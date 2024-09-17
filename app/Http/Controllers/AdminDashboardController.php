@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Carga;
 use App\Models\FaturaCarga;
-
+use App\Models\Warehouse;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
@@ -16,37 +17,53 @@ class AdminDashboardController extends Controller
         $currentDate = Carbon::now();
         // Obter o início e o fim da semana atual
         $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();        
 
         // Buscar as cargas da semana
-        // $cargasDaSemana = Carga::whereBetween('data_recebida', [$startOfWeek, $endOfWeek])->get();
+        $cargasMiami = Warehouse::whereBetween('data', [$startOfWeek, $endOfWeek])->get();
+
         // Buscar as FaturaCarga cujas cargas têm a data_recebida dentro da semana
         $cargasDaSemana = FaturaCarga::whereHas('carga', function($query) use ($startOfWeek, $endOfWeek) {
             $query->whereBetween('data_recebida', [$startOfWeek, $endOfWeek]);
         })->get();
 
-        //Caso na semana atual não tenha uma carga ainda
-        if ($cargasDaSemana->isEmpty()) {
-            $currentDate = $currentDate->subWeek();
-            $startOfWeek = Carbon::now()->startOfWeek();
-            $endOfWeek = Carbon::now()->endOfWeek();
-            $cargasDaSemana = FaturaCarga::whereHas('carga', function($query) use ($startOfWeek, $endOfWeek) {
-                $query->whereBetween('data_recebida', [$startOfWeek, $endOfWeek]);
-            })->get();
-        }
-
         $peso = 0;
-        $cobrado = 0;
-        $totalInvoices = 0;
         $totalClientes = 0;
         $totalPacotes = 0;
+        $tipoCarga = "faturacarga";
 
-        foreach ($cargasDaSemana as $fatura_carga) {
-            $peso += $fatura_carga->invoices_pesos_total();
-            $cobrado += $fatura_carga->invoices_pagas();
-            $totalInvoices += $fatura_carga->valor_total();
-            $totalClientes += $fatura_carga->carga->clientes->count();
-            $totalPacotes += $fatura_carga->carga->pacotes->count();
+        //Caso na semana atual não tenha uma Fatura ainda
+        if ($cargasDaSemana->isEmpty()) {
+            $semanaPassada = $currentDate->subWeek();
+            $startOfWeekP = (clone $semanaPassada)->startOfWeek();
+            $endOfWeekP = (clone $semanaPassada)->endOfWeek();
+
+            $cargasDaSemana = Carga::whereNull('data_recebida')
+                            ->whereBetween('data_enviada', [$startOfWeekP, $endOfWeekP])
+                            ->first();
+
+                            $peso += $cargasDaSemana->pacotes->sum('peso_aprox');
+                            $totalClientes += $cargasDaSemana->clientes->count();
+                            $totalPacotes += $cargasDaSemana->pacotes->count();
+                     
+            $tipoCarga = "carga";
+            $cargasDaSemana = DB::table('pacotes')
+                            ->select('clientes.id', 'clientes.caixa_postal', 'clientes.apelido',
+                                    DB::raw('COALESCE(SUM(pacotes.qtd), 0) as total_pacotes'),
+                                    DB::raw('COALESCE(SUM(pacotes.peso_aprox), 0) as total_aproximado'),
+                                    DB::raw('COALESCE(SUM(pacotes.peso), 0) as total_real'))
+                                    ->leftJoin('clientes', 'clientes.id', '=', 'pacotes.cliente_id')
+                                    // ->leftJoin('users', 'users.id', '=', 'clientes.user_id') // Junção com a tabela de usuários
+                                    ->where('pacotes.carga_id', $cargasDaSemana->id)
+                                    ->groupBy('clientes.id', 'clientes.caixa_postal', 'clientes.apelido')
+                                    ->get();
+
+        } else {
+            foreach ($cargasDaSemana as $fatura_carga) {
+                $peso += $fatura_carga->invoices_pesos_total();
+                $totalClientes += $fatura_carga->carga->clientes->count();
+                $totalPacotes += $fatura_carga->carga->pacotes->count();
+            }
         }
 
         $semanaPassada = $currentDate->subWeek();
@@ -79,17 +96,22 @@ class AdminDashboardController extends Controller
         $cargaCard = [
             'valor' => $peso,
             'porcentagem' => $variacaoPercentualPeso,
-        ];
+        ];        
 
-        if ($totalInvoices > 0) {
-            $variacaoPercentualCobrada = (($cobrado * 100) / $totalInvoices) ;
-        } else {
-            $variacaoPercentualCobrada = 0; // Caso a semana anterior seja 0, não há como calcular variação percentual
+        $pesoMiami = 0;
+        foreach ($cargasMiami as $warehouse) {
+            $pesoMiami += $warehouse->pacotes->sum('peso_aprox');
         }
 
-        $cobradoCard = [
-            'valor' => $cobrado,
-            'porcentagem' => $variacaoPercentualCobrada,
+        if ($peso > 0) {
+            $variacaoPercentualMiami = (($pesoMiami - $peso) / $peso) * 100;
+        } else {
+            $variacaoPercentualMiami = 0; // Caso a semana anterior seja 0, não há como calcular variação percentual
+        }
+
+        $miamiCard = [
+            'valor' => $pesoMiami,
+            'porcentagem' => $variacaoPercentualMiami,
         ];
 
         if ($totalClientesAnterior > 0) {
@@ -115,6 +137,6 @@ class AdminDashboardController extends Controller
         ];
 
         // $cargasDaSemana = Carga::whereBetween('data_recebida', [$startOfWeek, $endOfWeek])->get();
-        return view('admin.index', compact('cargasDaSemana', 'cargaCard', 'cobradoCard', 'clientesCard', 'pacotesCard')); // Isso assume que você possui uma vista chamada 'admin.dashboard.index'
+        return view('admin.index', compact('cargasDaSemana', 'cargaCard', 'miamiCard', 'clientesCard', 'pacotesCard', 'cargasDaSemana', 'tipoCarga')); // Isso assume que você possui uma vista chamada 'admin.dashboard.index'
     }
 }

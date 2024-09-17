@@ -59,5 +59,5 @@ class Carga extends Model
     public function fatura_carga()
     {
         return $this->belongsTo(FaturaCarga::class);
-    }
+    }   
 }

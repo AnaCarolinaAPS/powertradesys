@@ -53,11 +53,11 @@ class Carga extends Model
 
     public function clientes()
     {
-        return $this->hasManyThrough(Cliente::class, Pacote::class, 'carga_id', 'id', 'id', 'cliente_id');
+        return $this->hasManyThrough(Cliente::class, Pacote::class, 'carga_id', 'id', 'id', 'cliente_id')->distinct();
     }
 
     public function fatura_carga()
     {
         return $this->belongsTo(FaturaCarga::class);
-    }   
+    }
 }

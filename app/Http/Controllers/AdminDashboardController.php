@@ -56,6 +56,7 @@ class AdminDashboardController extends Controller
                                     // ->leftJoin('users', 'users.id', '=', 'clientes.user_id') // Junção com a tabela de usuários
                                     ->where('pacotes.carga_id', $cargasDaSemana->id)
                                     ->groupBy('clientes.id', 'clientes.caixa_postal', 'clientes.apelido')
+                                    ->orderBy('total_aproximado', 'DESC')
                                     ->get();
 
         } else {
@@ -137,6 +138,6 @@ class AdminDashboardController extends Controller
         ];
 
         // $cargasDaSemana = Carga::whereBetween('data_recebida', [$startOfWeek, $endOfWeek])->get();
-        return view('admin.index', compact('cargasDaSemana', 'cargaCard', 'miamiCard', 'clientesCard', 'pacotesCard', 'cargasDaSemana', 'tipoCarga')); // Isso assume que você possui uma vista chamada 'admin.dashboard.index'
+        return view('admin.index', compact('cargasDaSemana', 'cargaCard', 'miamiCard', 'clientesCard', 'pacotesCard', 'cargasDaSemana', 'tipoCarga')); 
     }
 }

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('cliente_id');
             $table->foreign('cliente_id')->references('id')->on('clientes')->onDelete('cascade');
             $table->date('data_pedido');
-            $table->date('data_miami')->nullable();
+            $table->unsignedBigInteger('pacote_id')->nullable();
+            $table->foreign('pacote_id')->references('id')->on('pacotes')->onDelete('cascade');
             $table->enum('status', ['aguardando', 'solicitado', 'buscando', 'em sistema', 'encontrado', 'naorecebido'])->default('aguardando');
             $table->timestamps();
         });

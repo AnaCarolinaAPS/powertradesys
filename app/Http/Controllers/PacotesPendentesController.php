@@ -47,12 +47,21 @@ class PacotesPendentesController extends Controller
 
             //se existe pacote, atualiza a pendencia para o status "em sistema"
             if ($pacote) {
-                $pendente->update([
-                    'status' => 'em sistema',
-                    // Adicione outros campos conforme necessário
-                ]);
+                //O pacote existe em sistema e já está no sistema com o código do cliente
+                if ($pacote->cliente->id == $request->input('cliente_id')) {
+                    $pendente->update([
+                        'status' => 'encontrado',
+                        'pacote_id' => $pacote->id,
+                        // Adicione outros campos conforme necessário
+                    ]);
+                } else {
+                    $pendente->update([
+                        'status' => 'em sistema',
+                        // Adicione outros campos conforme necessário
+                    ]);    
+                }
             }
-            // Limpar o cache das invoices pendentes
+            // Limpar o cache dos pacotes pendentes
             Cache::forget('pending_pacotes_count');
 
             // Exibir toastr de sucesso
@@ -92,7 +101,6 @@ class PacotesPendentesController extends Controller
                 'rastreio' => 'required|string|max:255',
                 'data_pedido' => 'required|date',
                 'cliente_id' => 'nullable|exists:clientes,id',
-                'data_recebido' => 'nullable|date',
                 'status' => 'required|in:aguardando,solicitado,buscando,em sistema,encontrado,naorecebido',
                 // Adicione outras regras de validação conforme necessário
             ]);
@@ -105,6 +113,9 @@ class PacotesPendentesController extends Controller
                 'status' => $request->input('status'),
                 // Adicione outros campos conforme necessário
             ]);
+
+            // Limpar o cache dos pacotes pendentes
+            Cache::forget('pending_pacotes_count');
 
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [
@@ -132,6 +143,9 @@ class PacotesPendentesController extends Controller
             // Excluir o Shipper do banco de dados
             $pacote->delete();
 
+            // Limpar o cache dos pacotes pendentes
+            Cache::forget('pending_pacotes_count');
+
             // Redirecionar após a exclusão bem-sucedida
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',
@@ -156,6 +170,9 @@ class PacotesPendentesController extends Controller
         // Obtenha o usuário autenticado
         $user = Auth::user();
         $all_items = PacotesPendentes::where('cliente_id', $user->cliente->id)->get();
+        
+        // Limpar o cache dos pacotes pendentes
+        Cache::forget('pending_pacotes_count'.Auth::user()->cliente->id);
         
         return view('client.pacote.pendentes', compact('all_items'));
     }
@@ -185,12 +202,22 @@ class PacotesPendentesController extends Controller
 
             //se existe pacote, atualiza a pendencia para o status "em sistema"
             if ($pacote) {
-                $pendente->update([
-                    'status' => 'em sistema',
-                    // Adicione outros campos conforme necessário
-                ]);
+                //O pacote existe em sistema e já está no sistema com o código do cliente
+                if ($pacote->cliente->id == Auth::user()->cliente->id) {
+                    $pendente->update([
+                        'status' => 'encontrado',
+                        'pacote_id' => $pacote->id,
+                        // Adicione outros campos conforme necessário
+                    ]);
+                } else {
+                    $pendente->update([
+                        'status' => 'em sistema',
+                        // Adicione outros campos conforme necessário
+                    ]);    
+                }
             }
-            // Limpar o cache das invoices pendentes
+            
+            // Limpar o cache dos pacotes pendentes
             Cache::forget('pending_pacotes_count'.Auth::user()->cliente->id);
 
             // Exibir toastr de sucesso
@@ -224,6 +251,7 @@ class PacotesPendentesController extends Controller
             $pacote = PacotesPendentes::find($id);
             $pacote->delete();
 
+            // Limpar o cache dos pacotes pendentes
             Cache::forget('pending_pacotes_count'.Auth::user()->cliente->id);
             // Redirecionar após a exclusão bem-sucedida
             return redirect()->back()->with('toastr', [

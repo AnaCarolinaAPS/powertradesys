@@ -18,12 +18,17 @@ class PacotesPendentes extends Model
         'rastreio',
         'cliente_id',
         'data_pedido',
-        'data_miami',
+        'pacote_id',
         'status',
     ];
 
     public function cliente()
     {
         return $this->belongsTo(Cliente::class);
+    }
+
+    public function pacote()
+    {
+        return $this->belongsTo(Pacote::class);
     }
 }

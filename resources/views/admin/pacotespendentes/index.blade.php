@@ -1,6 +1,6 @@
 
 @extends('layouts.admin_master')
-@section('titulo', 'Pacotes | PowerTrade.Py')
+@section('titulo', 'Pacotes Pendentes | PowerTrade.Py')
 
 @section('admin')
 <div class="page-content">

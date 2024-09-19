@@ -147,7 +147,7 @@
                                             <!-- <th>Valor Aproximado</th> -->
                                         @else 
                                             <th>Peso</th>
-                                            <th>Valor Cobrado</th>
+                                            {{-- <th>Valor Cobrado</th> --}}
                                             <th style="width: 120px;">Pago</th>
                                         @endif
                                     </tr>
@@ -167,13 +167,10 @@
                                         @foreach ($cargasDaSemana as $faturaCarga)
                                             @foreach ($faturaCarga->invoices as $invoice)
                                             <tr>
-                                                <td><h6 class="mb-0"><td>{{ '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name }}</td></h6></td>
-                                                <td>Python Developer</td>
+                                                <td><h6 class="mb-0">{{ '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name }}</h6></td>
+                                                <td>{{ $invoice->qtd_pacote_orig(), 1, ',', '.' }}</td>
                                                 <td>{{ number_format($invoice->peso_pacote(), 1, ',', '.') }} kgs</td>
-                                                <td>
-                                                    <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i>Deactive</div>
-                                                </td>
-                                                <td>{{ number_format($invoice->valor_total(), 2, ',', '.') }} U$</td>
+                                                {{-- <td>{{ number_format($invoice->valor_total(), 2, ',', '.') }} U$</td> --}}
                                                 <td>
                                                     @if ($invoice->valor_pendente() == 0)
                                                         <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i>Pago</div>
@@ -183,7 +180,6 @@
                                                         <div class="font-size-13"><i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i>Parcial</div>
                                                     @endif
                                                 </td>
-                                                <td>$25,060</td>
                                             </tr>
                                             @endforeach
                                         @endforeach

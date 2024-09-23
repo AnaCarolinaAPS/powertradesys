@@ -21,6 +21,9 @@ class FechamentoCaixaController extends Controller
         $totalSaldoUS = null;
         $totalSaldoRS = null;
         $totalSaldoGS = null;
+        $totalGastoUS = null;
+        $totalGastoRS = null;
+        $totalGastoGS = null;
 
         if ($tipo == 'all') {
             $all_items = FechamentoCaixa::all();
@@ -39,15 +42,18 @@ class FechamentoCaixaController extends Controller
 
                 if ($fechamento->caixa->moeda === 'U$') {
                     $totalSaldoUS += $fechamento->calculaSaldo();
+                    $totalGastoUS += $fechamento->totalGastos();
                 } else if ($fechamento->caixa->moeda === 'G$') {
                     $totalSaldoGS += $fechamento->calculaSaldo();
+                    $totalGastoGS += $fechamento->totalGastos();
                 } else {
                     $totalSaldoRS += $fechamento->calculaSaldo();
+                    $totalGastoRS += $fechamento->totalGastos();
                 }
             }
         }
         // $all_items = FechamentoCaixa::all();
-        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totalSaldoUS', 'totalSaldoGS', 'totalSaldoRS'));
+        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totalSaldoUS', 'totalSaldoGS', 'totalSaldoRS', 'totalGastoUS', 'totalGastoGS', 'totalGastoRS'));
     }
 
     /**
@@ -103,43 +109,44 @@ class FechamentoCaixaController extends Controller
             //     'borderColor' => $borderColor
             // ];
 
-            // $soma_subcategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'))
-            //                 ->where('tipo', 'saida')
-            //                 ->where('fechamento_origem_id', $id)
-            //                 ->groupBy('categoria_id', 'subcategoria_id')
-            //                 ->get();
+            $soma_subcategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'))
+                            ->where('tipo', 'saida')
+                            ->where('fechamento_origem_id', $id)
+                            ->groupBy('categoria_id', 'subcategoria_id')
+                            ->orderBy('total_saida')
+                            ->get();
 
-            // // Forma arrays para montagem do gráfico:
-            // // Inicializar arrays para armazenar os dados do gráfico
-            // $labels_sub = [];
-            // $data_sub = [];
-            // $backgroundColor_sub = [];
-            // $borderColor_sub = [];
+            // Forma arrays para montagem do gráfico:
+            // Inicializar arrays para armazenar os dados do gráfico
+            $labels_sub = [];
+            $data_sub = [];
+            $backgroundColor_sub = [];
+            $borderColor_sub = [];
 
-            // // Iterar sobre os resultados da consulta
-            // foreach ($soma_subcategorias as $categoria) {
-            //     // Adicionar categoria_id como label
-            //     $labels_sub[] = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
-            //     // Adicionar total_saida como dado
-            //     $data_sub[] = $categoria->total_saida;
-            //     // Gerar cores aleatórias para o gráfico
-            //     $red = mt_rand(0, 255);
-            //     $green = mt_rand(0, 255);
-            //     $blue = mt_rand(0, 255);
-            //     $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
-            //     $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
-            // }
+            // Iterar sobre os resultados da consulta
+            foreach ($soma_subcategorias as $categoria) {
+                // Adicionar categoria_id como label
+                $labels_sub[] = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+                // Adicionar total_saida como dado
+                $data_sub[] = $categoria->total_saida*-1;
+                // Gerar cores aleatórias para o gráfico
+                $red = mt_rand(0, 255);
+                $green = mt_rand(0, 255);
+                $blue = mt_rand(0, 255);
+                $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
+                $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
+            }
 
-            // // Criar um array associativo com todas as informações
-            // $data_grafico_sub = [
-            //     'labels' => $labels_sub,
-            //     'data' => $data_sub,
-            //     'backgroundColor' => $backgroundColor_sub,
-            //     'borderColor' => $borderColor_sub
-            // ];
+            // Criar um array associativo com todas as informações
+            $data_grafico_sub = [
+                'labels' => $labels_sub,
+                'data' => $data_sub,
+                'backgroundColor' => $backgroundColor_sub,
+                'borderColor' => $borderColor_sub
+            ];
 
             $data_grafico = [];
-            $data_grafico_sub = [];
+            // $data_grafico_sub = [];
             // Retornar a view com os detalhes do shipper
             return view('admin.fechamentocaixa.show', compact('fechamento', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas_t', 'all_caixas_c', 'data_grafico', 'data_grafico_sub'));
         } catch (\Exception $e) {

@@ -174,7 +174,7 @@
         </div>
         <!-- end row -->
         <div class="row">
-            <div class="col-xl-6">
+            {{-- <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -187,8 +187,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-xl-6">
+            </div> --}}
+            <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -430,47 +430,49 @@
         console.log (tipo);
     }
 
-    var dados = @json($data_grafico);
+    // var dados = @json($data_grafico);
 
-    var datapie = {
-      labels: dados.labels,
-      datasets: [{
-        // label: 'My First Dataset',
-        data: dados.data,
-        backgroundColor: dados.backgroundColor,
-        borderColor: dados.borderColor,
-        borderWidth: 1
-      }]
-    };
+    // var datapie = {
+    //   labels: dados.labels,
+    //   datasets: [{
+    //     // label: 'My First Dataset',
+    //     data: dados.data,
+    //     backgroundColor: dados.backgroundColor,
+    //     borderColor: dados.borderColor,
+    //     borderWidth: 1
+    //   }]
+    // };
 
-    // Opções do gráfico
-    var optionspie = {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'top',
-        },
-        title: {
-          display: true,
-          text: 'Gastos x Valor'
-        }
-      }
-    };
+    // // Opções do gráfico
+    // var optionspie = {
+    //   responsive: true,
+    //   plugins: {
+    //     legend: {
+    //       position: 'top',
+    //     },
+    //     title: {
+    //       display: true,
+    //       text: 'Gastos x Valor'
+    //     }
+    //   }
+    // };
 
-    // Criando o gráfico de pizza
-    var ctxpie = document.getElementById('categoriaChart').getContext('2d');
-    var myPieChart = new Chart(ctxpie, {
-      type: 'pie',
-      data: datapie,
-      options: optionspie
-    });
+    // // Criando o gráfico de pizza
+    // var ctxpie = document.getElementById('categoriaChart').getContext('2d');
+    // var myPieChart = new Chart(ctxpie, {
+    //   type: 'pie',
+    //   data: datapie,
+    //   options: optionspie
+    // });
 
     var dadossub = @json($data_grafico_sub);
+
+    console.log (dadossub);
 
     var datapiesub = {
       labels: dadossub.labels,
       datasets: [{
-        // label: 'My First Dataset',
+        label: 'Total Gastos',
         data: dadossub.data,
         backgroundColor: dadossub.backgroundColor,
         borderColor: dadossub.borderColor,
@@ -479,12 +481,12 @@
     };
 
     // Criando o gráfico de pizza
-    var ctxpie2 = document.getElementById('subcategoriaChart').getContext('2d');
-    var myPieChart2 = new Chart(ctxpie2, {
-      type: 'pie',
-      data: datapiesub,
-      options: optionspie
-    });
+    // var ctxpie2 = document.getElementById('subcategoriaChart').getContext('2d');
+    // var myPieChart2 = new Chart(ctxpie2, {
+    //   type: 'pie',
+    //   data: datapiesub,
+    //   options: optionspie
+    // });
 
     // JavaScript para abrir o modal ao clicar na linha da tabela
     document.querySelectorAll('.abrirModal').forEach(item => {
@@ -555,6 +557,70 @@
                 })
                 .catch(error => console.error('Erro:', error));
         });
+    });
+
+    const Utils = {
+    months: function({count}) {
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July",
+                            "August", "September", "October", "November", "December"];
+        return monthNames.slice(0, count);
+    }
+    };
+
+    const labels = Utils.months({count: 7});
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'My First Dataset',
+            data: [65, 59, 80, 81, 56, 55, 40],
+            backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(255, 205, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(201, 203, 207, 0.2)'
+            ],
+            borderColor: [
+            'rgb(255, 99, 132)',
+            'rgb(255, 159, 64)',
+            'rgb(255, 205, 86)',
+            'rgb(75, 192, 192)',
+            'rgb(54, 162, 235)',
+            'rgb(153, 102, 255)',
+            'rgb(201, 203, 207)'
+            ],
+            borderWidth: 1
+        }]
+    };
+
+    var datasub = {
+      labels: dadossub.labels,
+      datasets: [{
+        // label: 'My First Dataset',
+        data: dadossub.data,
+        backgroundColor: dadossub.backgroundColor,
+        borderColor: dadossub.borderColor,
+        borderWidth: 1
+      }]
+    };
+
+    // Criando o gráfico de pizza
+    var ctx = document.getElementById('subcategoriaChart').getContext('2d');
+    const stackedBar = new Chart(ctx, {
+        type: 'bar',
+        data: datapiesub,
+        options: {
+            scales: {
+                x: {
+                    stacked: true
+                },
+                y: {
+                    stacked: true
+                }
+            }
+        }
     });
 </script>
 @endsection

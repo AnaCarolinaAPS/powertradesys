@@ -46,14 +46,31 @@ class Funcionario extends Model
         $anosTrabalhados = $dataContratacao->diffInYears($hoje);
 
         // Calcular dias de férias disponíveis (12 dias por ano trabalhado)
-        $diasDeFeriasDisponiveis = $anosTrabalhados * 12;
+        // $diasDeFeriasDisponiveis = $anosTrabalhados * 12;
+
+        // Inicializa a variável para armazenar os dias de férias disponíveis
+        $diasDeFeriasDisponiveis = 0;
+
+        // Acumula os dias de férias disponíveis com base nos intervalos
+        if ($anosTrabalhados > 10) {
+            // Se trabalhou mais de 10 anos, somar:
+            // 5 anos * 12 dias + 5 anos * 18 dias + anos restantes * 30 dias
+            $diasDeFeriasDisponiveis = (5 * 12) + (5 * 18) + (($anosTrabalhados - 10) * 30);
+        } elseif ($anosTrabalhados > 5) {
+            // Se trabalhou entre 5 e 10 anos, somar:
+            // 5 anos * 12 dias + anos restantes * 18 dias
+            $diasDeFeriasDisponiveis = (5 * 12) + (($anosTrabalhados - 5) * 18);
+        } else {
+            // Se trabalhou até 5 anos, somar anos * 12 dias
+            $diasDeFeriasDisponiveis = $anosTrabalhados * 12;
+        }
 
         // Calcular quantos dias de férias o funcionário já tirou
         $diasDeFeriasUsados = 0;
 
         foreach ($this->ferias as $ferias) {
             // Diferença em dias entre a data de início e a data de fim das férias
-            $diasFerias = Carbon::parse($ferias->data_inicio)->diffInDays(Carbon::parse($ferias->data_fim)) + 1;
+            $diasFerias = Carbon::parse($ferias->data_inicio)->diffInWeekdays(Carbon::parse($ferias->data_fim)) + 1;
             $diasDeFeriasUsados += $diasFerias;
         }
 

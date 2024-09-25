@@ -130,7 +130,7 @@
                                         <td>{{ $ferias->data_inicio; }}</td>
                                         <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($ferias->data_inicio)->format('d/m/Y') }}</h6></td>
                                         <td>{{ \Carbon\Carbon::parse($ferias->data_fim)->format('d/m/Y') }}</td>
-                                        <td>({{ \Carbon\Carbon::parse($ferias->data_inicio)->diffInDays(\Carbon\Carbon::parse($ferias->data_fim)) + 1}} dias) {{ $ferias->observacao; }}</td>
+                                        <td>({{ \Carbon\Carbon::parse($ferias->data_inicio)->diffInWeekdays(\Carbon\Carbon::parse($ferias->data_fim)) + 1}} dias) {{ $ferias->observacao; }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

@@ -20,6 +20,8 @@ class ClientDashboardController extends Controller
         $role = Role::findByName('client'); // Substitua 'guest' pelo nome da função desejada
         $clientesComUsuarios = $role->users;
 
+        
+
         return view('client.index', compact('usuariosNaoClientes', 'clientesComUsuarios')); // Isso assume que você possui uma vista chamada 'admin.dashboard.index'
     }
 }

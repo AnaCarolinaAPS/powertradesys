@@ -51,7 +51,7 @@ class FeriasController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'observacao' => 'required|string|max:255',
+                'observacao' => 'nullable|string|max:255',
                 'data_inicio' => 'required|date',
                 'data_fim' => 'required|date',
                 // Adicione outras regras de validação conforme necessário

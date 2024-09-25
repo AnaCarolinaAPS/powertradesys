@@ -153,7 +153,7 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @if ($tipoCarga == "carga")
+                                    @if ($tipoCarga == "carga" && $cargasDaSemana)
                                         @foreach ($cargasDaSemana as $totais)
                                             <tr>
                                                 <td><h6 class="mb-0">{{ '('.$totais->caixa_postal.') '.$totais->apelido }}</h6></td>
@@ -163,7 +163,7 @@
                                             </tr>
                                         @endforeach
                                         <!-- end -->
-                                    @else 
+                                    @elseif ($tipoCarga == "faturacarga" && $cargasDaSemana)
                                         @foreach ($cargasDaSemana as $faturaCarga)
                                             @foreach ($faturaCarga->invoices as $invoice)
                                             <tr>
@@ -184,6 +184,7 @@
                                             @endforeach
                                         @endforeach
                                         <!-- end -->
+                                    @else
                                     @endif
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->

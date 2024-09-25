@@ -115,9 +115,10 @@
                         </button>
                         <div class="table-responsive">
                             {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>Data Inicio</th>
                                         <th>Data Inicio</th>
                                         <th>Data Fim</th>
                                         <th>Observações</th>
@@ -126,9 +127,10 @@
                                 <tbody>
                                     @foreach ($funcionario->ferias as $ferias)
                                     <tr class="abrirFerias" data-item-id="{{ $ferias->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesFerias">
+                                        <td>{{ $ferias->data_inicio; }}</td>
                                         <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($ferias->data_inicio)->format('d/m/Y') }}</h6></td>
                                         <td>{{ \Carbon\Carbon::parse($ferias->data_fim)->format('d/m/Y') }}</td>
-                                        <td>{{ $ferias->observacao; }}</td>
+                                        <td>({{ \Carbon\Carbon::parse($ferias->data_inicio)->diffInDays(\Carbon\Carbon::parse($ferias->data_fim)) + 1}} dias) {{ $ferias->observacao; }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -470,7 +472,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="observacao">Observações</label>
-                                        <textarea name="observacoes" id="observacoes" class="form-control" rows="3"></textarea>
+                                        <textarea name="observacao" id="fObservacao" class="form-control" rows="3"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -560,9 +562,9 @@
                     document.getElementById('fData_inicio').value = data.data_inicio;
                     document.getElementById('fData_fim').value = data.data_fim;
                     if (data.observacao == null) {
-                        document.getElementById('observacao').value = "";
+                        document.getElementById('fObservacao').value = "";
                     } else {
-                        document.getElementById('observacao').value = data.observacao;
+                        document.getElementById('fObservacao').value = data.observacao;
                     }
 
                     var form = document.getElementById('formAtualizacaoFerias');

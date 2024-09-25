@@ -50,7 +50,7 @@
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                         <td>{{ $pacote->data_pedido }}</td>
                                         <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y')}}</td>
-                                        <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
+                                        <td><h6 class="mb-0">'{{ $pacote->rastreio }}</h6></td>
                                         <!-- <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td> -->
                                         <td>
                                             @if($pacote->status == 'aguardando')

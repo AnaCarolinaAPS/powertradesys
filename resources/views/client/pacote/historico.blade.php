@@ -47,7 +47,7 @@
                                         @else
                                             <td>Em Processo</td>
                                         @endif
-                                        <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
+                                        <td><h6 class="mb-0">'{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->invoice_pacote ? $pacote->invoice_pacote->peso : 'Aguardando' }}</td>
                                         @if ($pacote->retirado > 0)

@@ -97,6 +97,54 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Férias</h4>
+                            </div>
+                            <div class="col">
+                            </div>
+                            <div class="col">
+                                Anos Trabalhados: <b>{{ \Carbon\Carbon::parse($funcionario->data_contratacao)->diffInYears(\Carbon\Carbon::now()); }} anos</b>
+                            </div>
+                            <div class="col">
+                                <b>Férias PENDENTES: {{$funcionario->ferias_pendente();}} dias</b>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
+                            <i class="fas fa-plus"></i> Novo
+                        </button>
+                        <div class="table-responsive">
+                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data Inicio</th>
+                                        <th>Data Fim</th>
+                                        <th>Observações</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($funcionario->ferias as $ferias)
+                                    <tr class="abrirModal" data-item-id="{{ $servico->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                        <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($ferias->data_inicio)->format('d/m/Y') }}</h6></td>
+                                        <td>{{ \Carbon\Carbon::parse($ferias->data_fim)->format('d/m/Y') }}</td>
+                                        <td>{{ $ferias->observacoes; }}</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end page title -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
                         <h4 class="card-title mb-4">Serviços</h4>
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
                             <i class="fas fa-plus"></i> Novo
@@ -339,6 +387,79 @@
                             </button>
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
                             <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacao">Atualizar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!--  -->
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNovoItem" aria-hidden="true" style="display: none;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Novo Servico</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('servicos_funcionarios.store') }}" id="formNovoItem">
+                        @csrf
+                        <div class="modal-body">
+                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <input type="hidden" name="funcionario_id" value="{{ $funcionario->id }}">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="descricao">Descrição</label>
+                                        <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição do Serviço Prestado" maxlength="255" required>
+                                    </div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="form-group">
+                                        <label for="data_inicio">Data Inicio</label>
+                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_inicio" name="data_inicio">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="status">Tipo</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="tipo" name="tipo">
+                                            <option value="fixo"> Fixo </option>
+                                            <option value="variavel"> Variável </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="status">Moeda</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="moeda" name="moeda">
+                                            <option value="U$"> U$ </option>
+                                            <option value="G$"> G$ </option>
+                                            <option value="R$"> R$ </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="valor">Valor</label>
+                                        <input class="form-control" type="number" value="0.00" step="0.10" id="valor" name="valor">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="frequencia">Frequencia</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="frequencia" name="frequencia">
+                                            <option value="mensal"> Mensal </option>
+                                            <option value="quinzenal"> Quinzenal </option>
+                                            <option value="semanal"> Semanal </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovoItem">Adicionar</button>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->

@@ -37,6 +37,7 @@ use App\Http\Controllers\TextController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CreditoController;
 use App\Http\Controllers\PacotesPendentesController;
+use App\Http\Controllers\FeriasController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -356,6 +357,16 @@ Route::middleware('auth')->group(function () {
             Route::put('/{pacotependente}', [PacotesPendentesController::class, 'update'])->name('pacotes_pendentes.update');
             Route::delete('/{pacotependente}', [PacotesPendentesController::class, 'destroy'])->name('pacotes_pendentes.destroy');
         });
+
+        // Férias CRUD
+        Route::prefix('/admin/funcionarios/ferias')->group(function () {
+            // Route::get('/', [FeriasController::class, 'index'])->name('ferias.index');
+            Route::post('/', [FeriasController::class, 'store'])->name('ferias.store');
+            Route::get('/{ferias}', [FeriasController::class, 'show'])->name('ferias.show');
+            Route::put('/{ferias}', [FeriasController::class, 'update'])->name('ferias.update');
+            Route::delete('/{ferias}', [FeriasController::class, 'destroy'])->name('ferias.destroy');
+        });
+
 
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');

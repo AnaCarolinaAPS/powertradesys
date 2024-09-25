@@ -105,7 +105,7 @@
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
                             <li><a href="{{ route('funcionarios.index'); }}">Funcionários</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Férias</a></li>
+                            {{--<li><a href="{{ route('ferias.index'); }}">Férias</a></li>--}}
                             <li><a href="{{ route('folhapagamentos.index'); }}">Folha de Pagamento</a></li>
                         </ul>
                     </li>

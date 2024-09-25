@@ -39,7 +39,7 @@
                                 <tbody>
                                     @foreach ($all_items as $pacote)
                                     <tr>
-                                        <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
+                                        <td><h6 class="mb-0">'{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso_aprox }}</td>
                                         <td>Em Miami</td>

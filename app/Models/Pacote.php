@@ -54,4 +54,9 @@ class Pacote extends Model
     {
         return $this->hasOne(InvoicePacote::class);
     }
+
+    public function pacotesPendente()
+    {
+        return $this->belongsTo(PacotesPendente::class);
+    }
 }

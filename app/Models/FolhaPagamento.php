@@ -29,15 +29,28 @@ class FolhaPagamento extends Model
         return $this->belongsToMany(Pagamento::class, 'folha_pagamento_pagamentos')->withPivot('valor_recebido');;
     }
 
-    //Para resgatar os valores dos itens (Total do Valor da Despesa)
+    //Para resgatar os valor da folha de pagamento
     public function valor_total()
     {
         return $this->items->sum('valor');
+        // return $this->items
+        // ->groupBy(function ($item) {
+        //     return $item->servicosF->moeda;
+        // })
+        // ->map(function ($group) {
+        //     return $group->sum('valor');
+        // });
     }
 
-    //Para resgatar todos os pagamentos associados a despesa
+    //Para resgatar todos os pagamentos associados a essa folha de pagamento
     public function valor_pago()
     {
         return $this->pagamentos->sum('pivot.valor_recebido');
+    }
+
+    //Para o total pendente da folha de pagamento
+    public function valor_pendente()
+    {
+        return $this->items->sum('valor')-$this->pagamentos->sum('pivot.valor_recebido');
     }
 }

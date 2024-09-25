@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\InvoicePacote;
 use App\Models\Invoice;
 use App\Models\Pacote;
+use App\Models\PacotesPendentes;
+use Illuminate\Support\Facades\Cache;
 
 class InvoicePacoteController extends Controller
 {
@@ -43,6 +45,33 @@ class InvoicePacoteController extends Controller
                 // Adicione outros campos conforme necessário
             ]);
 
+            //Busca para ver se o pacote adicionado existe entre as pendencias
+            $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+
+            // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
+            if ($pacotePendente) {
+                //Se quem é o "dono" ou fez o pedido do pacote é a pessoa que o sistema cadastrou
+                if ($pacotePendente->cliente->id == $pacote->pacote->cliente->id) {
+                    $pacotePendente->delete();
+                    Cache::forget('pending_pacotes_count');
+                    // Exibir toastr de sucesso
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'Pacote atualizado com sucesso!<br>Pacote excluído das Pendencias: '.$pacote->pacote->rastreio,
+                        'title'   => 'Sucesso',
+                    ]);
+                } else { //se não for o mesmo id de cliente, colocar "em sistema"
+                    $pacotePendente->update([
+                        'status' => 'em sistema',
+                    ]);
+                    // Exibir toastr de sucesso
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'warning',
+                        'message' => 'Pacote estava pendente no sistema não é do cliente que foi pedido!<br>Revisar: '.$pacote->pacote->rastreio,
+                        'title'   => 'Sucesso',
+                    ]);
+                }
+            }
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',

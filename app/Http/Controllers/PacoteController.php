@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Pacote;
 use App\Models\Warehouse;
 use App\Models\Cliente;
+use App\Models\PacotesPendentes;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class PacoteController extends Controller
 {
@@ -44,7 +46,7 @@ class PacoteController extends Controller
                                 ->exists();
 
             // Criação de um novo Shipper no banco de dados
-            Pacote::create([
+            $pacote = Pacote::create([
                 'rastreio' => $request->input('rastreio'),
                 'qtd' => $request->input('qtd'),
                 'peso_aprox' => $request->input('peso_aprox'),
@@ -63,12 +65,39 @@ class PacoteController extends Controller
                     'title'   => 'Atenção',
                 ]);
             } else {
-                // Exibir toastr de sucesso
-                return redirect()->back()->with('toastr', [
-                    'type'    => 'success',
-                    'message' => 'Pacote criado com sucesso!',
-                    'title'   => 'Sucesso',
-                ]);
+                //Busca para ver se o pacote adicionado existe entre as pendencias
+                $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+
+                // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
+                if ($pacotePendente) {
+                    //Se quem é o "dono" ou fez o pedido do pacote é a pessoa que o sistema cadastrou
+                    if ($pacotePendente->cliente->id == $pacote->cliente->id) {
+                        $pacotePendente->update([
+                            'status' => 'encontrado',
+                            'pacote_id' => $pacote->id,
+                        ]);
+                    } else { //se não for o mesmo id de cliente, colocar "em sistema"
+                        $pacotePendente->update([
+                            'status' => 'em sistema',
+                        ]);
+                    }
+
+                    Cache::forget('pending_pacotes_count');
+
+                    // Exibir toastr de INFO para sinalizar 
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'Pacote criado foi pedido por um cliente!<br>[Revisar Pacotes Pendentes]'.$pacotePendente->status,
+                        'title'   => 'Sucesso',
+                    ]);                
+                } else {
+                    // Exibir toastr de sucesso
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'success',
+                        'message' => 'Pacote criado com sucesso!',
+                        'title'   => 'Sucesso',
+                    ]);
+                }
             }
         } catch (\Exception $e) {
             // Exibir toastr de Erro
@@ -145,12 +174,40 @@ class PacoteController extends Controller
                 ]);
             }
 
-            // Exibir toastr de sucesso
-            return redirect()->back()->with('toastr', [
-                'type'    => 'success',
-                'message' => 'Pacote atualizado com sucesso!',
-                'title'   => 'Sucesso',
-            ]);
+            //Busca para ver se o pacote adicionado existe entre as pendencias
+            $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+
+            // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
+            if ($pacotePendente) {
+                //Se quem é o "dono" ou fez o pedido do pacote é a pessoa que o sistema cadastrou
+                if ($pacotePendente->cliente->id == $pacote->cliente->id) {
+                    $pacotePendente->update([
+                        'status' => 'encontrado',
+                        'pacote_id' => $pacote->id,
+                    ]);
+                } else { //se não for o mesmo id de cliente, colocar "em sistema"
+                    $pacotePendente->update([
+                        'status' => 'em sistema',
+                    ]);
+                }
+
+                Cache::forget('pending_pacotes_count');
+
+                // Exibir toastr de INFO para sinalizar 
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'info',
+                    'message' => 'Pacote atualizado foi pedido por um cliente!<br>[Revisar Pacotes Pendentes] '.$pacotePendente->status,
+                    'title'   => 'Sucesso',
+                ]);         
+            } else {
+                // Exibir toastr de sucesso
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'success',
+                    'message' => 'Pacote atualizado com sucesso!',
+                    'title'   => 'Sucesso',
+                ]);
+            }
+            
         } catch (\Exception $e) {
             // Exibir toastr de Erro
             return redirect()->back()->with('toastr', [
@@ -167,15 +224,6 @@ class PacoteController extends Controller
     // public function destroy(Pacote $pacote)
     public function destroy($id)
     {
-        // Verificar se o Shipper possui Warehouses
-        // if ($shipper->warehouses()->exists()) {
-        //     return redirect()->back()->with('toastr', [
-        //         'type'    => 'error',
-        //         'message' => 'Não é possível excluir o Shipper, pois ele possui Warehouses associadas.',
-        //         'title'   => 'Erro',
-        //     ]);
-        // }
-
         try {
             $pacote = Pacote::find($id);
             // Excluir o Shipper do banco de dados

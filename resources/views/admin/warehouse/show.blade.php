@@ -123,11 +123,15 @@
                                     <i class="fas fa-plus"></i> Novo
                                 </button>
                             </div>
+                            <div class="col text-end">
+                                <a href="{{ route('warehouses.scrape', ['warehouse' => $warehouse->id]) }}" class="btn btn-warning waves-effect waves-light mb-2"><i class="fas fa-plus"></i> Scrap</a>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>CD</th>
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
                                         <th>Qtd</th>
@@ -138,6 +142,7 @@
                                 <tbody>
                                     @foreach ($warehouse->pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{ $pacote->codigo ?? 'none' }}</td>
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
                                         <td>{{ $pacote->qtd }}</td>
@@ -236,13 +241,13 @@
                             <!-- Campo hidden para armazenar o id da Warehouse -->
                             <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="rastreio">Rastreio</label>
-                                        <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
+                                        <label for="codigo">Codigo</label>
+                                        <input class="form-control" type="number" value="{{ $codigo+1; }}" step="1" id="codigo" name="codigo" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="cliente_id">Cliente</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id">
@@ -252,16 +257,24 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
                                     <div class="form-group">
-                                        <label for="peso_aprox">Peso Aprox.</label>
-                                        <input class="form-control" type="number" value="0.0" step="0.10" id="peso_aprox" name="peso_aprox">
+                                        <label for="rastreio">Rastreio</label>
+                                        <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="peso_aprox">Peso Aprox.</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="peso_aprox" name="peso_aprox" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="qtd">Qtd</label>
-                                        <input class="form-control" type="number" value="1" id="qtd" name="qtd">
+                                        <input class="form-control" type="number" value="1" id="qtd" name="qtd" required>
                                     </div>
                                 </div>
                             </div>

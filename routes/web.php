@@ -38,6 +38,7 @@ use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CreditoController;
 use App\Http\Controllers\PacotesPendentesController;
 use App\Http\Controllers\FeriasController;
+use App\Http\Controllers\ScrapingController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -113,6 +114,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
             Route::put('/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');
             Route::delete('/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
+            Route::get('/scrape/{warehouse}', [ScrapingController::class, 'scrape'])->name('warehouses.scrape');
+
         });
 
         // Pacotes CRUD
@@ -366,8 +369,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/{ferias}', [FeriasController::class, 'update'])->name('ferias.update');
             Route::delete('/{ferias}', [FeriasController::class, 'destroy'])->name('ferias.destroy');
         });
-
-
+        
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
         });

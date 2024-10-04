@@ -124,7 +124,10 @@
                                 </button>
                             </div>
                             <div class="col text-end">
-                                <a href="{{ route('warehouses.scrape', ['warehouse' => $warehouse->id]) }}" class="btn btn-warning waves-effect waves-light mb-2"><i class="fas fa-plus"></i> Scrap</a>
+                                <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#scrapp">
+                                    <i class="fas fa-plus"></i> Scrape
+                                </button>
+                                <!-- <a href="{{ route('warehouses.scrape', ['warehouse' => $warehouse->id]) }}" class="btn btn-warning waves-effect waves-light mb-2"><i class="fas fa-plus"></i> Scrap</a> -->
                             </div>
                         </div>
                         <div class="table-responsive">
@@ -462,6 +465,36 @@
                     </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
+        </div>
+        <!-- Modal de Scrapp -->
+        <div class="modal fade" id="scrapp" tabindex="-1" role="dialog" aria-labelledby="scrapp" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Scrapp Pacotes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{{ route('pacotes.scrape') }}" id="formScrape">
+                        <div class="modal-body">
+                            <p>Tem certeza que deseja incluir esses pacotes?</p>
+                            <div class="row">
+                                @csrf
+                                <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <textarea name="dados" id="dados" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <!-- Adicionar o botão de exclusão no modal -->
+                            <button type="submit" class="btn btn-warning waves-effect waves-light" form="formScrape">Scrapp</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

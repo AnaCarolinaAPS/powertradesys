@@ -38,13 +38,19 @@ class ScrapingController extends Controller
                     'qtd' => 1,
                     'peso_aprox' => $item['peso'],
                     'warehouse_id' => $warehouse->id,
-                    'cliente_id' => 4, //trocar por código do SIN Nombre no sistema
+                    'cliente_id' => 6, //trocar por código do SIN Nombre no sistema
                     // Adicione outros campos conforme necessário
                 ]);
             }
 
             // Retorna uma resposta de sucesso
-            return response()->json(['message' => 'Itens cadastrados com sucesso!'], 201);            
+            // Exibir toastr de INFO para sinalizar 
+            return redirect()->back()->with('toastr', [
+                'type'    => 'info',
+                'message' => 'Pacotes criados com sucesso!<br>',
+                'title'   => 'Sucesso',
+            ]);  
+            // return response()->json(['message' => 'Itens cadastrados com sucesso!'], 201);            
         } catch (\Exception $e) {
             // Retorna uma resposta de sucesso
             return response()->json(['message' => 'Erro', 'data' => $e], 500);

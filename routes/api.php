@@ -18,4 +18,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/pacotes/scaper', [ScrapingController::class, 'scrape']);
+// Route::post('/pacotes/scaper', [ScrapingController::class, 'scrape']);

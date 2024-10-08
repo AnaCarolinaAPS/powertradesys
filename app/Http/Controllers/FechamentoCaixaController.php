@@ -15,16 +15,16 @@ class FechamentoCaixaController extends Controller
      * Display a listing of the resource.
      */
     public function index($tipo = null)
-    {
-        $all_caixas = Caixa::all();
-
+    {        
         $totalSaldoUS = null;
         $totalSaldoRS = null;
         $totalSaldoGS = null;
 
         if ($tipo == 'all') {
+            $all_caixas = Caixa::all();
             $all_items = FechamentoCaixa::all();
         } else {
+            $all_caixas = Caixa::where('aberto', true)->get();
             $totalSaldoUS = 0;
             $totalSaldoRS = 0;
             $totalSaldoGS = 0;
@@ -45,7 +45,7 @@ class FechamentoCaixaController extends Controller
                     $totalSaldoRS += $fechamento->calculaSaldo();
                 }
             }
-        }
+        }        
         // $all_items = FechamentoCaixa::all();
         return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totalSaldoUS', 'totalSaldoGS', 'totalSaldoRS'));
     }

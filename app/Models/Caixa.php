@@ -18,6 +18,7 @@ class Caixa extends Model
         'nome',
         'moeda',
         'observacoes',
+        'aberto',
     ];
 
     // public function transacoesOrigem()

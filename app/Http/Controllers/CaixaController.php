@@ -26,7 +26,7 @@ class CaixaController extends Controller
             $request->validate([
                 'nome' => 'required|string|max:255|unique:caixas',
                 'observacoes' => 'nullable|string',
-                'moeda' => 'required|in:U$,R$,G$,outros'
+                'moeda' => 'required|in:U$,R$,G$,outros',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -72,14 +72,16 @@ class CaixaController extends Controller
             if ($caixa->nome == $request->input('nome')) {
                 $request->validate([
                     'observacoes' => 'nullable|string',
-                    'moeda' => 'required|in:U$,R$,G$,outros'
+                    'moeda' => 'required|in:U$,R$,G$,outros',
+                    'aberto' => 'required|boolean',
                     // Adicione outras regras de validação conforme necessário
                 ]);
             } else {
                 $request->validate([
                     'nome' => 'required|string|max:255|unique:caixas',
                     'observacoes' => 'nullable|string',
-                    'moeda' => 'required|in:U$,R$,G$,outros'
+                    'moeda' => 'required|in:U$,R$,G$,outros',
+                    'aberto' => 'required|boolean',
                     // Adicione outras regras de validação conforme necessário
                 ]);
             }
@@ -89,6 +91,7 @@ class CaixaController extends Controller
                 'nome' => $request->input('nome'),
                 'observacoes' => $request->input('observacoes'),
                 'moeda' => $request->input('moeda'),
+                'aberto' => $request->input('aberto'),
                 // Adicione outros campos conforme necessário
             ]);
 

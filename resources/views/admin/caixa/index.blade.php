@@ -121,7 +121,7 @@
                     @csrf
                     @method('PUT') <!-- Método HTTP para update -->
                     <div class="modal-body">
-                        <input type="hidden" name="id" value="" id="did">
+                        <input type="hidden" name="id" value="" id="did">                        
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
@@ -137,6 +137,15 @@
                                         <option value="R$"> R$ </option>
                                         <option value="G$"> G$ </option>
                                         <option value="outros"> Outros </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="aberta">Status</label>
+                                    <select class="selectpicker form-control" id="daberto" name="aberto">
+                                        <option value="1"> Aberta </option>
+                                        <option value="0"> Fechada </option>
                                     </select>
                                 </div>
                             </div>
@@ -205,6 +214,7 @@
                     document.getElementById('dnome').value = data.nome;
                     document.getElementById('dmoeda').value = data.moeda;
                     document.getElementById('dobservacoes').value = data.observacoes;
+                    document.getElementById('daberto').value = data.aberto;
                     $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacao');

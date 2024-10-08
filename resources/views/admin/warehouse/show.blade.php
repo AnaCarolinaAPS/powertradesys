@@ -123,11 +123,18 @@
                                     <i class="fas fa-plus"></i> Novo
                                 </button>
                             </div>
+                            <div class="col text-end">
+                                <button type="button" class="btn btn-warning waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#scrapp">
+                                    <i class="fas fa-plus"></i> Scrape
+                                </button>
+                                <!-- <a href="{{ route('warehouses.scrape', ['warehouse' => $warehouse->id]) }}" class="btn btn-warning waves-effect waves-light mb-2"><i class="fas fa-plus"></i> Scrap</a> -->
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>CD</th>
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
                                         <th>Qtd</th>
@@ -138,6 +145,7 @@
                                 <tbody>
                                     @foreach ($warehouse->pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{ $pacote->codigo ?? 'none' }}</td>
                                         <td><h6 class="mb-0">{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
                                         <td>{{ $pacote->qtd }}</td>
@@ -236,13 +244,13 @@
                             <!-- Campo hidden para armazenar o id da Warehouse -->
                             <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="rastreio">Rastreio</label>
-                                        <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
+                                        <label for="codigo">Codigo</label>
+                                        <input class="form-control" type="number" value="{{ $codigo+1; }}" step="1" id="codigo" name="codigo" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="cliente_id">Cliente</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id">
@@ -252,16 +260,24 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
                                     <div class="form-group">
-                                        <label for="peso_aprox">Peso Aprox.</label>
-                                        <input class="form-control" type="number" value="0.0" step="0.10" id="peso_aprox" name="peso_aprox">
+                                        <label for="rastreio">Rastreio</label>
+                                        <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="peso_aprox">Peso Aprox.</label>
+                                        <input class="form-control" type="number" value="0.0" step="0.10" id="peso_aprox" name="peso_aprox" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="qtd">Qtd</label>
-                                        <input class="form-control" type="number" value="1" id="qtd" name="qtd">
+                                        <input class="form-control" type="number" value="1" id="qtd" name="qtd" required>
                                     </div>
                                 </div>
                             </div>
@@ -449,6 +465,36 @@
                     </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
+        </div>
+        <!-- Modal de Scrapp -->
+        <div class="modal fade" id="scrapp" tabindex="-1" role="dialog" aria-labelledby="scrapp" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Scrapp Pacotes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form method="post" action="{{ route('pacotes.scrape') }}" id="formScrape">
+                        <div class="modal-body">
+                            <p>Tem certeza que deseja incluir esses pacotes?</p>
+                            <div class="row">
+                                @csrf
+                                <input type="hidden" name="warehouse_id" value="{{ $warehouse->id }}">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <textarea name="dados" id="dados" class="form-control" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <!-- Adicionar o botão de exclusão no modal -->
+                            <button type="submit" class="btn btn-warning waves-effect waves-light" form="formScrape">Scrapp</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 

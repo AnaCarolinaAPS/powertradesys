@@ -8,6 +8,7 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\Shipper;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pacote;
 
 class WarehouseController extends Controller
 {
@@ -102,9 +103,15 @@ class WarehouseController extends Controller
                     ->groupBy('clientes.id', 'clientes.caixa_postal', 'clientes.apelido')
                     ->get();
 
+            $lastcod = Pacote::where('warehouse_id', $id)->latest()->first();
+            if ($lastcod) {
+                $codigo = $lastcod->codigo;
+            } else {
+                $codigo = 1; //vai ser o primeiro
+            }
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes', 'all_embarcadors', 'totais', 'resumo'));
+            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes', 'all_embarcadors', 'totais', 'resumo', 'codigo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('warehouses.index')->with('toastr', [

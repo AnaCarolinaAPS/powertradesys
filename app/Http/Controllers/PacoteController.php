@@ -37,6 +37,7 @@ class PacoteController extends Controller
                 'warehouse_id' => 'required|exists:warehouses,id',
                 'cliente_id' => 'nullable|exists:clientes,id',
                 'observacoes' => 'nullable|string',
+                'codigo' => 'required|numeric',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -45,7 +46,7 @@ class PacoteController extends Controller
                                 ->where('rastreio', '=', $request->input('rastreio'))
                                 ->exists();
 
-            // Criação de um novo Shipper no banco de dados
+            // Criação de um novo Pacote no banco de dados
             $pacote = Pacote::create([
                 'rastreio' => $request->input('rastreio'),
                 'qtd' => $request->input('qtd'),
@@ -53,6 +54,7 @@ class PacoteController extends Controller
                 'warehouse_id' => $request->input('warehouse_id'),
                 'cliente_id' => $request->input('cliente_id'),
                 'observacoes' => $request->input('observacoes'),
+                'codigo' => $request->input('codigo'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -66,7 +68,8 @@ class PacoteController extends Controller
                 ]);
             } else {
                 //Busca para ver se o pacote adicionado existe entre as pendencias
-                $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+                // $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+                $pacotePendente = PacotesPendentes::whereRaw('? LIKE CONCAT("%", rastreio)', [$request->input('rastreio')])->first();
 
                 // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
                 if ($pacotePendente) {
@@ -175,7 +178,8 @@ class PacoteController extends Controller
             }
 
             //Busca para ver se o pacote adicionado existe entre as pendencias
-            $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+            // $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+            $pacotePendente = PacotesPendentes::whereRaw('? LIKE CONCAT("%", rastreio)', [$request->input('rastreio')])->first();
 
             // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
             if ($pacotePendente) {
@@ -221,12 +225,11 @@ class PacoteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    // public function destroy(Pacote $pacote)
     public function destroy($id)
     {
         try {
             $pacote = Pacote::find($id);
-            // Excluir o Shipper do banco de dados
+            // Excluir o Pacote do banco de dados
             $pacote->delete();
 
             // Redirecionar após a exclusão bem-sucedida

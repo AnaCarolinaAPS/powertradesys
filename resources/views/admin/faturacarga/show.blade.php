@@ -256,6 +256,96 @@
             <!-- end col -->
         </div>
         @endcan
+        @can('visualizar financeiro')
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Gastos da Semana</h4>
+                            </div>
+                            @php
+                            $totalSaldoRS = 0;
+                            $totalSaldoGS = 0;
+                            $totalSaldoUS = 0;
+
+                            
+                            @endphp
+                            <div class="col">
+                                <b>{{$totalSaldoRS === null ? "" : "Total R$: ".number_format($totalGastosRs, 2, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalSaldoGS === null ? "" : "Total G$: ".number_format($totalGastosGs, 0, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastosUs === null ? "" : "Total U$: ".number_format($totalGastosUs, 2, ',', '.');}}</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosUs as $gasto)
+                                        <tr>
+                                            <td>{{ $gasto->descricao }}</td>
+                                            <td>{{ number_format($gasto->valor_origem, 0, ',', '.') }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosRs as $gasto)
+                                        <tr>
+                                            <td>{{ $gasto->descricao }}</td>
+                                            <td>{{ number_format($gasto->valor_origem, 2, ',', '.') }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
+                            <div class="col">
+                                <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Descrição</th>
+                                            <th>Valor</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosGs as $gasto)
+                                        <tr>
+                                            <td>{{ $gasto->descricao }}</td>
+                                            <td>{{ number_format($gasto->valor_origem, 0, ',', '.') }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        @endcan
     </div>
     <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNewInvoice" aria-hidden="true" style="display: none;" id="ModalNewInvoice">
         <div class="modal-dialog modal-lg">

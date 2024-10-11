@@ -264,19 +264,12 @@
                         <div class="row">
                             <div class="col">
                                 <h4 class="card-title mb-4">Gastos da Semana</h4>
-                            </div>
-                            @php
-                            $totalSaldoRS = 0;
-                            $totalSaldoGS = 0;
-                            $totalSaldoUS = 0;
-
-                            
-                            @endphp
+                            </div>                            
                             <div class="col">
-                                <b>{{$totalSaldoRS === null ? "" : "Total R$: ".number_format($totalGastosRs, 2, ',', '.');}}</b>
+                                <b>{{$totalGastosRs === null ? "" : "Total R$: ".number_format($totalGastosRs, 2, ',', '.');}}</b>
                             </div>
                             <div class="col">
-                                <b>{{$totalSaldoGS === null ? "" : "Total G$: ".number_format($totalGastosGs, 0, ',', '.');}}</b>
+                                <b>{{$totalGastosGs === null ? "" : "Total G$: ".number_format($totalGastosGs, 0, ',', '.');}}</b>
                             </div>
                             <div class="col">
                                 <b>{{$totalGastosUs === null ? "" : "Total U$: ".number_format($totalGastosUs, 2, ',', '.');}}</b>
@@ -284,11 +277,11 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="dGastoUs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Descrição</th>
-                                            <th>Valor</th>
+                                            <th>Valor U$</th>
                                         </tr>
                                     </thead><!-- end thead -->
                                     <tbody>
@@ -304,11 +297,11 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="dGastoRs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Descrição</th>
-                                            <th>Valor</th>
+                                            <th>Valor R$</th>
                                         </tr>
                                     </thead><!-- end thead -->
                                     <tbody>
@@ -322,11 +315,11 @@
                                 </table> <!-- end table -->
                             </div>
                             <div class="col">
-                                <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="dGastoGs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Descrição</th>
-                                            <th>Valor</th>
+                                            <th>Valor G$</th>
                                         </tr>
                                     </thead><!-- end thead -->
                                     <tbody>

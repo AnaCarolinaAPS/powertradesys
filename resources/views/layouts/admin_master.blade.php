@@ -177,6 +177,9 @@
                 initializeDataTableWithButtons("datatable-buttons");
                 initializeDataTableWithButtons("datatable-totals");
                 initializeDataTableWithButtonsDate("datatable-date");
+                initializeDataTableWithButtons("dGastoUs");
+                initializeDataTableWithButtons("dGastoRs");
+                initializeDataTableWithButtons("dGastoGs");
             });
         </script>
     </body>

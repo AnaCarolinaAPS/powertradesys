@@ -38,8 +38,8 @@ class Fornecedor extends Model
     public function totalPendente()
     {
         // Pegar todas as despesas do fornecedor e somar os valores pendentes
-    return $this->despesas->sum(function ($despesa) {
-        return $despesa->valor_pendente();
-    });
+        return $this->despesas->sum(function ($despesa) {
+            return $despesa->valor_pendente();
+        });
     }
 }

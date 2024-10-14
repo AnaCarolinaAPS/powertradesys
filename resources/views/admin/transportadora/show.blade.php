@@ -106,6 +106,49 @@
             <!-- end col -->
         </div>
         <!-- end row -->
+        @can('visualizar financeiro')
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Invoices (Despesas)</h4>
+                            </div>
+                            <div class="col">
+                                Falta PAGAR : <b>{{number_format($transportadora->totalPendente(), 2, ',', '.');}} U$</b>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data Carga</th>
+                                        <th>Data Carga</th>
+                                        <th>Valor Total</th>
+                                        <th>Valor Pendente</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($transportadora->despesas as $despesa)
+                                    <tr data-href="{{ route('faturacargas.show', ['faturacarga' => $despesa->fatura_carga->id]) }}">
+                                        <td>{{ $despesa->data; }}</td>
+                                        <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($despesa->data)->format('d/m/Y') }}</h6></td>                                        
+                                        <td>{{number_format($despesa->valor_total(), 2, ',', '.');}} U$</td>
+                                        <td>{{number_format($despesa->valor_pendente(), 2, ',', '.');}} U$</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        @endcan
         <!-- Modal de Confirmação -->
         <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -286,6 +329,17 @@
 </div>
 
 <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var tableRows = document.querySelectorAll('tbody tr[data-href]');
+
+        tableRows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+    
     // JavaScript para abrir o modal ao clicar na linha da tabela
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {

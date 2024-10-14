@@ -4,7 +4,6 @@
 @section('admin')
 <div class="page-content">
     <div class="container-fluid">
-
         <!-- start page title -->
         <div class="row">
             <div class="col-12">
@@ -73,7 +72,7 @@
                         </div>
                     </div><!-- end cardbody -->
                 </div><!-- end card -->
-            </div><!-- end col -->
+            </div><!-- end col -->            
             <div class="col-xl-3 col-md-6">
                 <div class="card">
                     <div class="card-body">
@@ -114,6 +113,93 @@
                                     @endif
                                         {{ number_format($pacotesCard['porcentagem'], 2);}}%</span>do que a anterior
                                 </p>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-success rounded-3">
+                                    <i class="fas fa-box-open font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+        </div><!-- end row -->
+
+        <div class="row">
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Falta Cobrar</p>
+                                <h4 class="mb-2">{{ number_format($totalPendente, 2, ',', '.') }}<span class="font-size-14 me-2"> U$</span></h4>                                
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="ri-plane-line font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Falta PAGAR (Despacho)</p>
+                                <h4 class="mb-2">{{ number_format($totalDespacho, 2, ',', '.') }}<span class="font-size-14 me-2"> U$</span></h4>
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-success rounded-3">
+                                    <i class="ri-home-6-line font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->            
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Falta PAGAR (Embarcadores)</p>
+                                <h4 class="mb-2">{{ number_format($totalEmbarque, 2, ',', '.') }}<span class="font-size-14 me-2"> U$</span></h4>
+                                <!-- <p class="text-muted mb-0">
+                                    @if ($clientesCard['porcentagem'] >= 0)
+                                        <span class="text-success fw-bold font-size-12 me-2"><i class="ri-arrow-right-up-line me-1 align-middle"></i>
+                                    @else
+                                        <span class="text-danger fw-bold font-size-12 me-2"><i class="ri-arrow-right-down-line me-1 align-middle"></i>
+                                    @endif
+                                        {{ number_format($clientesCard['porcentagem'], 2);}}%</span>do que a anterior
+                                </p> -->
+                            </div>
+                            <div class="avatar-sm">
+                                <span class="avatar-title bg-light text-primary rounded-3">
+                                    <i class="ri-user-3-line font-size-24"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div><!-- end cardbody -->
+                </div><!-- end card -->
+            </div><!-- end col -->
+            <div class="col-xl-3 col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div class="flex-grow-1">
+                                <p class="text-truncate font-size-14 mb-2">Contas a Pagar</p>
+                                <h4 class="mb-2">0<span class="font-size-14 me-2"> U$</span></h4>                                
+                                <!-- <p class="text-muted mb-0">
+                                    @if ($pacotesCard['porcentagem'] >= 0)
+                                        <span class="text-success fw-bold font-size-12 me-2"><i class="ri-arrow-right-up-line me-1 align-middle"></i>
+                                    @else
+                                        <span class="text-danger fw-bold font-size-12 me-2"><i class="ri-arrow-right-down-line me-1 align-middle"></i>
+                                    @endif
+                                        {{ number_format($pacotesCard['porcentagem'], 2);}}%</span>do que a anterior
+                                </p> -->
                             </div>
                             <div class="avatar-sm">
                                 <span class="avatar-title bg-light text-success rounded-3">

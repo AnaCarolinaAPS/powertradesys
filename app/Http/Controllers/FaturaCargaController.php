@@ -10,7 +10,11 @@ use App\Models\Servico;
 use App\Models\Fornecedor;
 use App\Models\Despesa;
 use App\Models\Cliente;
+use App\Models\Caixa;
+use App\Models\FechamentoCaixa;
+use App\Models\FluxoCaixa;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class FaturaCargaController extends Controller
 {
@@ -151,10 +155,70 @@ class FaturaCargaController extends Controller
 
             $all_despesas = Despesa::where('fatura_carga_id', $faturacarga->id)->get();
 
+            // Suponha que $data seja a data que você está consultando
+            // $data = Carbon::parse($faturacarga->carga->data_recebida); // Altere para a data desejada
+
+            // 1. Calcular o início e o fim da semana dessa data
+            $startOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->startOfWeek(\Carbon\Carbon::SUNDAY); // Começo da semana (segunda-feira)
+            $endOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->endOfWeek(\Carbon\Carbon::SATURDAY); // Fim da semana (domingo)
+
+            // 2. Filtrar os caixas que utilizam a mesma moeda
+            $caixasComMoeda = Caixa::where('moeda', '=', 'U$')->pluck('id');
+
+            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
+            $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
+                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->pluck('id');
+
+            // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
+            $gastosUs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
+                ->where('tipo', '=', 'saida')
+                ->get();
+
+            $totalGastosUs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
+                ->where('tipo', '=', 'saida')
+                ->sum('valor_origem');
+
+            //GASTOS EM GUARANIS
+            // 2. Filtrar os caixas que utilizam a mesma moeda
+            $caixasComMoeda = Caixa::where('moeda', '=', 'G$')->pluck('id');
+
+            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
+            $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
+                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->pluck('id');
+
+            // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
+            $gastosGs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
+                ->where('tipo', '=', 'saida')
+                ->get();
+
+            $totalGastosGs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
+                ->where('tipo', '=', 'saida')
+                ->sum('valor_origem');
+
+            //GASTOS EM REAIS
+            // 2. Filtrar os caixas que utilizam a mesma moeda
+            $caixasComMoeda = Caixa::where('moeda', '=', 'R$')->pluck('id');
+
+            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
+            $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
+                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->pluck('id');
+
+            // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
+            $gastosRs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
+                ->where('tipo', '=', 'saida')
+                ->get();
+            
+            $totalGastosRs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
+                ->where('tipo', '=', 'saida')
+                ->sum('valor_origem');
+
             session(['previous_url' => route('faturacargas.show', ['faturacarga' => $faturacarga->id])]);
 
-            // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas'));
+            // Retornar a view com os detalhes
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas', 'gastosUs', 'gastosGs', 'gastosRs', 'totalGastosUs', 'totalGastosGs', 'totalGastosRs'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

@@ -7,6 +7,8 @@ use Carbon\Carbon;
 use App\Models\Carga;
 use App\Models\FaturaCarga;
 use App\Models\Warehouse;
+use App\Models\Cliente;
+use App\Models\Fornecedor;
 use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
@@ -143,7 +145,29 @@ class AdminDashboardController extends Controller
             'porcentagem' => $variacaoPercentualPacotes,
         ];
 
+
+        $all_clis = Cliente::all();
+        $totalPendente = $all_clis->sum(function($cliente) {
+            return $cliente->invoices->sum(function($invoice) {
+                return $invoice->valor_pendente();
+            });
+        });
+
+        $all_despacho = Fornecedor::where('tipo', 'despachante')->get();
+        $totalDespacho = $all_despacho->sum(function($despachante) {
+            return $despachante->despesas->sum(function($despesa) {
+                return $despesa->valor_pendente();
+            });
+        });
+
+        $all_embarcador = Fornecedor::where('tipo', 'embarcador')->get();
+        $totalEmbarque = $all_embarcador->sum(function($embarcador) {
+            return $embarcador->despesas->sum(function($despesa) {
+                return $despesa->valor_pendente();
+            });
+        });
+
         // $cargasDaSemana = Carga::whereBetween('data_recebida', [$startOfWeek, $endOfWeek])->get();
-        return view('admin.index', compact('cargasDaSemana', 'cargaCard', 'miamiCard', 'clientesCard', 'pacotesCard', 'cargasDaSemana', 'tipoCarga')); 
+        return view('admin.index', compact('cargasDaSemana', 'cargaCard', 'miamiCard', 'clientesCard', 'pacotesCard', 'cargasDaSemana', 'tipoCarga', 'totalPendente', 'totalDespacho', 'totalEmbarque')); 
     }
 }

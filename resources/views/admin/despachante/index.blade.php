@@ -37,6 +37,7 @@
                                     <tr>
                                         <th>Nome</th>
                                         <th>Contato</th>
+                                        <th>Total Pendente</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -45,6 +46,7 @@
                                     <tr data-href="{{ route('despachantes.show', ['despachante' => $despachante->id]) }}">
                                         <td>{{ $despachante->nome }}</td>
                                         <td>{{ $despachante->contato }}</td>
+                                        <td>{{number_format($despachante->totalPendente(), 2, ',', '.');}} U$</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

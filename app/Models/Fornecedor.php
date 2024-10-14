@@ -34,4 +34,12 @@ class Fornecedor extends Model
     {
         return $this->hasMany(Despesa::class);
     }
+
+    public function totalPendente()
+    {
+        // Pegar todas as despesas do fornecedor e somar os valores pendentes
+    return $this->despesas->sum(function ($despesa) {
+        return $despesa->valor_pendente();
+    });
+    }
 }

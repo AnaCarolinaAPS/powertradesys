@@ -106,6 +106,38 @@
             </div>
             <!-- end col -->
         </div>
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Invoices (Despesas)</h4>
+                        <div class="table-responsive">
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data Carga</th>
+                                        <th>Valor Total</th>
+                                        <th>Valor Pendente</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($despachante->despesas as $despesa)
+                                    <tr class="abrirModal" data-item-id="{{ $despesa->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                        <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($despesa->data)->format('d/m/Y') }}</h6></td>                                        
+                                        <td>{{number_format($despesa->valor_total(), 2, ',', '.');}} U$</td>
+                                        <td>{{number_format($despesa->valor_pendente(), 2, ',', '.');}} U$</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
         <!-- end row -->
         <!-- Modal de Confirmação -->
         <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModal" aria-hidden="true">

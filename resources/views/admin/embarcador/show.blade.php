@@ -120,7 +120,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Data Carga</th>
@@ -130,7 +130,8 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($embarcador->despesas as $despesa)
-                                    <tr data-href="{{ route('faturacargas.show', ['faturacarga' => $despesa->fatura_carga->id]) }}">
+                                    <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                        <td>{{ $despesa->data; }}</td>
                                         <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($despesa->data)->format('d/m/Y') }}</h6></td>                                        
                                         <td>{{number_format($despesa->valor_total(), 2, ',', '.');}} U$</td>
                                         <td>{{number_format($despesa->valor_pendente(), 2, ',', '.');}} U$</td>

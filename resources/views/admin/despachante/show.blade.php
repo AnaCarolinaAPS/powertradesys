@@ -133,7 +133,7 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($despachante->despesas as $despesa)
-                                    <tr data-href="{{ route('faturacargas.show', ['faturacarga' => $despesa->fatura_carga->id]) }}">
+                                    <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
                                         <td>{{ $despesa->data; }}</td>
                                         <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($despesa->data)->format('d/m/Y') }}</h6></td>                                        
                                         <td>{{number_format($despesa->valor_total(), 2, ',', '.');}} U$</td>

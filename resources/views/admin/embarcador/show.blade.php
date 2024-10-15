@@ -124,6 +124,7 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Data Carga</th>
+                                        <th>Data Carga</th>
                                         <th>Valor Total</th>
                                         <th>Valor Pendente</th>
                                     </tr>

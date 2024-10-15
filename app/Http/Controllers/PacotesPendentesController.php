@@ -117,6 +117,7 @@ class PacotesPendentesController extends Controller
                 'data_pedido' => 'required|date',
                 'cliente_id' => 'nullable|exists:clientes,id',
                 'status' => 'required|in:aguardando,solicitado,buscando,em sistema,encontrado,naorecebido',
+                'referencia' => 'nullable|string',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -126,6 +127,7 @@ class PacotesPendentesController extends Controller
                 'rastreio' => $request->input('rastreio'),
                 'data_recebido' => $request->input('data_recebido'),
                 'status' => $request->input('status'),
+                'referencia' => $request->input('status'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -184,12 +186,13 @@ class PacotesPendentesController extends Controller
     {        
         // Obtenha o usuário autenticado
         $user = Auth::user();
-        $all_items = PacotesPendentes::where('cliente_id', $user->cliente->id)->get();
+        $all_items = PacotesPendentes::where('cliente_id', $user->cliente->id)->whereNull('pacote_id')->get();
+        $all_encontrados = PacotesPendentes::where('cliente_id', $user->cliente->id)->whereNotNull('pacote_id')->get();
         
         // Limpar o cache dos pacotes pendentes
         Cache::forget('pending_pacotes_count'.Auth::user()->cliente->id);
         
-        return view('client.pacote.pendentes', compact('all_items'));
+        return view('client.pacote.pendentes', compact('all_items', 'all_encontrados'));
     }
 
     /**
@@ -201,17 +204,31 @@ class PacotesPendentesController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'rastreio' => 'required|string|max:255',
+                'referencia' => 'nullable|string',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             $user = Auth::user();
-            // Criação de um novo item no banco de dados
-            $pendente = PacotesPendentes::create([
-                'rastreio' => $request->input('rastreio'),
-                'data_pedido' => now(),
-                'cliente_id' => $user->cliente->id,
-                // Adicione outros campos conforme necessário
-            ]);
+
+            $pacoteexistente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+
+            if ($pacoteexistente) {
+                // Exibir toastr de sucesso
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'warning',
+                    'message' => 'Você já solicitou esse pacote! <br>Verifique: '.$request->input('rastreio'),
+                    'title'   => 'Atenção',
+                ]);
+            } else {
+                // Criação de um novo item no banco de dados
+                $pendente = PacotesPendentes::create([
+                    'rastreio' => $request->input('rastreio'),
+                    'data_pedido' => now(),
+                    'cliente_id' => $user->cliente->id,
+                    'referencia' => $request->input('referencia'),
+                    // Adicione outros campos conforme necessário
+                ]);
+            }            
 
             $pacote = Pacote::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
 
@@ -246,6 +263,46 @@ class PacotesPendentesController extends Controller
             return redirect()->back()->with('toastr', [
                 'type'    => 'error',
                 'message' => 'Ocorreu um erro ao criar o Pacote Pendente: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function clientePendentesUpdate(Request $request, PacotesPendentes $pacotesPendentes)
+    {
+        try {
+            // Validação dos dados do formulário
+            $request->validate([
+                'rastreio' => 'required|string|max:255',
+                'referencia' => 'nullable|string',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            $pacote = PacotesPendentes::find($request->input('id'));
+            
+            $pacote->update([
+                'rastreio' => $request->input('rastreio'),
+                'referencia' => $request->input('referencia'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Limpar o cache dos pacotes pendentes
+            Cache::forget('pending_pacotes_count');
+
+            // Exibir toastr de sucesso
+            return redirect()->back()->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Pendencia atualizada com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar a Pendencia: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
         }

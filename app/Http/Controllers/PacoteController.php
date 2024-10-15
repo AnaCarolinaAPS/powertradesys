@@ -67,6 +67,8 @@ class PacoteController extends Controller
                     'title'   => 'Atenção',
                 ]);
             } else {
+                //Pega os últimos 6 números do rastreio informado e compara com algum pacote pendente.
+                $searchSubstring = substr($request->input('rastreio'), -6);
                 //Busca para ver se o pacote adicionado existe entre as pendencias
                 // $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
                 $pacotePendente = PacotesPendentes::whereRaw('? LIKE CONCAT("%", rastreio)', [$request->input('rastreio')])->first();
@@ -168,6 +170,8 @@ class PacoteController extends Controller
                     'volume' => $request->input('volume'),
                     // Adicione outros campos conforme necessário
                 ]);
+
+                //Verificar com os clientes se não é interessante excluir a pendencia quando o pacote é recebido 
             } else {
                 // Exibir toastr de Erro
                 return redirect()->back()->with('toastr', [

@@ -35,41 +35,56 @@ class PacotesPendentesController extends Controller
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            // Criação de um novo item no banco de dados
-            $pendente = PacotesPendentes::create([
-                'rastreio' => $request->input('rastreio'),
-                'data_pedido' => $request->input('data_pedido'),
-                'cliente_id' => $request->input('cliente_id'),
-                // Adicione outros campos conforme necessário
-            ]);
+            // Verificar se existe um rastreio igual na mesma warehouse
+            $rastreioDuplicado = PacotesPendentes::where('rastreio', '=', $request->input('rastreio'))
+                                ->where('cliente_id', '=', $request->input('cliente_id'))
+                                ->exists();
 
-            $pacote = Pacote::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+            // Se encontrar um rastreio duplicado, exibe um alerta e redireciona de volta
+            if ($rastreioDuplicado) {
+                // Exibir toastr de sucesso
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'warning',
+                    'message' => 'Rastreio já foi cadastrado como Pendente!<br>Verifique: '.$request->input('rastreio'),
+                    'title'   => 'Atenção',
+                ]);
+            } else {
+                // Criação de um novo item no banco de dados
+                $pendente = PacotesPendentes::create([
+                    'rastreio' => $request->input('rastreio'),
+                    'data_pedido' => $request->input('data_pedido'),
+                    'cliente_id' => $request->input('cliente_id'),
+                    // Adicione outros campos conforme necessário
+                ]);
 
-            //se existe pacote, atualiza a pendencia para o status "em sistema"
-            if ($pacote) {
-                //O pacote existe em sistema e já está no sistema com o código do cliente
-                if ($pacote->cliente->id == $request->input('cliente_id')) {
-                    $pendente->update([
-                        'status' => 'encontrado',
-                        'pacote_id' => $pacote->id,
-                        // Adicione outros campos conforme necessário
-                    ]);
-                } else {
-                    $pendente->update([
-                        'status' => 'em sistema',
-                        // Adicione outros campos conforme necessário
-                    ]);    
+                $pacote = Pacote::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+
+                //se existe pacote, atualiza a pendencia para o status "em sistema"
+                if ($pacote) {
+                    //O pacote existe em sistema e já está no sistema com o código do cliente
+                    if ($pacote->cliente->id == $request->input('cliente_id')) {
+                        $pendente->update([
+                            'status' => 'encontrado',
+                            'pacote_id' => $pacote->id,
+                            // Adicione outros campos conforme necessário
+                        ]);
+                    } else {
+                        $pendente->update([
+                            'status' => 'em sistema',
+                            // Adicione outros campos conforme necessário
+                        ]);    
+                    }
                 }
-            }
-            // Limpar o cache dos pacotes pendentes
-            Cache::forget('pending_pacotes_count');
+                // Limpar o cache dos pacotes pendentes
+                Cache::forget('pending_pacotes_count');
 
-            // Exibir toastr de sucesso
-            return redirect()->back()->with('toastr', [
-                'type'    => 'success',
-                'message' => 'Pacote Pendente criado com sucesso!',
-                'title'   => 'Sucesso',
-            ]);
+                // Exibir toastr de sucesso
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'success',
+                    'message' => 'Pacote Pendente criado com sucesso!',
+                    'title'   => 'Sucesso',
+                ]);
+            }            
         } catch (\Exception $e) {
             // Exibir toastr de Erro
             return redirect()->back()->with('toastr', [

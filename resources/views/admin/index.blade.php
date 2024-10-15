@@ -125,6 +125,7 @@
             </div><!-- end col -->
         </div><!-- end row -->
 
+        @can('visualizar financeiro')
         <div class="row">
             <div class="col-xl-3 col-md-6">
                 <div class="card">
@@ -211,7 +212,7 @@
                 </div><!-- end card -->
             </div><!-- end col -->
         </div><!-- end row -->
-
+        @endcan
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">

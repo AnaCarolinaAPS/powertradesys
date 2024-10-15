@@ -40,9 +40,7 @@
                                         <th>Data Pedido</th>    
                                         <th>Data Pedido</th>    
                                         <th>Rastreio</th>
-                                        <!-- <th>Cliente</th>                                  -->
                                         <th>Status</th>
-                                        <th>Pacote</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -51,7 +49,6 @@
                                         <td>{{ $pacote->data_pedido }}</td>
                                         <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y')}}</td>
                                         <td><h6 class="mb-0">'{{ $pacote->rastreio }}</h6></td>
-                                        <!-- <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td> -->
                                         <td>
                                             @if($pacote->status == 'aguardando')
                                                 <i class="ri-checkbox-blank-circle-line font-size-10 text-secondary align-middle me-2"></i> Aguardando Entrega
@@ -61,12 +58,46 @@
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-warning align-middle me-2"></i> Buscando
                                             @elseif($pacote->status == 'em sistema')
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-info align-middle me-2"></i> Em Sistema
-                                            @elseif($pacote->status == 'encontrado')
-                                                <i class="ri-checkbox-blank-circle-fill font-size-10 text-success align-middle me-2"></i> Encontrado
                                             @elseif($pacote->status == 'naorecebido')
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-danger align-middle me-2"></i> Não Recebido
                                             @endif
-                                        </td>
+                                        </td>                                        
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+
+        <!-- end page title -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Pacotes ENCONTRADOS</h4>
+
+                        <div class="table-responsive">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data Pedido</th>    
+                                        <th>Data Pedido</th>    
+                                        <th>Rastreio</th>
+                                        <th>Pacote</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($all_items as $pacote)
+                                    <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{ $pacote->data_pedido }}</td>
+                                        <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y')}}</td>
+                                        <td><h6 class="mb-0">'{{ $pacote->rastreio }}</h6></td>
                                         <td>
                                             @if($pacote->pacote)
                                                 @if (isset($pacote->pacote->carga->data_recebida))

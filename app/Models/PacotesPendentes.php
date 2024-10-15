@@ -20,6 +20,7 @@ class PacotesPendentes extends Model
         'data_pedido',
         'pacote_id',
         'status',
+        'referencia',
     ];
 
     public function cliente()

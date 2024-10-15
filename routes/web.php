@@ -373,6 +373,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/emprocesso', [PacoteController::class, 'clienteProcesso'])->name('pacotes.processo');
             Route::get('/pendentes', [PacotesPendentesController::class, 'clientePendentes'])->name('pacotes.pendentes');
             Route::post('/pendentes', [PacotesPendentesController::class, 'clientePendentesStore'])->name('pacotes.pendentes.store');
+            Route::put('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesUpdate'])->name('pacotes.pendentes.update');
             Route::get('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesShow'])->name('pacotes.pendentes.show');
             Route::delete('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesDestroy'])->name('pacotes.pendentes.destroy');
         });

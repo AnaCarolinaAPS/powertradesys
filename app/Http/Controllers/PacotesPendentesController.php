@@ -16,9 +16,13 @@ class PacotesPendentesController extends Controller
      */
     public function index()
     {
-        $all_items = PacotesPendentes::all();
+        // $all_items = PacotesPendentes::all();
+
+        $all_items = PacotesPendentes::whereNull('pacote_id')->get();
+        $all_encontrados = PacotesPendentes::whereNotNull('pacote_id')->get();
+
         $all_clientes = Cliente::all();
-        return view('admin.pacotespendentes.index', compact('all_items', 'all_clientes'));
+        return view('admin.pacotespendentes.index', compact('all_items', 'all_clientes', 'all_encontrados'));
     }
 
     /**

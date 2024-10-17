@@ -42,7 +42,6 @@
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
                                         <th>Status</th>
-                                        <th>Pacote</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -67,6 +66,40 @@
                                                 <i class="ri-checkbox-blank-circle-fill font-size-10 text-danger align-middle me-2"></i> Não Recebido
                                             @endif
                                         </td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end row -->
+
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Pacotes ENCONTRADOS</h4>
+                        <div class="table-responsive">
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data Pedido</th>    
+                                        <th>Rastreio</th>
+                                        <th>Cliente</th>
+                                        <th>Pacote</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($all_encontrados as $pacote)
+                                    <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y').' ('.\Carbon\Carbon::parse($pacote->data_pedido)->diffInDays(now()).' dias)' }}</td>
+                                        <td><h6 class="mb-0">'{{ $pacote->rastreio }}</h6></td>
+                                        <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
                                         <td>
                                             @if($pacote->pacote)
                                                 <a href="{{ route('warehouses.show', ['warehouse' =>  $pacote->pacote->warehouse->id]) }}" class="link-info">Ver Pacote</a>

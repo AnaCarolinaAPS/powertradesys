@@ -44,7 +44,7 @@ class AdminDashboardController extends Controller
                             ->whereBetween('data_enviada', [$startOfWeekP, $endOfWeekP])
                             ->first();
 
-            if ($cargasDaSemana && !$cargasDaSemana->isEmpty()) {   
+            if ($cargasDaSemana) {   
                 $peso += $cargasDaSemana->pacotes->sum('peso_aprox');
                 $totalClientes += $cargasDaSemana->clientes->count();
                 $totalPacotes += $cargasDaSemana->pacotes->count();    

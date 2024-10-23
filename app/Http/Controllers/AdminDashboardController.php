@@ -35,7 +35,7 @@ class AdminDashboardController extends Controller
         $tipoCarga = "faturacarga";
 
         //Caso na semana atual não tenha uma Fatura ainda
-        if ($cargasDaSemana->isEmpty()) {
+        if ($cargasDaSemana) {
             $semanaPassada = $currentDate->subWeek();
             $startOfWeekP = (clone $semanaPassada)->startOfWeek();
             $endOfWeekP = (clone $semanaPassada)->endOfWeek();

@@ -102,6 +102,9 @@
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddPacote">
                             <i class="fas fa-plus"></i> Add Pacote
                         </button>
+                        <button type="button" class="btn btn-info waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalConfirmAddPacote">
+                            <i class="fas fa-plus"></i> Add Carga
+                        </button>
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -524,6 +527,29 @@
                             @csrf
                             <input type="hidden" name="invoice_id" value="{{  $invoice->id; }}" id="invoice_id">
                             <button type="submit" class="btn btn-success waves-effect waves-light">Pagar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Confirmação -->
+        <div class="modal fade" id="ModalConfirmAddPacote" tabindex="-1" role="dialog" aria-labelledby="ModalConfirmAddPacote" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmação de Inclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja incluir todos os pacotes da Carga?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <!-- Adicionar o botão de exclusão no modal -->
+                        <form method="post" action="{{ route('invoices_pacotes.addPacoteCarga', ['invoice' => $invoice->id]) }}">
+                            @csrf
+                            <button type="submit" class="btn btn-info waves-effect waves-light">Incluir</button>
                         </form>
                     </div>
                 </div>

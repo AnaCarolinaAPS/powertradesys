@@ -199,6 +199,7 @@ Route::middleware('auth')->group(function () {
         // INVOICES CRUD
         Route::prefix('/admin/invoicespacotes')->group(function () {
             // Route::get('/', [InvoicePacoteController::class, 'index'])->name('invoices.index');
+            Route::post('/varios/{invoice}', [InvoicePacoteController::class, 'addPacoteCarga'])->name('invoices_pacotes.addPacoteCarga');
             Route::post('/', [InvoicePacoteController::class, 'store'])->name('invoices_pacotes.store');
             Route::get('/{invoicespacotes}', [InvoicePacoteController::class, 'show'])->name('invoices_pacotes.show');
             Route::put('/{invoicespacotes}', [InvoicePacoteController::class, 'update'])->name('invoices_pacotes.update');

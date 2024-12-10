@@ -74,6 +74,115 @@
             #customers .dados {
                 border-bottom: 1px solid #ddd; /* Adicionar borda inferior na última linha */
             }
+
+            /* INVOICE */
+            div #cabecalhoinvoice {
+                border: 1px;
+            }
+
+            #cabecalhoinvoice th {
+                padding-bottom: 12px;
+                color: #242742;
+            }
+
+            #cabecalhoinvoice td {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 0.75em;
+                padding: 0px;
+                margin: 0px 2px;
+            }
+
+            #cabecalhoinvoice .align-right {
+                text-align: right;
+                padding-right: 10px;
+            }
+
+            #cabecalhoinvoice h3 {
+                !important font-family: Arial, Helvetica, sans-serif;
+                font-size: 1.7em;
+                padding: 0px;
+                margin: 0px 0px 0px 80px;
+                color: #242742;
+            }
+
+            #cabecalhoinvoice h4 {
+                !important font-family: Arial, Helvetica, sans-serif;
+                font-size: 1.0em;
+                padding: 0px;
+                margin: 0px 0px 0px 80px;
+                color:#606060;
+            }
+
+            #invoice {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 0.75em;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            #invoice th {
+                border: 1px solid #ddd;
+                padding: 3px;
+            }
+
+            #invoice td {
+                border-left: 1px solid #ddd;
+                border-right: 1px solid #ddd;
+                border-top: none;
+                border-bottom: none;
+                padding: 3px;
+            }
+
+            #invoice .align-center {
+                text-align: center;
+            }
+
+            #invoice .font-white {
+                color: white;
+            }
+
+            #invoice th {
+                /* padding-top: 12px;
+                padding-bottom: 12px; */
+                text-align: left;
+                color: black;
+                background-color: #ddd;
+                /* color: white; */
+            }
+
+            #invoice tr:last-child td {
+                border-bottom: 1px solid #ddd; /* Adicionar borda inferior na última linha */
+            }
+
+            #invoice .dados {
+                border-bottom: 1px solid #ddd; /* Adicionar borda inferior na última linha */
+            }
+
+            div #fiminvoice {
+                border: 1px;
+            }
+
+            #fiminvoice th {
+                padding-bottom: 12px;
+                color: #242742;
+            }
+
+            #fiminvoice td {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 0.75em;
+                /* padding: 0px; */
+                margin: 0px;
+            }
+
+            #fiminvoice td, #fiminvoice th {
+                padding: 5px 5px; /* 10px de espaço vertical, 5px de espaço horizontal */
+            }
+
+            #fiminvoice .align-right {
+                text-align: right;
+                padding-right: 10px;
+            }
+
         </style>
     </head>
 

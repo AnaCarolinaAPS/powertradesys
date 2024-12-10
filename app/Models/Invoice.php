@@ -75,4 +75,12 @@ class Invoice extends Model
             return $invoicePacote->pacote->qtd ?? 0;
         });
     }
+
+    // //Para retirar o valor pendente
+    // public function total_cliente_pendente()
+    // {
+    //     $this->cliente->invoices->sum(function($invoice) {
+    //         return $invoice->valor_pendente();
+    //     });
+    // }
 }

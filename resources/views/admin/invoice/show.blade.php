@@ -66,6 +66,7 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
+                                <a href="{{ route('invoices.pdf', ['invoice' => $invoice->id]); }}" class="btn btn-info me-auto waves-effect">Gerar PDF</a>
                                 <!-- Botão de Exclusão -->
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir

@@ -35,14 +35,13 @@ class FechamentoCaixaController extends Controller
                     ->first();
                 if ($fechamento) {
                     $all_items[] = $fechamento;
-                }
-
-                if ($fechamento->caixa->moeda === 'U$') {
-                    $totalSaldoUS += $fechamento->calculaSaldo();
-                } else if ($fechamento->caixa->moeda === 'G$') {
-                    $totalSaldoGS += $fechamento->calculaSaldo();
-                } else {
-                    $totalSaldoRS += $fechamento->calculaSaldo();
+                    if ($fechamento->caixa->moeda === 'U$') {
+                        $totalSaldoUS += $fechamento->calculaSaldo();
+                    } else if ($fechamento->caixa->moeda === 'G$') {
+                        $totalSaldoGS += $fechamento->calculaSaldo();
+                    } else {
+                        $totalSaldoRS += $fechamento->calculaSaldo();
+                    }
                 }
             }
         }        
@@ -200,7 +199,7 @@ class FechamentoCaixaController extends Controller
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de Erro
-            return redirect()->route('registro_caixa.index')->with('toastr', [
+            return redirect()->back()->with('toastr', [
                 'type'    => 'error',
                 'message' => 'Ocorreu um erro ao criar o Registro de Caixa: <br>'. $e->getMessage(),
                 'title'   => 'Erro',

@@ -123,7 +123,7 @@
                         </ul>
                     </li>-->
                     
-                    {{--<li>
+                    <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-line-chart-line"></i>
                             <span>Relatórios</span>
@@ -131,10 +131,10 @@
                         <ul class="sub-menu" aria-expanded="true">
                             <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
                             <li><a href="{{ route('relatorioCarga.index'); }}">Cargas</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Lucros</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Gastos</a></li>
+                            <!-- <li><a href="layouts-compact-sidebar.html">Lucros</a></li> -->
+                            <li><a href="{{ route('relatorioGastos.index'); }}">Gastos</a></li>
                         </ul>
-                    </li>--}}
+                    </li>
                 @endrole
                 @role('client')
                     <li>

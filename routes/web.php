@@ -347,10 +347,8 @@ Route::middleware('auth')->group(function () {
 
         // Controlador de Relatórios
         Route::prefix('/admin/relatorios')->group(function () {
-            // Route::post('/', [FolhaPagamentoItemController::class, 'store'])->name('folhas_items.store');
-            // Route::get('/carga/{folhaitem}', [FolhaPagamentoItemController::class, 'show'])->name('folhas_items.show');
-            // Route::put('/{folhaitem}', [FolhaPagamentoItemController::class, 'update'])->name('folhas_items.update');
-            // Route::delete('/{folhaitem}', [FolhaPagamentoItemController::class, 'destroy'])->name('folhas_items.destroy');
+            Route::get('gastos/', [RelatorioController::class, 'indexGastos'])->name('relatorioGastos.index');
+            Route::get('/gastos/{periodo}', [RelatorioController::class, 'showGastos'])->name('relatorioGastos.show');
             Route::get('carga/', [RelatorioController::class, 'indexCarga'])->name('relatorioCarga.index');
         });
 

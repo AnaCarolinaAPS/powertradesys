@@ -75,4 +75,8 @@ class FaturaCarga extends Model
             return $invoice->peso_pacote_orig();
         });
     }
+
+    public function lucro ()  {
+        return $this->valor_total() - $this->despesas_total();
+    }
 }

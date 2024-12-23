@@ -252,20 +252,20 @@
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="cliente_id">Cliente</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id">
-                                            @foreach ($all_clientes as $cliente)
-                                                <option value="{{ $cliente->id }}"> {{ '('. $cliente->caixa_postal.') '.$cliente->apelido }} </option>
-                                            @endforeach
-                                        </select>
+                                        <label for="rastreio">Rastreio</label>
+                                        <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
                                     </div>
                                 </div>
                             </div>
                             <div class="row mt-2">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="rastreio">Rastreio</label>
-                                        <input type="text" class="form-control" id="rastreio" name="rastreio" placeholder="Numero de Rastreio" maxlength="255" required>
+                                        <label for="cliente_id">Cliente</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id">
+                                            @foreach ($all_clientes as $cliente)
+                                                <option value="{{ $cliente->id }}"> {{ '('. $cliente->caixa_postal.') '.$cliente->apelido }} </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-3">

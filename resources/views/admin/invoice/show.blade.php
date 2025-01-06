@@ -110,6 +110,7 @@
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>#</th>
                                         <th>Rastreio</th>
                                         <th>Peso Origem</th>
                                         <th>Peso</th>
@@ -120,6 +121,7 @@
                                 <tbody>
                                     @foreach ($invoice->invoice_pacotes as $invoicep)
                                     <tr class="abrirModal" data-pacote-id="{{ $invoicep->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{ $invoicep->pacote->codigo ?? 'none' }}</td>
                                         <td>'{{ $invoicep->pacote->rastreio}}</td>
                                         <td>{{ $invoicep->pacote->peso}}</td>
                                         <td>{{ $invoicep->peso }}</td>

@@ -43,7 +43,7 @@
                     $peso_total = 0;
                     $qtd_total = 0;
                 @endphp
-                @foreach ($invoice->invoice_pacotes as $pacote)
+                @foreach ($invoice->invoice_pacotes->sortBy(fn($item) => $item->pacote->codigo ?? '') as $pacote)
                 <tr>
                     <td class="align-center" width="25px">{{$i}}</td>
                     <td class="align-center">{{$pacote->pacote->rastreio}}</td>

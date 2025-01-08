@@ -275,6 +275,7 @@ Route::middleware('auth')->group(function () {
             // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
             Route::get('/caixas/{tipo}', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
             Route::post('/', [FechamentoCaixaController::class, 'store'])->name('registro_caixa.store');
+            Route::get('/caixas/saldo-final/{id}', [FechamentoCaixaController::class, 'getSaldoFinal'])->name('registro_caixa.getsaldo');
         });
 
         // Pagamento CRUD

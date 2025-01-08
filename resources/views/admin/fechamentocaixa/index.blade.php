@@ -112,7 +112,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="caixa_id">Caixa</label>
-                                    <select class="selectpicker form-control" data-live-search="true" id="caixa_id" name="caixa_id" >
+                                    <select class="selectpicker form-control" data-live-search="true" id="caixa_id" name="caixa_id" onchange="carregarSaldoInicial()">
                                         @foreach ($all_caixas as $caixa)
                                             <option value="{{ $caixa->id }}"> {{ $caixa->nome }} </option>
                                         @endforeach
@@ -148,5 +148,27 @@
             });
         });
     });
+
+    function carregarSaldoInicial() {
+        const caixaId = document.getElementById('caixa_id').value;
+
+        // Verificar se o ID foi selecionado
+        if (caixaId) {
+            const url = "{{ route('registro_caixa.getsaldo', ':id') }}".replace(':id', caixaId);
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        document.getElementById('saldo_inicial').value = data.saldo_final;
+                    } else {
+                        alert('Erro ao carregar o saldo final da caixa. Tente novamente.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar o saldo:', error);
+                    alert('Erro ao carregar o saldo. Verifique sua conexão.');
+                });
+        }
+    }
 </script>
 @endsection

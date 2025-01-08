@@ -167,9 +167,8 @@ class FechamentoCaixaController extends Controller
 
             // Converter a data para um objeto Carbon
             $dataCarbon = \Carbon\Carbon::parse($request->input('data'));
-            // Calcular o domingo (início da semana) e o sábado (final da semana)
-            $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
-            $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+            $start_date = $dataCarbon->startOfMonth()->format('Y-m-d');
+            $end_date = $dataCarbon->endOfMonth()->format('Y-m-d');
 
             $fechamentoExiste = FechamentoCaixa::where('start_date', $start_date)->where('end_date', $end_date)->where('caixa_id', $request->input('caixa_id'))->first();
 
@@ -204,6 +203,27 @@ class FechamentoCaixaController extends Controller
                 'message' => 'Ocorreu um erro ao criar o Registro de Caixa: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
+        }
+    }
+
+    public function getSaldoFinal($id)
+    {
+        try {
+            $caixa = Caixa::findOrFail($id);
+
+            // Supondo que o saldo final esteja no último fechamento de caixa
+            $ultimoFechamento = FechamentoCaixa::where('caixa_id', $id)->latest('end_date')->first();
+            $saldoFinal = $ultimoFechamento ? $ultimoFechamento->calculaSaldo() : 0;
+
+            return response()->json([
+                'success' => true,
+                'saldo_final' => $saldoFinal,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar o saldo final.',
+            ], 500);
         }
     }
 }

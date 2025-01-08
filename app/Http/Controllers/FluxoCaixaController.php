@@ -90,8 +90,8 @@ class FluxoCaixaController extends Controller
             } else if ($request->input('tipo') == 'transferencia') {
                 //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
                 $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data'));
-                $start_date = $data->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
-                $end_date = $data->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+                $start_date = $data->startOfMonth()->format('Y-m-d');
+                $end_date = $data->endOfMonth()->format('Y-m-d');
 
                 $caixa_destino = $request->input('caixa_destino_id_t');
                 //VERIFICA SE A CAIXA DESTINO POSSUI UM REGISTRO DE FECHAMENTO DE CAIXA
@@ -129,8 +129,8 @@ class FluxoCaixaController extends Controller
             } else if ($request->input('tipo') == 'cambio') {
                 //Data retira Mês e Ano para buscar o fechamando do caixa de DESTINO
                 $data = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data'));
-                $start_date = $data->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
-                $end_date = $data->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+                $start_date = $data->startOfMonth()->format('Y-m-d');
+                $end_date = $data->endOfMonth()->format('Y-m-d');
                 $caixa_destino = $request->input('caixa_destino_id_c');
                 //VERIFICA SE A CAIXA DESTINO POSSUI UM REGISTRO DE FECHAMENTO DE CAIXA
                 $fechamentoDestino = FechamentoCaixa::where('caixa_id', $caixa_destino)->where('start_date', $start_date)->where('end_date', $end_date)->firstOrFail();

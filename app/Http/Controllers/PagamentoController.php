@@ -37,8 +37,8 @@ class PagamentoController extends Controller
 
             //Data retira as das referentas a semana para buscar o fechamento do caixa de DESTINO
             $dataCarbon = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data_pagamento'));
-            $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
-            $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+            $start_date = $dataCarbon->startOfMonth()->format('Y-m-d');
+            $end_date = $dataCarbon->endOfMonth()->format('Y-m-d');
 
             $fechamento = FechamentoCaixa::where('caixa_id', $request->input('caixa_origem_id'))->where('start_date', $start_date)->where('end_date', $end_date)->first();
 

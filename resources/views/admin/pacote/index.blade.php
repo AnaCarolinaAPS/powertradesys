@@ -265,12 +265,12 @@
 
                     if (data.carga_id !== null) {
                         // Se carga_id estiver presente, mostrar o botão e atribuir o link adequado
-                        var link = "{{ route('cargas.show', ['carga' => ':cargaId']) }}";
-                        link = link.replace(':cargaId', data.carga_id);
+                        var link2 = "{{ route('cargas.show', ['carga' => ':cargaId']) }}";
+                        link2 = link2.replace(':cargaId', data.carga_id);
                         // $('#cargaBotao').show().attr('href', link);
                         $('#cargaBotao').show().on('click', function () {
                             // window.location.href = link;
-                            window.open(link, '_blank');
+                            window.open(link2, '_blank');
                         });
                         console.error('Erro:', data.carga_id);
                     } else {

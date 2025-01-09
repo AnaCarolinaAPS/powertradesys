@@ -29,7 +29,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <h4 class="card-title mb-4">{{ $fechamento->caixa->nome }}</h4>
+                                <h4 class="card-title mb-4">{{ $fechamento->caixa->nome }} [{{ \Carbon\Carbon::parse($fechamento->start_date)->format('d/m/Y'); }} até {{ \Carbon\Carbon::parse($fechamento->end_date)->format('d/m/Y'); }}]</h4>
                             </div>
                             {{-- <div class="col">
                                 <h4 class="card-title mb-4">Disponível: {{ $fechamento->saldo_final }} {{ $fechamento->caixa->moeda }}</h4>

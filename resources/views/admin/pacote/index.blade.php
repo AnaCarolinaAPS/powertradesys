@@ -259,7 +259,8 @@
                     var link = "{{ route('warehouses.show', ['warehouse' => ':warehouseId']) }}";
                     link = link.replace(':warehouseId', data.warehouse_id);
                     $('#warehouseBotao').show().on('click', function () {
-                        window.location.href = link;
+                        // window.location.href = link;
+                        window.open(link, '_blank');
                     });
 
                     if (data.carga_id !== null) {
@@ -268,7 +269,8 @@
                         link = link.replace(':cargaId', data.carga_id);
                         // $('#cargaBotao').show().attr('href', link);
                         $('#cargaBotao').show().on('click', function () {
-                            window.location.href = link;
+                            // window.location.href = link;
+                            window.open(link, '_blank');
                         });
                         console.error('Erro:', data.carga_id);
                     } else {

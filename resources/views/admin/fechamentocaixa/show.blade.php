@@ -179,11 +179,11 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <h4 class="card-title mb-4">Gráfico por Categoria</h4>
+                                <h4 class="card-title mb-4">Gráfico de Gastos</h4>
                             </div>
                         </div>
                         <div class="row">
-                            <canvas id="categoriaChart"></canvas>
+                            <canvas id="subcategoriaChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -193,11 +193,46 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <h4 class="card-title mb-4">Gráfico por Subcategoria</h4>
+                                <h4 class="card-title mb-4">Tabela de Gastos</h4>
                             </div>
                         </div>
-                        <div class="row">
-                            <canvas id="subcategoriaChart"></canvas>
+                        <div class="table-responsive">
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Valor</th>
+                                        <th>Descrição</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($all_gastos as $fluxo)
+                                        <td>
+                                            @if ($fechamento->caixa->moeda == 'G$')
+                                                {{ number_format($fluxo->valor_origem, 0, '.', ',') }}
+                                            @else
+                                                {{ number_format($fluxo->valor_origem, 2, '.', ',') }}
+                                            @endif
+                                           
+                                        </td>
+                                        <td>
+                                            @if ($fluxo->tipo == 'saida')
+                                                {{ '['.$fluxo->categoria->nome.']'; }}
+                                            @elseif ($fluxo->tipo == 'salario')
+                                                {{ '[Empresa]' }}
+                                            @endif
+
+                                            @if ($fluxo->tipo == 'saida')
+                                                {{ ' ['.$fluxo->subcategoria->nome.']'; }}
+                                            @elseif ($fluxo->tipo == 'salario')
+                                                {{ ' [Salario]' }}
+                                            @endif
+    
+                                            {{ $fluxo->descricao }}
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
                         </div>
                     </div>
                 </div>
@@ -430,20 +465,7 @@
         console.log (tipo);
     }
 
-    var dados = @json($data_grafico);
-
-    var datapie = {
-      labels: dados.labels,
-      datasets: [{
-        // label: 'My First Dataset',
-        data: dados.data,
-        backgroundColor: dados.backgroundColor,
-        borderColor: dados.borderColor,
-        borderWidth: 1
-      }]
-    };
-
-    // Opções do gráfico
+    // // Opções do gráfico
     var optionspie = {
       responsive: true,
       plugins: {
@@ -456,14 +478,6 @@
         }
       }
     };
-
-    // Criando o gráfico de pizza
-    var ctxpie = document.getElementById('categoriaChart').getContext('2d');
-    var myPieChart = new Chart(ctxpie, {
-      type: 'pie',
-      data: datapie,
-      options: optionspie
-    });
 
     var dadossub = @json($data_grafico_sub);
 

@@ -280,15 +280,17 @@
                                 <table id="dGastoUs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Descrição</th>
                                             <th>Valor U$</th>
+                                            <th>Data</th>
+                                            <th>Descrição</th>
                                         </tr>
                                     </thead><!-- end thead -->
                                     <tbody>
                                         @foreach ($gastosUs as $gasto)
                                         <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 2, '.', ',') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($gasto->data)->format('d/m/Y'); }}</td>
                                             <td>{{ $gasto->descricao }}</td>
-                                            <td>{{ number_format($gasto->valor_origem, 0, ',', '.') }}</td>
                                         </tr>
                                         @endforeach                                        
                                     </tbody><!-- end tbody -->
@@ -300,15 +302,15 @@
                                 <table id="dGastoRs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Descrição</th>
                                             <th>Valor R$</th>
+                                            <th>Descrição</th>
                                         </tr>
                                     </thead><!-- end thead -->
                                     <tbody>
                                         @foreach ($gastosRs as $gasto)
                                         <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 2, '.', ',') }}</td>
                                             <td>{{ $gasto->descricao }}</td>
-                                            <td>{{ number_format($gasto->valor_origem, 2, ',', '.') }}</td>
                                         </tr>
                                         @endforeach                                        
                                     </tbody><!-- end tbody -->
@@ -318,15 +320,15 @@
                                 <table id="dGastoGs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Descrição</th>
                                             <th>Valor G$</th>
+                                            <th>Descrição</th>
                                         </tr>
                                     </thead><!-- end thead -->
                                     <tbody>
                                         @foreach ($gastosGs as $gasto)
                                         <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 0, '.', ',') }}</td>
                                             <td>{{ $gasto->descricao }}</td>
-                                            <td>{{ number_format($gasto->valor_origem, 0, ',', '.') }}</td>
                                         </tr>
                                         @endforeach                                        
                                     </tbody><!-- end tbody -->

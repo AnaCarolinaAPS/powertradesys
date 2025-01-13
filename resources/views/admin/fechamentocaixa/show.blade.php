@@ -172,6 +172,8 @@
             </div>
             <!-- end col -->
         </div>
+
+        @if (!$all_gastos->isEmpty())
         <!-- end row -->
         <div class="row">
             <div class="col-xl-6">
@@ -238,6 +240,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 </div>
 <!-- End Page-content -->

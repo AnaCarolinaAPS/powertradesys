@@ -18,6 +18,12 @@ class RelatorioController extends Controller
         return view('admin.relatoriocarga.index', compact('all_items'));
     }
 
+    public function showCargas($id)
+    {
+        $faturacarga = FaturaCarga::findOrFail($id);
+        return view('admin.relatoriocarga.show', compact('faturacarga'));
+    }
+
     /**
      * Display a listing of the resource.
      */

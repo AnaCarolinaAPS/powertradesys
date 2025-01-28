@@ -10,7 +10,6 @@ class FaturaCarga extends Model
     use HasFactory;
 
     protected $fillable = [
-        'data',
         'numero',
         'carga_id',
         'servico_id',

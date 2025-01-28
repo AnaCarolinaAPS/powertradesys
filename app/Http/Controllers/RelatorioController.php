@@ -15,7 +15,83 @@ class RelatorioController extends Controller
     public function indexCarga()
     {
         $all_items = FaturaCarga::all();
-        return view('admin.relatoriocarga.index', compact('all_items'));
+
+        $ultimasCinco = FaturaCarga::latest()->take(5)->get()->sortBy('data');
+
+        // Forma arrays para montagem do gráfico:
+        // Inicializar arrays para armazenar os dados do gráfico        
+        $labels_carga = [];
+        $data_carga = [];
+        $backgroundColor_valores = [
+            'rgba(246, 71, 71, 0.4)', 'rgba(230, 126, 34, 0.4)', 'rgba(104, 195, 163, 0.4)', 'rgba(44, 130, 201, 0.4)', 'rgba(153, 102, 255, 0.4)',
+        ];
+        $borderColor_valores = [
+            'rgba(246, 71, 71, 1)', 'rgba(230, 126, 34, 1)', 'rgba(104, 195, 163, 1)', 'rgba(44, 130, 201, 1)', 'rgba(153, 102, 255, 1)', 
+        ];
+        foreach ($ultimasCinco as $fatura) {
+            // Adicionar categoria_id como label
+            $labels_carga[] = \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y');
+            // Adicionar total_saida como dado
+            $data_carga[] = $fatura->invoices_pesos_orig();
+        }   
+
+        // Criar um array associativo com todas as informações
+        $data_grafico_mes = [
+            'labels' => $labels_carga,
+            'data' => $data_carga,
+            'backgroundColor' => $backgroundColor_valores,
+            'borderColor' => $borderColor_valores
+        ];
+
+
+        // Obter a data de 12 meses atrás
+        $startDate = Carbon::now()->subMonths(12)->startOfMonth();
+        $endDate = Carbon::now()->endOfMonth();
+
+        // Filtrar FaturaCarga pelos últimos 12 meses
+        $faturas = FaturaCarga::whereHas('carga', function ($query) use ($startDate, $endDate) {
+            // Filtrar FaturaCarga baseada na data da relação Carga
+            $query->whereBetween('data_recebida', [$startDate, $endDate]);
+            })
+            ->get()
+            ->groupBy(function ($fatura) {
+                // Agrupar por mês e ano no formato "Janeiro/2025" usando a data da Carga
+                return Carbon::parse($fatura->carga->data_recebida)->format('F/Y');
+        });
+
+        // Inicializar o array para armazenar os totais
+        $labels_ano = [];
+        $data_ano = [];
+        $backgroundColor_ano = [];
+        $borderColor_ano = [];
+
+        // Iterar sobre os grupos para calcular o total de pesos por mês
+        foreach ($faturas as $mesAno => $faturasDoMes) {
+
+            $totalPeso = $faturasDoMes->sum(function ($fatura) {
+                // Somar o valor de invoices_pesos_orig() para cada FaturaCarga
+                return $fatura->invoices_pesos_orig();
+            });
+
+            // Armazenar os resultados
+            $labels_ano[] = $mesAno;
+            $data_ano[] = $totalPeso;
+            // Gerar cores aleatórias para o gráfico
+            $red = mt_rand(0, 255);
+            $green = mt_rand(0, 255);
+            $blue = mt_rand(0, 255);
+            $backgroundColor_ano[] = "rgba($red, $green, $blue, 0.3)";
+            $borderColor_ano[] = "rgba($red, $green, $blue, 1)";
+        }
+
+        $data_grafico_ano = [
+            'labels' => $labels_ano,
+            'data' => $data_ano,
+            'backgroundColor' => $backgroundColor_ano,
+            'borderColor' => $borderColor_ano
+        ];
+
+        return view('admin.relatoriocarga.index', compact('all_items', 'data_grafico_mes', 'data_grafico_ano'));
     }
 
     public function showCargas($id)

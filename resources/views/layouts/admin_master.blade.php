@@ -182,6 +182,7 @@
                 initializeDataTableWithButtons("dGastoGs");
                 initializeDataTableWithButtons("dbcel1");
                 initializeDataTableWithButtons("dbcel2");
+                initializeDataTableWithButtonsDate("tabcel1");
             });
         </script>
     </body>

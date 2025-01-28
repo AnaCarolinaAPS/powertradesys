@@ -21,7 +21,72 @@ class RelatorioController extends Controller
     public function showCargas($id)
     {
         $faturacarga = FaturaCarga::findOrFail($id);
-        return view('admin.relatoriocarga.show', compact('faturacarga'));
+
+        //Montagem do gráfico tipo Barra com os clientes e pesos
+        // Inicializar arrays para armazenar os dados do gráfico
+        $labels_cliente = [];
+        $data_cliente = [];
+        $backgroundColor_cliente = [];
+        $borderColor_cliente = [];
+
+        $i = 0;
+
+        // Iterar sobre os resultados da consulta
+        foreach ($faturacarga->invoices as $invoice) {
+            $label = '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name;
+        
+            // Adicionar categoria_id como label
+            $labels_cliente[] = $label;//$categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+            // Adicionar total_saida como dado
+            $data_cliente[] = $invoice->peso_pacote();
+            // Gerar cores aleatórias para o gráfico
+            $red = mt_rand(0, 255);
+            $green = mt_rand(0, 255);
+            $blue = mt_rand(0, 255);
+            $backgroundColor_cliente[] = "rgba($red, $green, $blue, 0.5)";
+            $borderColor_cliente[] = "rgba($red, $green, $blue, 1)";
+
+            ++$i;
+        }
+
+        // Criar um array associativo com todas as informações
+        $data_grafico_clientes = [
+            'labels' => $labels_cliente,
+            'data' => $data_cliente,
+            'backgroundColor' => $backgroundColor_cliente,
+            'borderColor' => $borderColor_cliente
+        ];
+
+        // Montagem do gráfico tipo pizza dos valores da carga
+        $faltacobrar = $faturacarga->valor_total() - $faturacarga->invoices_pagas();
+        $faltapagar = $faturacarga->despesas_total() - $faturacarga->despesas_pagas();
+        $cobrado = $faturacarga->invoices_pagas() - $faturacarga->despesas_pagas();
+        $despesapaga = $faturacarga->despesas_pagas();
+
+        // Forma arrays para montagem do gráfico:
+        // Inicializar arrays para armazenar os dados do gráfico
+        $labels_valores = [
+            'Falta Cobrar', 'Falta Pagar', 'Cobrado/Lucro', 'Despesa Paga',
+        ];
+        $data_valores = [
+            $faltacobrar, $faltapagar, $cobrado, $despesapaga,
+        ];
+        $backgroundColor_valores = [
+            'rgba(246, 71, 71, 0.5)', 'rgba(230, 126, 34, 0.5)', 'rgba(104, 195, 163, 0.5)', 'rgba(44, 130, 201, 0.5)', 
+        ];
+        $borderColor_valores = [
+            'rgba(246, 71, 71, 1)', 'rgba(230, 126, 34, 1)', 'rgba(104, 195, 163, 1)', 'rgba(44, 130, 201, 1)', 
+        ];
+
+        // Criar um array associativo com todas as informações
+        $data_grafico_valores = [
+            'labels' => $labels_valores,
+            'data' => $data_valores,
+            'backgroundColor' => $backgroundColor_valores,
+            'borderColor' => $borderColor_valores
+        ];
+
+        return view('admin.relatoriocarga.show', compact('faturacarga', 'data_grafico_valores', 'data_grafico_clientes'));
     }
 
     /**

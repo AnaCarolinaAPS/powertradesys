@@ -76,6 +76,13 @@ class FaturaCarga extends Model
         });
     }
 
+    public function invoices_qtd_orig()
+    {
+        return $this->invoices->sum(function ($invoice) {
+            return $invoice->qtd_pacote_orig();
+        });
+    }
+
     public function lucro ()  {
         return $this->valor_total() - $this->despesas_total();
     }

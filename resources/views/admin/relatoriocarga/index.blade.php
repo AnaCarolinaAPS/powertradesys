@@ -49,7 +49,7 @@
                                         <td>{{ \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td>{{ $fatura->carga->despachante->nome; }}</td>
                                         <td>{{ $fatura->carga->peso_guia ?? '0,0' }}</td>
-                                        <td>{{ number_format($fatura->lucro(), 2, ',', '.'); }}</td>
+                                        <td>{{ number_format($fatura->lucro(), 2, ',', '.');  }}</td>
                                         <td>{{ $fatura->carga->clientes->count(); }}</td>
                                     </tr>
                                     @endforeach

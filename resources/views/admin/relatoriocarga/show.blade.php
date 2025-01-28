@@ -51,7 +51,7 @@
                             </div>
                             <div class="avatar-sm">
                                 <span class="avatar-title bg-light text-success rounded-3">
-                                    <i class="ri-home-6-line font-size-24"></i>
+                                    <i class="ri-money-dollar-box-line font-size-24"></i>
                                 </span>
                             </div>
                         </div>
@@ -147,7 +147,7 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($faturacarga->invoices as $invoice)
-                                    @if ($invoice->valor_total() - $invoice->valor_pago() == 0)
+                                    @if ($invoice->valor_total() - $invoice->valor_pago() <= 0)
                                         <tr class="table-success" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
                                     @else
                                         <tr class="" data-href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}">
@@ -174,11 +174,12 @@
                                         <th>Cobrado</th>
                                         <th>Valor Total</th>
                                         <th>Falta Cobrar</th>
+                                        <th>Ver Mais</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($faturacarga->invoices as $invoice)
-                                    @if ($invoice->valor_total() - $invoice->valor_pago() == 0)
+                                    @if ($invoice->valor_pendente() <= 0)
                                         <tr class="table-success">
                                     @else
                                         <tr class="">
@@ -187,6 +188,7 @@
                                         <td>{{ number_format($invoice->peso_pacote(), 1, ',', '.') }}</td>
                                         <td>{{ number_format($invoice->valor_total(), 2, ',', '.') }} U$</td>
                                         <td>{{ number_format($invoice->valor_pendente(), 2, ',', '.') }} U$</td>
+                                        <td><a href="{{ route('invoices.show', ['invoice' => $invoice->id]) }}" class="link-info">Invoice #{{$invoice->id}}</a></td>
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->
@@ -270,11 +272,12 @@
                                                 <th>Fornececdor</th>
                                                 <th>Despesa</th>
                                                 <th>Pendente</th>
+                                                <th>Ver Mais</th>
                                             </tr>
                                         </thead><!-- end thead -->
                                         <tbody>
                                             @foreach ($faturacarga->despesas as $despesa)
-                                            @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() == 0)
+                                            @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() <= 0)
                                                 <tr class="table-success">
                                             @else
                                                 <tr>
@@ -282,6 +285,7 @@
                                                 <td>{{ $despesa->fornecedor->nome }}</td>
                                                 <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
                                                 <td>{{ number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') }}</td>
+                                                <td><a href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}" class="link-info">Despesa #{{$despesa->id}}</a></td>
                                             </tr>
                                             @endforeach
                                         </tbody><!-- end tbody -->

@@ -28,9 +28,7 @@ class RelatorioController extends Controller
         $backgroundColor_cliente = [];
         $borderColor_cliente = [];
 
-        $i = 0;
-
-        $invoicesPorPeso = $faturacarga->invoices->sortBy(function ($invoice) {
+        $invoicesPorPeso = $faturacarga->invoices->sortByDesc(function ($invoice) {
             return $invoice->peso_pacote();
         });        
 
@@ -48,8 +46,6 @@ class RelatorioController extends Controller
             $blue = mt_rand(0, 255);
             $backgroundColor_cliente[] = "rgba($red, $green, $blue, 0.5)";
             $borderColor_cliente[] = "rgba($red, $green, $blue, 1)";
-
-            ++$i;
         }
 
         // Criar um array associativo com todas as informações

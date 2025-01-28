@@ -180,8 +180,9 @@
                 initializeDataTableWithButtons("dGastoUs");
                 initializeDataTableWithButtons("dGastoRs");
                 initializeDataTableWithButtons("dGastoGs");
+                initializeDataTableWithButtons("dbcel1");
+                initializeDataTableWithButtons("dbcel2");
             });
         </script>
     </body>
-
 </html>

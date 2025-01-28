@@ -95,7 +95,6 @@
         </div><!-- end row -->
 
         <!-- Gráficos!! -->
-
         <div class="row">
             <div class="col-xl-6">
                 <div class="card">
@@ -111,7 +110,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
@@ -133,7 +131,8 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <div class="table-responsive">
+                        <!-- Tabela Completa (Mostrada apenas no computador) -->
+                        <div class="table-responsive d-none d-lg-block">
                             <h4 class="card-title mb-4">Relatório da Carga Recebida em {{ \Carbon\Carbon::parse($faturacarga->carga->data_recebida)->format('d/m/Y') }}</h4>
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -164,6 +163,35 @@
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
+
+                        <!-- Tabela Simplificada (Mostrada apenas no celular) -->
+                        <div class="table-responsive d-block d-lg-none">
+                            <h4 class="card-title mb-4">Relatório da Carga Recebida em {{ \Carbon\Carbon::parse($faturacarga->carga->data_recebida)->format('d/m/Y') }}</h4>
+                            <table id="dbcel1" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Cobrado</th>
+                                        <th>Valor Total</th>
+                                        <th>Falta Cobrar</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($faturacarga->invoices as $invoice)
+                                    @if ($invoice->valor_total() - $invoice->valor_pago() == 0)
+                                        <tr class="table-success">
+                                    @else
+                                        <tr class="">
+                                    @endif
+                                        <td>{{ '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->apelido; }}</td>
+                                        <td>{{ number_format($invoice->peso_pacote(), 1, ',', '.') }}</td>
+                                        <td>{{ number_format($invoice->valor_total(), 2, ',', '.') }} U$</td>
+                                        <td>{{ number_format($invoice->valor_pendente(), 2, ',', '.') }} U$</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -174,7 +202,7 @@
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body d-none d-lg-block">
                         <div class="row">
                             <div class="col">
                                 <h4 class="card-title mb-4">Despesas</h4>
@@ -182,35 +210,85 @@
                             <div class="col">
                                 Peso Guia: <b>{{$faturacarga->carga->peso_guia ? $faturacarga->carga->peso_guia : '0'}} kgs</b>
                             </div>
-                            <div class="col">
+                            <div class="col d-none d-lg-block">
                                 Valor Total: <b>{{number_format($faturacarga->despesas_total(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
                                 Falta PAGAR : <b>{{number_format($faturacarga->despesas_total() - $faturacarga->despesas_pagas(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
-                        <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Fornececdor</th>
-                                    <th>Valor Total Despesa</th>
-                                    <th>Pendente</th>
-                                </tr>
-                            </thead><!-- end thead -->
-                            <tbody>
-                                @foreach ($faturacarga->despesas as $despesa)
-                                @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() == 0)
-                                    <tr class="table-success" data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
-                                @else
-                                    <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
-                                @endif
-                                    <td>{{ $despesa->fornecedor->nome }}</td>
-                                    <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
-                                    <td>{{ number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody><!-- end tbody -->
-                        </table> <!-- end table -->
+
+                        <!-- Tabela Completa (Mostrada apenas no computador) -->
+                        <div class="table-responsive">
+                            <table id="datatable-totals" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fornececdor</th>
+                                        <th>Valor Total Despesa</th>
+                                        <th>Pendente</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($faturacarga->despesas as $despesa)
+                                    @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() == 0)
+                                        <tr class="table-success" data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                    @else
+                                        <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                    @endif
+                                        <td>{{ $despesa->fornecedor->nome }}</td>
+                                        <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
+                                        <td>{{ number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div> <!-- table responsive --> 
+                    </div><!-- end card -->
+
+                    <!-- Tabela Simplificada (Mostrada apenas no celular) -->
+                    <div class="card-body d-block d-lg-none">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Despesas</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                Guia: <b>{{$faturacarga->carga->peso_guia ? $faturacarga->carga->peso_guia : '0'}} kgs</b>
+                            </div>
+                            <div class="col">
+                                Falta: <b>{{number_format($faturacarga->despesas_total() - $faturacarga->despesas_pagas(), 2, ',', '.');}} U$</b>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="table-responsive">
+                                    <table id="dbcel2" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Fornececdor</th>
+                                                <th>Despesa</th>
+                                                <th>Pendente</th>
+                                            </tr>
+                                        </thead><!-- end thead -->
+                                        <tbody>
+                                            @foreach ($faturacarga->despesas as $despesa)
+                                            @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() == 0)
+                                                <tr class="table-success">
+                                            @else
+                                                <tr>
+                                            @endif
+                                                <td>{{ $despesa->fornecedor->nome }}</td>
+                                                <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') }}</td>
+                                                <td>{{ number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') }}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody><!-- end tbody -->
+                                    </table> <!-- end table -->
+                                </div> <!-- table responsive --> 
+                            </div>
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

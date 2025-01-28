@@ -21,7 +21,6 @@ class RelatorioController extends Controller
     public function showCargas($id)
     {
         $faturacarga = FaturaCarga::findOrFail($id);
-
         //Montagem do gráfico tipo Barra com os clientes e pesos
         // Inicializar arrays para armazenar os dados do gráfico
         $labels_cliente = [];
@@ -31,8 +30,12 @@ class RelatorioController extends Controller
 
         $i = 0;
 
+        $invoicesPorPeso = $faturacarga->invoices->sortBy(function ($invoice) {
+            return $invoice->peso_pacote();
+        });        
+
         // Iterar sobre os resultados da consulta
-        foreach ($faturacarga->invoices as $invoice) {
+        foreach ($invoicesPorPeso as $invoice) {
             $label = '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->apelido;
         
             // Adicionar categoria_id como label

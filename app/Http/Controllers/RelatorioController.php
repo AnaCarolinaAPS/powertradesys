@@ -33,7 +33,7 @@ class RelatorioController extends Controller
 
         // Iterar sobre os resultados da consulta
         foreach ($faturacarga->invoices as $invoice) {
-            $label = '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->user->name;
+            $label = '('.$invoice->cliente->caixa_postal.') '.$invoice->cliente->apelido;
         
             // Adicionar categoria_id como label
             $labels_cliente[] = $label;//$categoria->categoria->nome . " - " . $categoria->subcategoria->nome;

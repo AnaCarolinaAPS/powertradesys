@@ -97,7 +97,7 @@
         <!-- Gráficos!! -->
 
         <div class="row">
-            <div class="col-xl-8">
+            <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -111,7 +111,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-4">
+
+            <div class="col-xl-6">
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
@@ -265,7 +266,7 @@
     // Montagem do gráfico de BARRA
     var barchartid = document.getElementById('clientesChart').getContext('2d');
     var barChart = new Chart(barchartid, {
-        type: 'bar',
+        type: 'pie',
         data: dataBar,
         options: optionsBar
     });

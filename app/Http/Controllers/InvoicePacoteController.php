@@ -183,7 +183,7 @@ class InvoicePacoteController extends Controller
 
             // Lógica para atualizar os pacotes com o código da carga
             foreach ($all_pacotes as $pacote) {
-                InvoicePacote::create([
+                $invoiceP = InvoicePacote::create([
                     'peso' => $pacote->peso,
                     'invoice_id' => $invoice->id,
                     'pacote_id' => $pacote->id,
@@ -191,6 +191,23 @@ class InvoicePacoteController extends Controller
                     // Adicione outros campos conforme necessário
                 ]);
                 $qtdPacotes++;
+
+                //Busca para ver se o pacote adicionado existe entre as pendencias
+                $pacotePendente = PacotesPendentes::whereRaw('? LIKE CONCAT("%", rastreio)', [$invoiceP->pacote->rastreio])->first();
+
+                // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
+                if ($pacotePendente) {
+                    //Se quem é o "dono" ou fez o pedido do pacote é a pessoa que o sistema cadastrou
+                    if ($pacotePendente->cliente->id == $invoiceP->pacote->cliente->id) {
+                        $pacotePendente->delete();
+                        Cache::forget('pending_pacotes_count');
+
+                    } else { //se não for o mesmo id de cliente, colocar "em sistema"
+                        $pacotePendente->update([
+                            'status' => 'em sistema',
+                        ]);
+                    }
+                } 
             }
 
             if ($qtdPacotes > 0) {

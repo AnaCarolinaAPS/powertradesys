@@ -83,6 +83,20 @@
                                 </table> <!-- end table -->
                             </div>
                         </div>
+                        <div class="row mt-3">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Total GASTO:</h4>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastoRS === null ? "" : "Total R$: ".number_format($totalSaldoRS, 2, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastoGS === null ? "" : "Total G$: ".number_format($totalSaldoGS, 0, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastoUS === null ? "" : "Total U$: ".number_format($totalSaldoUS, 2, ',', '.');}}</b>
+                            </div>
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

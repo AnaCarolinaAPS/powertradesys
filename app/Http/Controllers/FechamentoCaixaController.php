@@ -19,6 +19,9 @@ class FechamentoCaixaController extends Controller
         $totalSaldoUS = null;
         $totalSaldoRS = null;
         $totalSaldoGS = null;
+        $totalGastoUS = null;
+        $totalGastoRS = null;
+        $totalGastoGS = null;
 
         if ($tipo == 'all') {
             $all_caixas = Caixa::all();
@@ -46,7 +49,7 @@ class FechamentoCaixaController extends Controller
             }
         }        
         // $all_items = FechamentoCaixa::all();
-        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totalSaldoUS', 'totalSaldoGS', 'totalSaldoRS'));
+        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totalSaldoUS', 'totalSaldoGS', 'totalSaldoRS', 'totalGastoUS', 'totalGastoGS', 'totalGastoRS'));
     }
 
     /**

@@ -115,7 +115,6 @@ Route::middleware('auth')->group(function () {
             Route::put('/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');
             Route::delete('/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
             Route::get('/scrape/{warehouse}', [ScrapingController::class, 'scrape'])->name('warehouses.scrape');
-
         });
 
         // Pacotes CRUD

@@ -141,12 +141,22 @@ class FaturaCargaController extends Controller
             $startOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->startOfWeek(\Carbon\Carbon::SUNDAY); // Começo da semana (segunda-feira)
             $endOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->endOfWeek(\Carbon\Carbon::SUNDAY); // Fim da semana (domingo)
 
+            $mes = Carbon::parse($faturacarga->carga->data_recebida)->month;
+            $ano = Carbon::parse($faturacarga->carga->data_recebida)->year;
+
             // 2. Filtrar os caixas que utilizam a mesma moeda
             $caixasComMoeda = Caixa::where('moeda', '=', 'U$')->pluck('id');
 
             // 3. Filtrar os FechamentoCaixa que estão dentro da semana
+            // $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
+            //     ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+            //     ->pluck('id');
+
+            //
+            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
             $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
-                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->whereMonth('start_date', $mes)
+                ->whereYear('start_date', $ano)
                 ->pluck('id');
 
             // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
@@ -174,7 +184,9 @@ class FaturaCargaController extends Controller
 
             // 3. Filtrar os FechamentoCaixa que estão dentro da semana
             $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
-                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                // ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->whereMonth('start_date', $mes)
+                ->whereYear('start_date', $ano)
                 ->pluck('id');
 
             // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
@@ -202,7 +214,9 @@ class FaturaCargaController extends Controller
 
             // 3. Filtrar os FechamentoCaixa que estão dentro da semana
             $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
-                ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                // ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
+                ->whereMonth('start_date', $mes)
+                ->whereYear('start_date', $ano)
                 ->pluck('id');
 
             // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos

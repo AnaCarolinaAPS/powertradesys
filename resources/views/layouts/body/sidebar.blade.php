@@ -76,6 +76,7 @@
                                     <li><a href="{{ route('caixas.index'); }}">Caixas</a></li>
                                     <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
                                     <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
+                                    <li><a href="{{ route('contasfixas.index'); }}">Contas Fixas</a></li>
                                 </ul>
                             </li>
                             <li><a href="{{ route('registro_caixa.index', ['tipo' => 'ultimos']); }}">Registro de Caixa</a></li>

@@ -39,6 +39,7 @@ use App\Http\Controllers\CreditoController;
 use App\Http\Controllers\PacotesPendentesController;
 use App\Http\Controllers\FeriasController;
 use App\Http\Controllers\ScrapingController;
+use App\Http\Controllers\ContasFixasController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -369,6 +370,15 @@ Route::middleware('auth')->group(function () {
             Route::get('/{ferias}', [FeriasController::class, 'show'])->name('ferias.show');
             Route::put('/{ferias}', [FeriasController::class, 'update'])->name('ferias.update');
             Route::delete('/{ferias}', [FeriasController::class, 'destroy'])->name('ferias.destroy');
+        });
+
+        // Férias CRUD
+        Route::prefix('/admin/contasfixas')->group(function () {
+            Route::get('/', [ContasFixasController::class, 'index'])->name('contasfixas.index');
+            Route::post('/', [ContasFixasController::class, 'store'])->name('contasfixas.store');
+            Route::get('/{conta}', [ContasFixasController::class, 'show'])->name('contasfixas.show');
+            Route::put('/{conta}', [ContasFixasController::class, 'update'])->name('contasfixas.update');
+            Route::delete('/{conta}', [ContasFixasController::class, 'destroy'])->name('contasfixas.destroy');
         });
         
         Route::prefix('/admin/gerar-pdf')->group(function () {

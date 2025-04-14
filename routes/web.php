@@ -38,6 +38,7 @@ use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CreditoController;
 use App\Http\Controllers\PacotesPendentesController;
 use App\Http\Controllers\FeriasController;
+use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\ScrapingController;
 use Illuminate\Support\Facades\Route;
 
@@ -374,6 +375,15 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
             Route::get('/invoice-pdf/{invoice}', [PDFController::class, 'invoicePDF'])->name('invoices.pdf');
+        });
+
+        // Produtos CRUD
+        Route::prefix('/admin/produtos')->group(function () {
+            Route::get('/', [ProdutoController::class, 'index'])->name('produtos.index');
+            Route::post('/', [ProdutoController::class, 'store'])->name('produtos.store');
+            Route::get('/{produto}', [ProdutoController::class, 'show'])->name('produtos.show');
+            Route::put('/{produto}', [ProdutoController::class, 'update'])->name('produtos.update');
+            Route::delete('/{produto}', [ProdutoController::class, 'destroy'])->name('produtos.destroy');
         });
 
     });

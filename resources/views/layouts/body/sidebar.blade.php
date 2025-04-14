@@ -44,8 +44,6 @@
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
-                                    {{-- <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
-                                    <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li> --}}
                                     <li><a href="{{ route('shippers.index'); }}">Shippers</a></li>
                                     <li><a href="{{ route('freteiros.index'); }}">Freteiros</a></li>
                                 </ul>
@@ -63,6 +61,18 @@
                         </ul>
                     </li>
 
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-box-open"></i>
+                            <span>Produtos / Serviços</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="{{ route('produtos.index'); }}">Produtos</a></li>
+                            <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
+                            <li><a href="{{ route('pacotes.index'); }}">Estoque</a></li>
+                        </ul>
+                    </li>
+
                     @can('visualizar financeiro')
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
@@ -74,7 +84,6 @@
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="{{ route('caixas.index'); }}">Caixas</a></li>
-                                    <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
                                     <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
                                 </ul>
                             </li>

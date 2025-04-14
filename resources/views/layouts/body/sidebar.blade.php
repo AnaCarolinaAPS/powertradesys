@@ -69,7 +69,7 @@
                         <ul class="sub-menu" aria-expanded="true">
                             <li><a href="{{ route('produtos.index'); }}">Produtos</a></li>
                             <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
-                            <li><a href="{{ route('pacotes.index'); }}">Estoque</a></li>
+                            <li><a href="{{ route('compras.index'); }}">Compras</a></li>
                         </ul>
                     </li>
 

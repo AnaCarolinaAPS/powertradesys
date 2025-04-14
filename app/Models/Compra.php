@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Produto extends Model
+class Compra extends Model
 {
     use HasFactory;
 
@@ -15,12 +15,12 @@ class Produto extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'nome',
-        'descricao',
+        'data',
+        'numero_factura',
+        'fornecedor',
     ];
 
-    public function itensDeCompra() {
+    public function itens() {
         return $this->hasMany(ItemCompra::class);
     }
-
 }

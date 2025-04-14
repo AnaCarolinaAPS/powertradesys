@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ContasFixas extends Model
+class ContasPagar extends Model
 {
     use HasFactory;
 
@@ -21,7 +21,7 @@ class ContasFixas extends Model
         'data_vencimento',
         'categoria_id',
         'subcategoria_id',
-        'ativa',
+        'contas_fixa_id',
     ];
 
     public function categoria()
@@ -34,9 +34,8 @@ class ContasFixas extends Model
         return $this->belongsTo(Categoria::class, 'subcategoria_id');
     }
 
-    public function contaspagars()
+    public function contafixa()
     {
-        return $this->hasMany(ContasPagar::class, 'contas_fixa_id');
+        return $this->belongsTo(ContasFixas::class, 'contas_fixa_id');
     }
-
 }

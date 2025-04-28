@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\FaturaCarga;
+use App\Models\Carga;
 use App\Models\FechamentoCaixa;
 
 class RelatorioController extends Controller
@@ -213,49 +214,56 @@ class RelatorioController extends Controller
         $startDate = Carbon::create($ano, $mes, 1)->startOfMonth()->toDateString();
         $endDate = Carbon::create($ano, $mes, 1)->endOfMonth()->toDateString();
 
+        $cargas = Carga::whereMonth('data_recebida', $mes)
+                    ->whereYear('data_recebida', $ano)
+                    ->pluck('id');
+
+        $factura_carga = FaturaCarga::whereIn('carga_id', $cargas)->get();
+
         // Filtrar os fechamentos de caixa no intervalo e agrupar por caixa_id
-        $fechamentos = FechamentoCaixa::whereBetween('start_date', [$startDate, $endDate])
-            ->with(['transacoesOrigem', 'caixa'])
-            ->get()
-            ->groupBy('caixa_id');
+        // $fechamentos = FechamentoCaixa::whereBetween('start_date', [$startDate, $endDate])
+        //     ->with(['transacoesOrigem', 'caixa'])
+        //     ->get()
+        //     ->groupBy('caixa_id');
 
         $lucroReal = 0;
         // Consolidar os totais por caixa
-        $detalhes = $fechamentos->map(function ($fechamentosPorCaixa, $caixaId) {
-            $totais = [
-                'gastos' => 0,
-                'salarios' => 0,
-                'despesas' => 0,
-                'entradas' => 0,
-                'lucroreal' => 0,
-                'total' => 0,
-            ];
+        // $detalhes = $fechamentos->map(function ($fechamentosPorCaixa, $caixaId) {
+        //     $totais = [
+        //         'gastos' => 0,
+        //         'salarios' => 0,
+        //         'despesas' => 0,
+        //         'entradas' => 0,
+        //         'lucroreal' => 0,
+        //         'total' => 0,
+        //     ];
 
-            foreach ($fechamentosPorCaixa as $fechamento) {
-                $totais['gastos'] += $fechamento->transacoesOrigem->where('tipo', 'saida')->sum('valor_origem');
-                $totais['salarios'] += $fechamento->transacoesOrigem->where('tipo', 'salario')->sum('valor_origem');
-                $totais['despesas'] += $fechamento->transacoesOrigem->where('tipo', 'despesa')->sum('valor_origem');
-                $totais['entradas'] += $fechamento->transacoesOrigem->where('tipo', 'entrada')->sum('valor_origem');
-            }
+        //     foreach ($fechamentosPorCaixa as $fechamento) {
+        //         $totais['gastos'] += $fechamento->transacoesOrigem->where('tipo', 'saida')->sum('valor_origem');
+        //         $totais['salarios'] += $fechamento->transacoesOrigem->where('tipo', 'salario')->sum('valor_origem');
+        //         $totais['despesas'] += $fechamento->transacoesOrigem->where('tipo', 'despesa')->sum('valor_origem');
+        //         $totais['entradas'] += $fechamento->transacoesOrigem->where('tipo', 'entrada')->sum('valor_origem');
+        //     }
 
-            // $totais['total'] = $totais['gastos'] + $totais['salarios'] + $totais['despesas'];
-            $totais['total'] = $totais['gastos'] + $totais['salarios'] + $totais['entradas'] + $totais['despesas'];
-            $totais['lucroreal'] = $totais['entradas'] + $totais['despesas'];
+        //     // $totais['total'] = $totais['gastos'] + $totais['salarios'] + $totais['despesas'];
+        //     $totais['total'] = $totais['gastos'] + $totais['salarios'] + $totais['entradas'] + $totais['despesas'];
+        //     $totais['lucroreal'] = $totais['entradas'] + $totais['despesas'];
 
-            return [
-                'caixa' => $fechamentosPorCaixa->first()->caixa,
-                'totais' => $totais,
-            ];
-        });
+        //     return [
+        //         'caixa' => $fechamentosPorCaixa->first()->caixa,
+        //         'totais' => $totais,
+        //     ];
+        // });
 
         $lucroTotal = 0;
 
-        // Filtrar os fechamentos de caixa no intervalo e agrupar por caixa_id
-        $faturas = FaturaCarga::whereHas('carga', function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('data_recebida', [$startDate, $endDate]);
-        })->get();        
+        // // Filtrar os fechamentos de caixa no intervalo e agrupar por caixa_id
+        // $faturas = FaturaCarga::whereHas('carga', function ($query) use ($startDate, $endDate) {
+        //     $query->whereBetween('data_recebida', [$startDate, $endDate]);
+        // })->get();        
 
-        return view('admin.relatoriogastos.show', compact('ano', 'mes', 'detalhes', 'lucroTotal', 'lucroReal'));
+
+        return view('admin.relatoriogastos.show', compact('ano', 'mes', 'factura_carga', 'lucroTotal', 'lucroReal'));
     }
 
 }

@@ -81,7 +81,35 @@ class CompraController extends Controller
      */
     public function update(Request $request, Compra $compra)
     {
-        //
+        try {
+            // Validação dos dados do formulário
+            $request->validate([
+                'data' => 'required|date|before_or_equal:today',
+                'fornecedor' => 'required|string|max:255',
+                // Adicione outras regras de validação conforme necessário
+            ]);
+
+            // Atualizar os dados do Shipper
+            $compra->update([
+                'data' => $request->input('data'),
+                'fornecedor' => $request->input('fornecedor'),
+                // Adicione outros campos conforme necessário
+            ]);
+
+            // Exibir toastr de sucesso
+            return redirect()->route('compras.show', ['compra' => $compra->id])->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Compra atualizada com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de Erro
+            return redirect()->route('compras.show', ['compra' => $compra->id])->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao atualizar a Compra: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 
     /**
@@ -89,6 +117,31 @@ class CompraController extends Controller
      */
     public function destroy(Compra $compra)
     {
-        //
+        if ($compra->itens()->count() > 0) {
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Não é possível excluir a Compra, pois ele possui produtos associados.',
+                'title'   => 'Erro',
+            ]);
+        }
+
+        try {
+            // Excluir a Compra do banco de dados
+            $compra->delete();
+
+            // Redirecionar após a exclusão bem-sucedida
+            return redirect()->route('compras.index')->with('toastr', [
+                'type'    => 'success',
+                'message' => 'Compra excluída com sucesso!',
+                'title'   => 'Sucesso',
+            ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao excluir a Compra: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 }

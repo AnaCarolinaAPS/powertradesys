@@ -40,20 +40,22 @@
                                         <th>Entradas (U$)</th>
                                         <th>Lucro Real (U$)</th>
                                         <th>Gastos (U$)</th>
+                                        <th>Salarios (U$)</th>
                                         <th>Saldo (U$)</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @foreach ($resultado as $linha)
-                                    <tr data-href="{{ route('relatorioGastos.show', ['periodo' => $linha['mes']]) }}">
-                                        <td>{{ $linha['mes'] }}</td>
-                                        <td>{{ \Carbon\Carbon::createFromFormat('Y-m', $linha['mes'])->locale('pt_BR')->translatedFormat('F Y') }}</td>
-                                        <td>{{ number_format($linha['despesas'], 2, ',', '.') }}</td>
-                                        <td>{{ number_format($linha['entradas'], 2, ',', '.') }}</td>
-                                        <td>{{ number_format($linha['lucros'], 2, ',', '.') }}</td>
-                                        <td>{{ number_format($linha['gastos'], 2, ',', '.') }}</td>
-                                        <td>{{ number_format($linha['saldo'], 2, ',', '.') }}</td>
-                                    </tr>
+                                    @foreach($resultado as $mes => $linha)
+                                        <tr data-href="{{ route('relatorioGastos.show', ['periodo' => $linha['mes']]) }}">
+                                            <td>{{ $mes }}</td>
+                                            <td>{{ \Carbon\Carbon::createFromFormat('Y-m', $mes)->locale('pt_BR')->translatedFormat('F Y') }}</td>
+                                            <td>{{ number_format($linha['despesas'], 2, ',', '.') }}</td>
+                                            <td>{{ number_format($linha['entradas'], 2, ',', '.') }}</td>
+                                            <td>{{ number_format($linha['lucros'], 2, ',', '.') }}</td>
+                                            <td>{{ number_format($linha['gastos'], 2, ',', '.') }}</td>
+                                            <td>{{ number_format($linha['salarios'], 2, ',', '.') }}</td>
+                                            <td>{{ number_format($linha['saldo'], 2, ',', '.') }}</td>
+                                        </tr>
                                     @endforeach
                                     <!-- end -->
                                 </tbody><!-- end tbody -->

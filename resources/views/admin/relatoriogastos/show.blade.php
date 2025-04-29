@@ -26,35 +26,79 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Relatório de Gastos {{ \Carbon\Carbon::create($ano, $mes)->format('F Y') }} CARGA X SEMANA</h4>                        
-                        <div class="table-responsive">
-                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Data Carga (Kgs)</th>
-                                        <th>Despesas Pago/Falta [Total] (U$)</th>
-                                        <th>Recebido (U$)</th>
-                                        <th>Falta Cobrar (U$)</th>
-                                        <th>Gastos (U$)</th>
-                                        <th>Saldo (U$)</th>
-                                    </tr>
-                                </thead><!-- end thead -->
-                                <tbody>
-                                    @foreach($factura_carga as $fatura)
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Gastos da Semana</h4>
+                            </div>                            
+                            <div class="col">
+                                <b>{{$totalGastosRs === null ? "" : "Total R$: ".number_format($totalGastosRs, 2, ',', '.');}} {{$totalGastosRs === null ? "" : "[U$ ".number_format(($totalGastosRs/5.85), 2, ',', '.')."]";}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastosGs === null ? "" : "Total G$: ".number_format($totalGastosGs, 0, ',', '.');}} {{$totalGastosGs === null ? "" : "[U$ ".number_format(($totalGastosGs/7950), 0, ',', '.')."]";}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastosUs === null ? "" : "Total U$: ".number_format($totalGastosUs, 2, ',', '.');}}</b>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <table id="dGastoUs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
                                         <tr>
-                                            <td>{{ $fatura->id }}</td>
-                                            <td>{{ \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y') }} ({{ number_format($fatura->invoices_pesos_orig(), 1, ',', '.') }} kgs)</td>
-                                            <td>{{ number_format($fatura->despesas_pagas(), 2, ',', '.') }} / {{ number_format($fatura->despesas_total()-$fatura->despesas_pagas(), 2, ',', '.') }} [{{ number_format($fatura->despesas_total(), 2, ',', '.') }}] </td>
-                                            <td>{{ number_format($fatura->invoices_pagas(), 2, ',', '.') }}</td>
-                                            <td>{{ number_format($fatura->valor_total()-$fatura->invoices_pagas(), 2, ',', '.') }}</td>
-                                            <td>{{ number_format($fatura->calcularGastosSemanaUs(), 2, ',', '.') }}</td>
-                                            <td>{{ number_format($fatura->invoices_pagas() + $fatura->calcularGastosSemanaUs(), 2, ',', '.') }}</td>
+                                            <th>Valor U$</th>
+                                            <th>Data</th>
+                                            <th>Descrição</th>
                                         </tr>
-                                    @endforeach
-                                     <!-- end -->
-                                </tbody><!-- end tbody -->
-                            </table> <!-- end table -->
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosUs as $gasto)
+                                        <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 2, '.', ',') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($gasto->data)->format('d/m/Y'); }}</td>
+                                            <td>{{ $gasto->descricao }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <table id="dGastoRs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Valor R$</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosRs as $gasto)
+                                        <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 2, '.', ',') }}</td>
+                                            <td>{{ $gasto->descricao }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
+                            <div class="col">
+                                <table id="dGastoGs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Valor G$</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosGs as $gasto)
+                                        <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 0, '.', ',') }}</td>
+                                            <td>{{ $gasto->descricao }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
                         </div>
                     </div><!-- end card -->
                 </div><!-- end card -->

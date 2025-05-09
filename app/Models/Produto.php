@@ -23,4 +23,11 @@ class Produto extends Model
         return $this->hasMany(ItemCompra::class);
     }
 
+    public function quantidade_comprada()
+    {
+        return $this->itensDeCompra->sum(function ($itens) {
+            return $itens->quantidade;
+        });
+    }
+
 }

@@ -40,6 +40,7 @@ use App\Http\Controllers\PacotesPendentesController;
 use App\Http\Controllers\FeriasController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\CompraController;
+use App\Http\Controllers\ItemCompraController;
 use App\Http\Controllers\ScrapingController;
 use Illuminate\Support\Facades\Route;
 
@@ -394,6 +395,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/{compra}', [CompraController::class, 'show'])->name('compras.show');
             Route::put('/{compra}', [CompraController::class, 'update'])->name('compras.update');
             Route::delete('/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
+        });
+
+        // Produtos CRUD
+        Route::prefix('/admin/compras/item')->group(function () {
+            Route::post('/', [ItemCompraController::class, 'store'])->name('compras_item.store');
+            Route::get('/{itemcompra}', [ItemCompraController::class, 'show'])->name('compras_item.show');
+            Route::put('/{itemcompra}', [ItemCompraController::class, 'update'])->name('compras_item.update');
+            Route::delete('/{itemcompra}', [ItemCompraController::class, 'destroy'])->name('compras_item.destroy');
         });
 
     });

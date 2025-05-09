@@ -31,7 +31,6 @@
                             <i class="fas fa-plus"></i> Nova
                         </button>
                         <div class="table-responsive">
-                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
                             <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>

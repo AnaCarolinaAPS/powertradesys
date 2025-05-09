@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('produto_id');
             $table->foreign('produto_id')->references('id')->on('produtos')->onDelete('cascade');
             $table->integer('quantidade');
-            $table->decimal('valor_unitario', 10, 2);
+            $table->decimal('valor_unitario', 10, 2)->nullable();
             $table->timestamps();
         });
     }

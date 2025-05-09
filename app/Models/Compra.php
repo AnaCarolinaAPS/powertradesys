@@ -23,4 +23,18 @@ class Compra extends Model
     public function itens() {
         return $this->hasMany(ItemCompra::class);
     }
+
+    public function quantidade_total()
+    {
+        return $this->itens->sum(function ($itens) {
+            return $itens->quantidade;
+        });
+    }
+
+    public function valor_total()
+    {
+        return $this->itens->sum(function ($item) {
+            return $item->quantidade*$item->valor_unitario;
+        });
+    }
 }

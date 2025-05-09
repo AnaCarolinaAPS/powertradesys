@@ -43,7 +43,7 @@
                                     @foreach ($all_items as $produto)
                                     <tr class="abrirModal" data-item-id="{{ $produto->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td>{{ $produto->nome }}</td>
-                                        <td>{{ 0 }}</td>
+                                        <td>{{ $produto->quantidade_comprada(); }}</td>
                                         <td>{{ 0 }}</td>
                                     </tr>
                                     @endforeach

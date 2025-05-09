@@ -41,6 +41,7 @@ use App\Http\Controllers\FeriasController;
 use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\ItemCompraController;
+use App\Http\Controllers\VendaController;
 use App\Http\Controllers\ScrapingController;
 use Illuminate\Support\Facades\Route;
 
@@ -388,7 +389,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{produto}', [ProdutoController::class, 'destroy'])->name('produtos.destroy');
         });
 
-        // Produtos CRUD
+        // Compra CRUD
         Route::prefix('/admin/compras')->group(function () {
             Route::get('/', [CompraController::class, 'index'])->name('compras.index');
             Route::post('/', [CompraController::class, 'store'])->name('compras.store');
@@ -397,12 +398,21 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
         });
 
-        // Produtos CRUD
+        // Item Compra CRUD
         Route::prefix('/admin/compras/item')->group(function () {
             Route::post('/', [ItemCompraController::class, 'store'])->name('compras_item.store');
             Route::get('/{itemcompra}', [ItemCompraController::class, 'show'])->name('compras_item.show');
             Route::put('/{itemcompra}', [ItemCompraController::class, 'update'])->name('compras_item.update');
             Route::delete('/{itemcompra}', [ItemCompraController::class, 'destroy'])->name('compras_item.destroy');
+        });
+
+        // Venda CRUD
+        Route::prefix('/admin/vendas')->group(function () {
+            Route::get('/', [VendaController::class, 'index'])->name('vendas.index');
+            Route::post('/', [VendaController::class, 'store'])->name('vendas.store');
+            Route::get('/{venda}', [VendaController::class, 'show'])->name('vendas.show');
+            Route::put('/{venda}', [VendaController::class, 'update'])->name('vendas.update');
+            Route::delete('/{venda}', [VendaController::class, 'destroy'])->name('vendas.destroy');
         });
 
     });

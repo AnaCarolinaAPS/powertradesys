@@ -38,6 +38,19 @@
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="fas fa-box-open"></i>
+                            <span>Produtos / Serviços</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="{{ route('produtos.index'); }}">Produtos</a></li>
+                            <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
+                            <li><a href="{{ route('compras.index'); }}">Compras</a></li>
+                            <li><a href="{{ route('vendas.index'); }}">Vendas</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-truck"></i>
                             <span>Logistica</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
@@ -58,18 +71,6 @@
                                 @endif
                                 </a>
                             </li>
-                        </ul>
-                    </li>
-
-                    <li>
-                        <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="fas fa-box-open"></i>
-                            <span>Produtos / Serviços</span>
-                        </a>
-                        <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="{{ route('produtos.index'); }}">Produtos</a></li>
-                            <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
-                            <li><a href="{{ route('compras.index'); }}">Compras</a></li>
                         </ul>
                     </li>
 

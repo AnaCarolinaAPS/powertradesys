@@ -59,4 +59,9 @@ class Cliente extends Model
     {
         return $this->creditos->sum('valor_credito');
     }
+
+    public function vendas()
+    {
+        return $this->hasMany(Venda::class);
+    }
 }

@@ -49,7 +49,7 @@
                                         <td>{{ \Carbon\Carbon::parse($warehouse->data)->format('d/m/Y') }}</td>
                                         <td><h6 class="mb-0">WR-{{ $warehouse->wr }}</h6></td>
                                         <td>{{ $warehouse->shipper->name }}</td>
-                                        <td>{{ $warehouse->quantidade_de_pacotes }}</td>
+                                        <td>{{ $warehouse->total_pacotes() }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

@@ -19,6 +19,8 @@ class Venda extends Model
         'numero_factura',
         'cliente_id',
         'condicao_venda',
+        'impresso',
+        'cancelado',
     ];
 
     public function cliente()

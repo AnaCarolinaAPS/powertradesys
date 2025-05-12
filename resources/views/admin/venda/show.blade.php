@@ -32,37 +32,65 @@
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="fornecedor">Nome do Cliente</label>
-                                        <input type="text" class="form-control" id="cliente_id" name="cliente_id" placeholder="Nome do Cliente" value="{{ $venda->cliente->user->name; }}" maxlength="255" readonly>
+                                        <label for="cliente_id">Cliente</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="cliente_id" name="cliente_id" required {{ $venda->impresso == 1 ? 'disabled' : '' }}>
+                                            @foreach ($all_clientes as $cliente)
+                                                <option value="{{ $cliente->id }}" {{ $venda->cliente_id == $cliente->id ? 'selected' : '' }}> {{ $cliente->user->name }} </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="numero_factura">Número da Factura</label>
-                                        <input type="text" class="form-control" id="numero_factura" name="numero_factura" placeholder="Número da Factura" value="{{ $venda->numero_factura; }}" maxlength="255" readonly>
+                                        <input type="text" class="form-control" id="numero_factura" name="numero_factura" placeholder="Número da Factura" value="{{ $venda->numero_factura; }}" maxlength="255" {{ $venda->impresso == 1 ? 'readonly' : '' }}>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="data">Data</label>
-                                        <input class="form-control" type="date" value="{{ $venda->data; }}" id="data" name="data" readonly>
+                                        <input class="form-control" type="date" value="{{ $venda->data; }}" id="data" name="data" {{ $venda->impresso == 1 ? 'readonly' : '' }}>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="numero_factura">Condição de Venda</label>
-                                        <select class="selectpicker form-control" id="condicao_venda" name="condicao_venda" readonly>
+                                        <select class="selectpicker form-control" id="condicao_venda" name="condicao_venda" {{ $venda->impresso == 1 ? 'disabled' : '' }}>
                                             <option value="contado" {{ $venda->condicao_venda == 'contado' ? 'selected' : '' }}> Contado </option>
                                             <option value="credito" {{ $venda->condicao_venda == 'credito' ? 'selected' : '' }}> Crédito </option>
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="impresso">Impresso</label>
+                                        <select class="selectpicker form-control" id="impresso" name="impresso" {{ $venda->impresso == 1 ? 'disabled' : '' }}>
+                                            <option value="1" {{ $venda->impresso == 1 ? 'selected' : '' }}> Sim </option>
+                                            <option value="0" {{ $venda->impresso == 0 ? 'selected' : '' }}> Não </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                @if ($venda->impresso == 1)
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="cancelado">Cancelado</label>
+                                        <select class="selectpicker form-control" id="cancelado" name="cancelado">
+                                            <option value="1" {{ $venda->cancelado == 1 ? 'selected' : '' }}> Sim </option>
+                                            <option value="0" {{ $venda->cancelado == 0 ? 'selected' : '' }}> Não </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                @else
+                                    <input type="hidden" name="cancelado" value="0">
+                                @endif
                             </div>
                             <div class="modal-footer mt-2">
                                 <!-- Botão de Exclusão -->
+                                 @if ($venda->impresso == 0)
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
                                     Excluir
                                 </button>
+                                @endif
                                 <a href="{{ route('vendas.index'); }}" class="btn btn-light waves-effect">Voltar</a>
                                 <button type="submit" class="btn btn-primary waves-effect waves-light" form="formDetalhe">Salvar</button>
                             </div>

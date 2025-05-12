@@ -28,4 +28,22 @@ class Venda extends Model
         return $this->belongsTo(Cliente::class);
     }
 
+    public function itens() {
+        return $this->hasMany(ItemVenda::class);
+    }
+
+    public function quantidade_total()
+    {
+        return $this->itens->sum(function ($itens) {
+            return $itens->quantidade;
+        });
+    }
+
+    public function valor_total()
+    {
+        return $this->itens->sum(function ($item) {
+            return $item->quantidade*$item->valor_unitario;
+        });
+    }
+
 }

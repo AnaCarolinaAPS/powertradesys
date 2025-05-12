@@ -100,7 +100,7 @@
             </div>
             <!-- end col -->
         </div>
-        {{--
+        
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">
@@ -117,6 +117,9 @@
                                         <th>Produto</th>
                                         <th>Qtd</th>
                                         <th>Valor Unitário</th>
+                                        <th>Extentas</th>
+                                        <th>IVA 5%</th>
+                                        <th>IVA 10%</th>
                                         <th>Total</th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -127,6 +130,9 @@
                                         <td>{{ $item->produto->nome }}</td>
                                         <td>{{ $item->quantidade }}</td>
                                         <td>{{ number_format($item->valor_unitario, 0, ',', '.') }}</td>
+                                        <td>{{ $item->valor_de_venta == 'extentas' ? number_format($item->valor_unitario, 0, ',', '.') : '-' }}</td>
+                                        <td>{{ $item->valor_de_venta == 'IVA5' ? number_format($item->valor_unitario, 0, ',', '.') : '-' }}</td>
+                                        <td>{{ $item->valor_de_venta == 'IVA10' ? number_format($item->valor_unitario, 0, ',', '.') : '-' }}</td>
                                         <td>{{ number_format($item->quantidade*$item->valor_unitario, 0, ',', '.') }}</td>
                                     </tr>
                                     @endforeach
@@ -179,7 +185,7 @@
                         <h5 class="modal-title" id="myLargeModalLabel">Adicionar Produto</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form class="form-horizontal mt-3" method="POST" action="{{ route('compras_item.store') }}" id="formNovoPacote">
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('vendas_item.store') }}" id="formNovoPacote">
                         @csrf
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id da Warehouse -->
@@ -211,7 +217,7 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="tituloModal">Item da Compra</h5>
+                        <h5 class="modal-title" id="tituloModal">Item da Venda</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form class="form-horizontal mt-3" method="POST" id="formAtualizacao" action="">
@@ -246,6 +252,16 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="valor_valor_de_venta">Valor de Ventas</label>
+                                        <select class="selectpicker form-control" id="dvalor_de_venta" name="valor_de_venta">
+                                            <option value="extentas"> Extentas </option>
+                                            <option value="IVA5"> IVA 5% </option>
+                                            <option value="IVA10"> IVA 10% </option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -270,7 +286,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Tem certeza que deseja excluir o item desta Compra?</p>
+                        <p>Tem certeza que deseja excluir o item desta Venda?</p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
@@ -284,9 +300,6 @@
                 </div>
             </div>
         </div>
-
-
-        --}}
     </div>
 </div>
 
@@ -306,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {
             const itemId = event.currentTarget.dataset.itemId;
-            const url = "{{ route('compras_item.show', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('vendas_item.show', ':id') }}".replace(':id', itemId);
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -315,13 +328,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     document.getElementById('dNome').value = data.produto.nome;
                     document.getElementById('dquantidade').value = data.quantidade;
                     document.getElementById('dvalor_unitario').value = data.valor_unitario;
+                    document.getElementById('dvalor_de_venta').value = data.valor_de_venta;
+                    $('.selectpicker').selectpicker('refresh');
 
                     var form = document.getElementById('formAtualizacao');
-                    var novaAction = "{{ route('compras_item.update', ['itemcompra' => ':id']) }}".replace(':id', data.id);
+                    var novaAction = "{{ route('vendas_item.update', ['itemvenda' => ':id']) }}".replace(':id', data.id);
                     form.setAttribute('action', novaAction);
 
                     var form2 = document.getElementById('formDeleteModal');
-                    var novaAction2 = "{{ route('compras_item.destroy', ['itemcompra' => ':id']) }}".replace(':id', data.id);
+                    var novaAction2 = "{{ route('vendas_item.destroy', ['itemvenda' => ':id']) }}".replace(':id', data.id);
                     form2.setAttribute('action', novaAction2);
                 })
                 .catch(error => console.error('Erro:', error));

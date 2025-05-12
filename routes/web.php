@@ -42,6 +42,7 @@ use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\CompraController;
 use App\Http\Controllers\ItemCompraController;
 use App\Http\Controllers\VendaController;
+use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ScrapingController;
 use Illuminate\Support\Facades\Route;
 
@@ -413,6 +414,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/{venda}', [VendaController::class, 'show'])->name('vendas.show');
             Route::put('/{venda}', [VendaController::class, 'update'])->name('vendas.update');
             Route::delete('/{venda}', [VendaController::class, 'destroy'])->name('vendas.destroy');
+        });
+
+        // Item Venda CRUD
+        Route::prefix('/admin/vendas/item')->group(function () {
+            Route::post('/', [ItemVendaController::class, 'store'])->name('vendas_item.store');
+            Route::get('/{itemvenda}', [ItemVendaController::class, 'show'])->name('vendas_item.show');
+            Route::put('/{itemvenda}', [ItemVendaController::class, 'update'])->name('vendas_item.update');
+            Route::delete('/{itemvenda}', [ItemVendaController::class, 'destroy'])->name('vendas_item.destroy');
         });
 
     });

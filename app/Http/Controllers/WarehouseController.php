@@ -18,10 +18,12 @@ class WarehouseController extends Controller
     public function index()
     {
         // $all_items = Warehouse::all();
-        $all_items = Warehouse::select('warehouses.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
-                    ->leftJoin('pacotes', 'warehouses.id', '=', 'pacotes.warehouse_id')
-                    ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.observacoes', 'warehouses.shipper_id', 'warehouses.embarcador_id', 'warehouses.created_at', 'warehouses.updated_at')
-                    ->get();
+        // $all_items = Warehouse::select('warehouses.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
+        //             ->leftJoin('pacotes', 'warehouses.id', '=', 'pacotes.warehouse_id')
+        //             ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.observacoes', 'warehouses.shipper_id', 'warehouses.embarcador_id', 'warehouses.created_at', 'warehouses.updated_at')
+        //             ->get();
+
+        $all_items = Warehouse::all();
         $all_shippers = Shipper::all();
         $all_embarcadors = Fornecedor::where('tipo', 'embarcador')->get();
         return view('admin.warehouse.index', compact('all_items', 'all_shippers', 'all_embarcadors'));

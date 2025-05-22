@@ -69,7 +69,7 @@ class VendaController extends Controller
             // Buscar a Compra pelo ID
             $venda = Venda::findOrFail($id);
             $all_clientes = Cliente::with('user')->get();
-            $all_produtos = Produto::all();
+            $all_produtos = Produto::comEstoque();//all();
             // Retornar a view com os detalhes do shipper
             return view('admin.venda.show', compact('venda', 'all_produtos', 'all_clientes'));
         } catch (\Exception $e) {

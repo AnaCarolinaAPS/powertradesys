@@ -76,9 +76,22 @@ class ItemVendaController extends Controller
                 'valor_unitario' => 'required|numeric',
                 'valor_de_venta' => 'required|in:extentas,IVA5,IVA10',
                 // Adicione outras regras de validação conforme necessário
-            ]);
+            ]);            
 
             $item = ItemVenda::findOrFail($request->input('id'));
+
+            $estoque_disponivel = $item->produto->quantidade_estoque() + $item->quantidade; // devolve a quantidade anterior ao estoque
+
+            //O estoque é calculado baseado em compras e vendas, a venda não pode ser maior do que a quantidade em estoque.
+            if ($request->input('quantidade') > $estoque_disponivel){
+                // Exibir toastr de Erro
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'warning',
+                    'message' => 'Não existe essa quantidade em estoque do Produto<br>NÃO FOI POSSÍVEL ATUALIZAR!!<br>Quantidade Máxima: '.$item->produto->quantidade_estoque(),
+                    'title'   => 'Atenção',
+                ]);
+            }
+
             // Atualizar os dados           
             $item->update([
                 'quantidade' => $request->input('quantidade'),

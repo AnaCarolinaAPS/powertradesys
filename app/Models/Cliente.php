@@ -20,6 +20,8 @@ class Cliente extends Model
         'caixa_postal',
         'apelido',
         'user_id',
+        'numero_documento',
+        'tipo_documento',
     ];
 
     public function user()

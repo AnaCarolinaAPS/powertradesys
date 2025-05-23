@@ -155,6 +155,27 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row mt-2">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="tipo_documento">Tipo Documento</label>
+                                    <select class="selectpicker form-control" id="tipo_documento" name="tipo_documento">
+                                        <option value="">-- Nenhum selecionado --</option>
+                                        <option value="CPF">CPF</option>
+                                        <option value="RG">RG</option>
+                                        <option value="RUC">RUC</option>
+                                        <option value="CI">CI</option>
+                                        <option value="PASSAPORTE">Passaporte</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="numero_documento">Número Documento</label>
+                                    <input type="text" class="form-control" id="numero_documento" name="numero_documento" placeholder="Número do Documento" maxlength="255">
+                                </div>
+                            </div>
+                        </div>
                         {{-- <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -163,7 +184,6 @@
                                 </div>
                             </div>
                         </div> --}}
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>

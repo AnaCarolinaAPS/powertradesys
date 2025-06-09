@@ -42,14 +42,22 @@
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="numero_factura">Número da Factura</label>
-                                        <input type="text" class="form-control" id="numero_factura" name="numero_factura" placeholder="Número da Factura" value="{{ $venda->numero_factura; }}" maxlength="255" {{ $venda->impresso == 1 ? 'readonly' : '' }}>
+                                        <label for="nro_documento">Número do Documento</label>
+                                        <input type="text" class="form-control" id="nro_documento" name="nro_documento" placeholder="Número da Factura" value="{{ $venda->cliente->tipo_documento.' '.$venda->cliente->numero_documento; }}" maxlength="255" readonly>
                                     </div>
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="data">Data</label>
                                         <input class="form-control" type="date" value="{{ $venda->data; }}" id="data" name="data" {{ $venda->impresso == 1 ? 'readonly' : '' }}>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="numero_factura">Número da Factura</label>
+                                        <input type="text" class="form-control" id="numero_factura" name="numero_factura" placeholder="Número da Factura" value="{{ $venda->numero_factura; }}" maxlength="255" {{ $venda->impresso == 1 ? 'readonly' : '' }}>
                                     </div>
                                 </div>
                                 <div class="col">
@@ -85,6 +93,7 @@
                                 @endif
                             </div>
                             <div class="modal-footer mt-2">
+                                <a href="{{ route('vendas.pdf', ['venda' => $venda->id]); }}" class="btn btn-info me-auto waves-effect">Gerar PDF</a>
                                 <!-- Botão de Exclusão -->
                                  @if ($venda->impresso == 0)
                                 <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
@@ -141,12 +150,21 @@
                             </table> <!-- end table -->
                         </div>
                         <div class="row text-center">
-                            {{-- <div class="col">
-                                <p><h6 class="mb-0">Quantidade Total: {{ $venda->quantidade_total(); }}</h6></p>
+                            <!-- <div class="col">
+                                <p><h6 class="mb-0">Quantidade Itens: {{ $venda->quantidade_total(); }}</h6></p>
+                            </div> -->
+                            <div class="col">
+                                <p><h6 class="mb-0">Valor Extentas: {{number_format($venda->total_extentas(), 0, ',', '.')}} gs</h6></p>
+                            </div>
+                            <div class="col">
+                                <p><h6 class="mb-0">Valor IVA 5%: {{number_format($venda->total_iva5()/11, 0, ',', '.')}} gs</h6></p>
+                            </div>
+                            <div class="col">
+                                <p><h6 class="mb-0">Valor IVA 10%: {{number_format($venda->total_iva10()/11, 0, ',', '.')}} gs</h6></p>
                             </div>
                             <div class="col">
                                 <p><h6 class="mb-0">Valor Total: {{number_format($venda->valor_total(), 0, ',', '.')}} gs</h6></p>
-                            </div> --}}
+                            </div>
                         </div>
                     </div><!-- end card -->
                 </div><!-- end card -->

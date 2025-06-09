@@ -379,6 +379,7 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
             Route::get('/invoice-pdf/{invoice}', [PDFController::class, 'invoicePDF'])->name('invoices.pdf');
+            Route::get('/venda-pdf/{venda}', [PDFController::class, 'vendaPDF'])->name('vendas.pdf');
         });
 
         // Produtos CRUD

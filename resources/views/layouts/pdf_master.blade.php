@@ -7,7 +7,6 @@
         <!-- Bootstrap Css -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <style>
-
             div #cabecalho {
                 border: 0;
             }
@@ -183,6 +182,116 @@
                 padding-right: 10px;
             }
 
+            /* CSS para FACTURAS / VENDAS*/
+            .folha {
+                position: relative;
+                max-width: 200mm; /* A4 */
+                max-height: 295mm;
+                padding: 0;
+                margin: 0;
+                font-family: Arial, sans-serif;
+                font-size: 11px;
+                /* border: 1px dashed red; */
+            }
+
+            .campo {
+                position: absolute;
+            }
+
+            .align-center {
+                text-align: center;
+            }
+
+            .font-white {
+                color: white;
+            }
+
+            .data-venda {
+                top: 113px;
+                left: 120px;
+            }
+
+            .contado {
+                top: 118px;
+                left: 550px;
+            }
+
+            .nome-cliente {
+                top: 133px;
+                left: 160px;
+            }
+
+            .doc-cliente {
+                top: 150px;
+                left: 50px;
+            }
+            
+            .folha .vendaitens {
+                position: absolute;
+                top: 215px;
+                width: 650px; 
+                margin-left: -10px;
+                border-collapse: collapse;
+                font-size: 11px;
+            }
+
+            .vendaitens tr {
+                /* height: 25px; */
+            }
+
+            .vendaitens td {
+                border: 1px solid #FFF;
+                padding: 3px 2px;
+                vertical-align: top;
+            }
+
+            .col-qtd {
+                width: 45px;
+            }
+
+            .col-descricao {
+                width: 320px;
+                max-width: 325px;
+                white-space: nowrap;           /* força ficar em uma linha */
+                overflow: hidden;              /* corta o que passar da largura */
+                text-overflow: ellipsis;       /* adiciona "..." no fim */
+            }
+
+            .col-unitario {
+                width: 60px;
+                max-width: 60px !important;
+            }
+
+            .col-totais {
+                width: 68px;
+                max-width: 65px;
+            }
+
+            .total {
+                top:  450px;
+                left: 550px;
+                font-size: 14px;
+            }
+
+            .total-extenso {
+                top:  445px;
+                left: 80px;
+            }
+
+            .iva5 {
+                top:  510px;
+                left: 250px;
+            }
+
+            .iva10 {
+                top:  510px;
+                left: 350px;
+            }
+
+            .iva-total {
+                top:  510px;
+                left: 450px;
+            }
         </style>
     </head>
 

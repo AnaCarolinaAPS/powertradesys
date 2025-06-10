@@ -45,6 +45,45 @@ class Venda extends Model
 
         $texto = '';
 
+        // 1. Limpar a entrada: remover pontos e garantir que é um número inteiro
+        if (is_string($numero)) {
+            $numero = str_replace('.', '', $numero);
+        }
+        $numero = intval($numero);
+
+        if ($numero == 0) return 'cero';
+        if ($numero == 100) return 'cien';
+
+        $texto = '';
+
+        // Bilhões (para o caso de expandir no futuro, mas o limite aqui é 999.999.999)
+        if ($numero >= 1000000000) {
+            $billones = intval($numero / 1000000000);
+            $resto = $numero % 1000000000;
+            $texto .= $this->numeroPorExtensoEspanhol($billones) . ' mil millones';
+            if ($resto > 0) {
+                $texto .= ' ' . $this->numeroPorExtensoEspanhol($resto);
+            }
+            return trim($texto);
+        }
+        
+        // Milhões
+        if ($numero >= 1000000) {
+            $millones = intval($numero / 1000000);
+            $resto = $numero % 1000000;
+
+            if ($millones == 1) {
+                $texto .= 'un millón'; // 'uno millón' não é correto, é 'un millón'
+            } else {
+                $texto .= $this->numeroPorExtensoEspanhol($millones) . ' millones';
+            }
+
+            if ($resto > 0) {
+                $texto .= ' ' . $this->numeroPorExtensoEspanhol($resto);
+            }
+            return trim($texto);
+        }
+
         // Milhares
         if ($numero >= 1000) {
             $milhar = intval($numero / 1000);
@@ -59,7 +98,6 @@ class Venda extends Model
             if ($resto > 0) {
                 $texto .= ' ' . $this->numeroPorExtensoEspanhol($resto);
             }
-
             return trim($texto);
         }
 
@@ -68,21 +106,24 @@ class Venda extends Model
             $centena = intval($numero / 100);
             $resto = $numero % 100;
 
+            if ($numero === 100 && $resto === 0) { // Cuidar de "cien" vs "ciento y algo"
+                 return 'cien';
+            }
+
             $texto .= $centenas[$centena];
 
             if ($resto > 0) {
                 $texto .= ' ' . $this->numeroPorExtensoEspanhol($resto);
             }
-
             return trim($texto);
         }
 
-        // Dezenas
+        // Dezenas (20 a 99)
         if ($numero >= 20) {
             $dezena = intval($numero / 10);
             $unidade = $numero % 10;
 
-            if ($numero < 30) {
+            if ($dezena == 2) { // 20 a 29
                 return 'veinti' . $unidades[$unidade];
             }
 
@@ -91,11 +132,10 @@ class Venda extends Model
             if ($unidade > 0) {
                 $texto .= ' y ' . $unidades[$unidade];
             }
-
             return trim($texto);
         }
 
-        // Menor que 20
+        // Menor que 20 (0 a 19)
         return $unidades[$numero];
     }
 

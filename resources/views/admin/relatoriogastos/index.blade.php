@@ -66,8 +66,28 @@
                                 <div class="tab-content" id="myTabContent">
                                     <div class="tab-pane fade show active" id="us" role="tabpanel" aria-labelledby="us-tab">
                                         <div class="row mt-4">
-                                            <div class="col-xl-12">
+                                            <div class="col">
                                                 <h4 class="card-title mb-4">Gastos U$</h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">ENTRADAS:
+                                                    {{ number_format($fluxosUsEntradas->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">DESPESAS:
+                                                    {{ number_format($fluxosUsDespesas->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">GASTOS:
+                                                    {{ number_format($fluxosUsGastos->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">SALDO:
+                                                    {{ number_format($fluxosUsEntradas->sum('valor_origem')+$fluxosUsDespesas->sum('valor_origem')+$fluxosUsGastos->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -127,7 +147,7 @@
                                                                     @endif
                                                                 </td>
                                                                 <td>
-                                                                    {{ number_format($fluxo->valor_origem, 0, ',', '') }}
+                                                                    {{ number_format($fluxo->valor_origem, 2, ',', '') }}
                                                                 </td>
                                                                 </tr>
                                                             @endforeach
@@ -230,8 +250,28 @@
                                     </div>
                                     <div class="tab-pane fade" id="gs" role="tabpanel" aria-labelledby="gs-tab">
                                         <div class="row mt-4">
-                                            <div class="col-xl-12">
+                                            <div class="col">
                                                 <h4 class="card-title mb-4">Gastos G$</h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">ENTRADAS:
+                                                    {{ number_format($fluxosGsEntradas->sum('valor_origem'), 0, ',', '.') }} G$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">DESPESAS:
+                                                    {{ number_format($fluxosGsDespesas->sum('valor_origem'), 0, ',', '.') }} G$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">GASTOS:
+                                                   {{ number_format($fluxosGsGastos->sum('valor_origem'), 0, ',', '.') }} G$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">SALDO:
+                                                    {{ number_format($fluxosGsEntradas->sum('valor_origem')+$fluxosGsDespesas->sum('valor_origem')+$fluxosGsGastos->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -394,8 +434,28 @@
                                     </div>
                                     <div class="tab-pane fade" id="rs" role="tabpanel" aria-labelledby="rs-tab">
                                         <div class="row mt-4">
-                                            <div class="col-xl-12">
+                                            <div class="col">
                                                 <h4 class="card-title mb-4">Gastos R$</h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">ENTRADAS:
+                                                    {{ number_format($fluxosRsEntradas->sum('valor_origem'), 2, ',', '.') }} R$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">DESPESAS:
+                                                    {{ number_format($fluxosRsDespesas->sum('valor_origem'), 2, ',', '.') }} R$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">GASTOS:
+                                                   {{ number_format($fluxosRsGastos->sum('valor_origem'), 2, ',', '.') }} R$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">SALDO:
+                                                    {{ number_format($fluxosRsEntradas->sum('valor_origem')+$fluxosRsDespesas->sum('valor_origem')+$fluxosRsGastos->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -455,7 +515,7 @@
                                                                     @endif
                                                                 </td>
                                                                 <td>
-                                                                    {{ number_format($fluxo->valor_origem, 0, ',', '') }}
+                                                                    {{ number_format($fluxo->valor_origem, 2, ',', '') }}
                                                                 </td>
                                                                 </tr>
                                                             @endforeach

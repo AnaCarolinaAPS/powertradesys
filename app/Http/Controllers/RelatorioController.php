@@ -342,4 +342,50 @@ class RelatorioController extends Controller
     
         return view('admin.relatoriogastos.show', compact('ano', 'mes', 'gastosUs', 'gastosGs', 'gastosRs', 'totalGastosUs', 'totalGastosGs', 'totalGastosRs'));
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexGastosMensais(Request $request){
+        $ano = $request->input('ano', date('Y'));
+        $mes = $request->input('mes', date('n'));
+
+        // 1. Filtrar os caixas que utilizam a moeda U$
+        $caixasUS = Caixa::where('moeda', '=', 'U$')->pluck('id');
+
+        // 2. Filtrar os FechamentoCaixa
+        $fechamentosUS = FechamentoCaixa::whereIn('caixa_id', $caixasUS)
+            ->whereMonth('start_date', $mes)
+            ->whereYear('start_date', $ano)
+            ->pluck('id');
+
+        // 2. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de GASTOS
+        $fluxosUsGastos = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosUS)
+            ->whereYear('data', $ano)
+            ->whereMonth('data', $mes)
+            ->where(function ($query) {
+                $query->where('tipo', 'saida')
+                      ->orWhere('tipo', 'salario');
+            })
+            ->get();
+
+        // 3. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de ENTRADAS (pagamentos)
+        $fluxosUsEntradas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosUS)
+            ->whereYear('data', $ano)
+            ->whereMonth('data', $mes)
+            ->where('tipo', 'entrada')
+            ->get();
+
+        // 4. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de DESPESAS (pagamentos a fornecedores) 
+        $fluxosUsDespesas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosUS)
+            ->whereYear('data', $ano)
+            ->whereMonth('data', $mes)
+            ->where('tipo', 'despesa')
+            ->get();
+        
+        
+        $teste = $caixasUS;
+    
+        return view('admin.relatoriogastos.index', compact('teste','fluxosUsGastos', 'fluxosUsEntradas', 'fluxosUsDespesas'));
+    }
 }

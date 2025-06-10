@@ -240,13 +240,18 @@
             }
 
             .vendaitens td {
-                border: 1px solid #FFF;
-                padding: 3px 2px;
+                border: 1px solid #DDD;
+                padding: 4px 2px 3px 2px;
                 vertical-align: top;
             }
 
             .col-qtd {
-                width: 45px;
+                width: 25px;
+                max-width: 25px !important;
+                white-space: nowrap;           /* força ficar em uma linha */
+                overflow: hidden;              /* corta o que passar da largura */
+                text-overflow: ellipsis;       /* adiciona "..." no fim */
+                text-align: center;    
             }
 
             .col-descricao {
@@ -255,42 +260,59 @@
                 white-space: nowrap;           /* força ficar em uma linha */
                 overflow: hidden;              /* corta o que passar da largura */
                 text-overflow: ellipsis;       /* adiciona "..." no fim */
+                left: 41px;
             }
 
             .col-unitario {
                 width: 60px;
                 max-width: 60px !important;
+                left: 371px;
             }
 
-            .col-totais {
+            .col-totaisE {
                 width: 68px;
-                max-width: 65px;
+                max-width: 68px !important;
+                left: 436px;
+            }
+
+            .col-totais5 {
+                width: 70px;
+                max-width: 70px !important;
+                left: 515px;
+            }
+
+            .col-totais10 {
+                width: 70px;
+                max-width: 70px !important;
+                left: 595px;
             }
 
             .total {
-                top:  450px;
-                left: 550px;
+                top:  455px;
+                left: 560px;
                 font-size: 14px;
             }
 
             .total-extenso {
-                top:  445px;
-                left: 80px;
+                top:  440px;
+                left: 100px;
+                max-width: 450px !important;
+                line-height: 1.7; /* You can adjust this value */
             }
 
             .iva5 {
-                top:  510px;
-                left: 250px;
+                top:  485px;
+                left: 150px;
             }
 
             .iva10 {
-                top:  510px;
-                left: 350px;
+                top:  485px;
+                left: 300px;
             }
 
             .iva-total {
-                top:  510px;
-                left: 450px;
+                top:  485px;
+                left: 460px;
             }
         </style>
     </head>

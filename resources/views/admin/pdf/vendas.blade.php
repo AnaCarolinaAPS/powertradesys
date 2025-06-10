@@ -14,58 +14,42 @@
         <div class="campo doc-cliente">
             {{ $venda->cliente->numero_documento }} {{ $venda->cliente->tipo_documento }}
         </div>
-        <!-- Adicione mais campos conforme necessário -->
-    
-        
-        <table class="vendaitens">
-            <tbody>
-                @php
-                    $i = 0
-                @endphp
-                @foreach ($venda->itens as $item)
-                <tr>
-                    <td class="col-qtd align-center">{{ $item->quantidade }}</td>
-                    <td class="col-descricao">{{ $item->produto->nome }}</td>
-                    <td class="col-unitario">{{ number_format($item->valor_unitario, 0, ',', '.') }}</td>
-                    <td class="col-totais">{{ $item->valor_de_venta == 'extentas' ? number_format($item->quantidade * $item->valor_unitario, 0, ',', '.') : '-' }}</td>
-                    <td class="col-totais">{{ $item->valor_de_venta == 'IVA5' ? number_format($item->quantidade * $item->valor_unitario, 0, ',', '.') : '-' }}</td>
-                    <td class="col-totais">{{ $item->valor_de_venta == 'IVA10' ? number_format($item->quantidade * $item->valor_unitario, 0, ',', '.') : '-' }}</td>
-                    <!-- Adicione mais colunas conforme necessário -->
-                </tr>
-                @php
-                    ++$i
-                @endphp
-                @endforeach
-                @for ($i = $i; $i <= 9; $i++)
-                    <tr class="font-white">
-                        <td class="align-center align-center">.</td>
-                        <td class="align-center">.</td>
-                        <td class="align-center">.</td>
-                        <td class="align-center">.</td>
-                        <td class="align-center">.</td>
-                        <td class="align-center">.</td>
-                        <!-- Adicione mais colunas conforme necessário -->
-                    </tr>
-                    <!-- Adicione mais linhas conforme necessário -->
-                @endfor
-                <!-- SUBTOTAIS -->
-                <tr>
-                    <td class="col-qtd"></td>
-                    <td class="col-descricao"></td>
-                    <td class="col-unitario"></td>
-                    <td class="col-totais">{{ $venda->total_extentas() > 0 ? number_format($venda->total_extentas(), 0, ',', '.') : '-' }}</td>
-                    <td class="col-unitario">{{ $venda->total_iva5() > 0 ? number_format($venda->total_iva5(), 0, ',', '.') : '-' }}</td>
-                    <td class="col-unitario">{{ $venda->total_iva10() > 0 ? number_format($venda->total_iva10(), 0, ',', '.') : '-' }}</td>
-                    <!-- Adicione mais colunas conforme necessário -->
-                </tr>
-            </tbody>
-        </table>        
+        <!-- Adicione mais campos conforme necessário -->        
+
+        @php
+            $top = 200;
+            $altura = 22;
+            $i = 0;
+        @endphp
+        @foreach ($venda->itens as $item)
+        <div class="campo col-qtd" style="top: {{$top+$altura*($i+1);}}px;"> {{ $item->quantidade }}</div>
+        <div class="campo col-descricao" style="top: {{$top+$altura*($i+1);}}px;"> {{ $item->produto->nome }}</div>
+        <div class="campo col-unitario" style="top: {{$top+$altura*($i+1);}}px;"> {{ number_format($item->valor_unitario, 0, ',', '.') }}</div>
+        <div class="campo col-totaisE" style="top: {{$top+$altura*($i+1);}}px;"> {{ $item->valor_de_venta == 'extentas' ? number_format($item->quantidade * $item->valor_unitario, 0, ',', '.') : '-' }}</div>
+        <div class="campo col-totais5" style="top: {{$top+$altura*($i+1);}}px;">{{ $item->valor_de_venta == 'IVA5' ? number_format($item->quantidade * $item->valor_unitario, 0, ',', '.') : '-' }}</div>
+        <div class="campo col-totais10" style="top: {{$top+$altura*($i+1);}}px;">{{ $item->valor_de_venta == 'IVA10' ? number_format($item->quantidade * $item->valor_unitario, 0, ',', '.') : '-' }}</div>
+        @php
+            ++$i
+        @endphp
+        @endforeach
+        <!-- @for ($i = $i; $i < 9; $i++)
+            <div class="campo col-qtd" style="top: {{$top+$altura*($i+1);}}px;"> 00000000 </div>
+            <div class="campo col-descricao" style="top: {{$top+$altura*($i+1);}}px;"> ------------------------------- </div>
+            <div class="campo col-unitario" style="top: {{$top+$altura*($i+1);}}px;"> 000.000.000 </div>
+            <div class="campo col-totaisE" style="top: {{$top+$altura*($i+1);}}px;"> 000.000.000 </div>
+            <div class="campo col-totais5" style="top: {{$top+$altura*($i+1);}}px;"> 000.000.000 </div>
+            <div class="campo col-totais10" style="top: {{$top+$altura*($i+1);}}px;"> 000.000.000 </div>
+        @endfor         -->
+
+        <div class="campo col-totaisE" style="top: {{$top+$altura*(10);}}px;"> {{ $venda->total_extentas() > 0 ? number_format($venda->total_extentas, 0, ',', '.') : '-' }}</div>
+        <div class="campo col-totais5" style="top: {{$top+$altura*(10);}}px;;">{{ $venda->total_iva5() > 0 ? number_format($venda->total_iva5(), 0, ',', '.') : '-' }}</div>
+        <div class="campo col-totais10" style="top: {{$top+$altura*(10);}}px;;">{{ $venda->total_iva10() > 0 ? number_format($venda->total_iva10(), 0, ',', '.') : '-' }}</div>
 
         <div class="campo total">
             {{ $venda->valor_total() > 0 ? number_format($venda->valor_total(), 0, ',', '.') : '-' }}
         </div>
         <div class="campo total-extenso">
-            {{ ucfirst($venda->valor_total_extenso()); }} -----------
+            {{ ucfirst($venda->valor_total_extenso()); }} -----
         </div>         
         <div class="campo iva5">
             {{ $venda->total_iva5() > 0 ? number_format($venda->total_iva5()/5, 0, ',', '.') : '-' }}

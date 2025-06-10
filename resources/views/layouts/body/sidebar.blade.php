@@ -38,14 +38,25 @@
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="fas fa-box-open"></i>
+                            <span>Produtos / Serviços</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="{{ route('produtos.index'); }}">Produtos</a></li>
+                            <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
+                            <li><a href="{{ route('compras.index'); }}">Compras</a></li>
+                            <li><a href="{{ route('vendas.index'); }}">Vendas</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-truck"></i>
                             <span>Logistica</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
-                                    {{-- <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
-                                    <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li> --}}
                                     <li><a href="{{ route('shippers.index'); }}">Shippers</a></li>
                                     <li><a href="{{ route('freteiros.index'); }}">Freteiros</a></li>
                                 </ul>
@@ -74,7 +85,6 @@
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="{{ route('caixas.index'); }}">Caixas</a></li>
-                                    <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
                                     <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
                                 </ul>
                             </li>

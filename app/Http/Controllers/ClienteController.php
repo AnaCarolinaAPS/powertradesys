@@ -41,6 +41,8 @@ class ClienteController extends Controller
             $request->validate([
                 'caixa_postal' => 'required|string|max:6|unique:clientes',
                 'apelido' => 'string',
+                'numero_documento' => 'nullable|string|max:255|unique:clientes',
+                'tipo_documento' => 'nullable|in:RG,CPF,RUC,CI,PASSAPORTE',
                 // Outras regras de validação para outros campos
             ]);
 
@@ -49,6 +51,8 @@ class ClienteController extends Controller
                 'caixa_postal' => $request->input('caixa_postal'),
                 'user_id' => $request->input('user_id'),
                 'apelido' => $request->input('apelido'),
+                'numero_documento' => $request->input('numero_documento'),
+                'tipo_documento' => $request->input('tipo_documento'),
                 // Outros campos
             ]);
 
@@ -103,13 +107,17 @@ class ClienteController extends Controller
     {
         try {
             $request->validate([
-                'apelido' => 'required|string|max:255|unique:clientes',
+                'apelido' => 'required|string|max:255|unique:clientes,apelido,' . $cliente->id,
+                'numero_documento' => 'string|max:255|unique:clientes,numero_documento,' . $cliente->id,
+                'tipo_documento' => 'in:RG,CPF,RUC,CI,PASSAPORTE',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Atualizar os dados
             $cliente->update([
                 'apelido' => $request->input('apelido'),
+                'numero_documento' => $request->input('numero_documento'),
+                'tipo_documento' => $request->input('tipo_documento'),
                 // Adicione outros campos conforme necessário
             ]);
 

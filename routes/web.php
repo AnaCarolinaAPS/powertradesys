@@ -38,6 +38,11 @@ use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CreditoController;
 use App\Http\Controllers\PacotesPendentesController;
 use App\Http\Controllers\FeriasController;
+use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\CompraController;
+use App\Http\Controllers\ItemCompraController;
+use App\Http\Controllers\VendaController;
+use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ScrapingController;
 use Illuminate\Support\Facades\Route;
 
@@ -374,6 +379,50 @@ Route::middleware('auth')->group(function () {
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
             Route::get('/invoice-pdf/{invoice}', [PDFController::class, 'invoicePDF'])->name('invoices.pdf');
+            Route::get('/venda-pdf/{venda}', [PDFController::class, 'vendaPDF'])->name('vendas.pdf');
+        });
+
+        // Produtos CRUD
+        Route::prefix('/admin/produtos')->group(function () {
+            Route::get('/', [ProdutoController::class, 'index'])->name('produtos.index');
+            Route::post('/', [ProdutoController::class, 'store'])->name('produtos.store');
+            Route::get('/{produto}', [ProdutoController::class, 'show'])->name('produtos.show');
+            Route::put('/{produto}', [ProdutoController::class, 'update'])->name('produtos.update');
+            Route::delete('/{produto}', [ProdutoController::class, 'destroy'])->name('produtos.destroy');
+        });
+
+        // Compra CRUD
+        Route::prefix('/admin/compras')->group(function () {
+            Route::get('/', [CompraController::class, 'index'])->name('compras.index');
+            Route::post('/', [CompraController::class, 'store'])->name('compras.store');
+            Route::get('/{compra}', [CompraController::class, 'show'])->name('compras.show');
+            Route::put('/{compra}', [CompraController::class, 'update'])->name('compras.update');
+            Route::delete('/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
+        });
+
+        // Item Compra CRUD
+        Route::prefix('/admin/compras/item')->group(function () {
+            Route::post('/', [ItemCompraController::class, 'store'])->name('compras_item.store');
+            Route::get('/{itemcompra}', [ItemCompraController::class, 'show'])->name('compras_item.show');
+            Route::put('/{itemcompra}', [ItemCompraController::class, 'update'])->name('compras_item.update');
+            Route::delete('/{itemcompra}', [ItemCompraController::class, 'destroy'])->name('compras_item.destroy');
+        });
+
+        // Venda CRUD
+        Route::prefix('/admin/vendas')->group(function () {
+            Route::get('/', [VendaController::class, 'index'])->name('vendas.index');
+            Route::post('/', [VendaController::class, 'store'])->name('vendas.store');
+            Route::get('/{venda}', [VendaController::class, 'show'])->name('vendas.show');
+            Route::put('/{venda}', [VendaController::class, 'update'])->name('vendas.update');
+            Route::delete('/{venda}', [VendaController::class, 'destroy'])->name('vendas.destroy');
+        });
+
+        // Item Venda CRUD
+        Route::prefix('/admin/vendas/item')->group(function () {
+            Route::post('/', [ItemVendaController::class, 'store'])->name('vendas_item.store');
+            Route::get('/{itemvenda}', [ItemVendaController::class, 'show'])->name('vendas_item.show');
+            Route::put('/{itemvenda}', [ItemVendaController::class, 'update'])->name('vendas_item.update');
+            Route::delete('/{itemvenda}', [ItemVendaController::class, 'destroy'])->name('vendas_item.destroy');
         });
 
     });

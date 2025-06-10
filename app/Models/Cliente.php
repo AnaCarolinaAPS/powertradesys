@@ -20,6 +20,8 @@ class Cliente extends Model
         'caixa_postal',
         'apelido',
         'user_id',
+        'numero_documento',
+        'tipo_documento',
     ];
 
     public function user()
@@ -58,5 +60,10 @@ class Cliente extends Model
     public function total_creditos()
     {
         return $this->creditos->sum('valor_credito');
+    }
+
+    public function vendas()
+    {
+        return $this->hasMany(Venda::class);
     }
 }

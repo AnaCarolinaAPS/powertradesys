@@ -10,6 +10,7 @@ use App\Models\Carga;
 use App\Models\FechamentoCaixa;
 use App\Models\Caixa;
 use App\Models\FluxoCaixa;
+use App\Models\Categoria;
 
 class RelatorioController extends Controller
 {
@@ -350,6 +351,12 @@ class RelatorioController extends Controller
         $ano = $request->input('ano', date('Y'));
         $mes = $request->input('mes', date('n'));
 
+        $all_categorias = Categoria::where('tipo', 'categoria')
+                            ->get();
+        $all_subcategorias = Categoria::where('tipo', 'subcategoria')
+                            ->get();
+
+
         // 1. Filtrar os caixas que utilizam a moeda U$
         $caixasUS = Caixa::where('moeda', '=', 'U$')->pluck('id');
 
@@ -361,8 +368,6 @@ class RelatorioController extends Controller
 
         // 2. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de GASTOS
         $fluxosUsGastos = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosUS)
-            ->whereYear('data', $ano)
-            ->whereMonth('data', $mes)
             ->where(function ($query) {
                 $query->where('tipo', 'saida')
                       ->orWhere('tipo', 'salario');
@@ -371,21 +376,201 @@ class RelatorioController extends Controller
 
         // 3. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de ENTRADAS (pagamentos)
         $fluxosUsEntradas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosUS)
-            ->whereYear('data', $ano)
-            ->whereMonth('data', $mes)
             ->where('tipo', 'entrada')
             ->get();
 
         // 4. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de DESPESAS (pagamentos a fornecedores) 
         $fluxosUsDespesas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosUS)
-            ->whereYear('data', $ano)
-            ->whereMonth('data', $mes)
             ->where('tipo', 'despesa')
             ->get();
         
+        $subcategoriasUs = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'), 'tipo')
+                            ->whereIn('fechamento_origem_id', $fechamentosUS)
+                            ->where(function ($query) {
+                                $query->where('tipo', 'saida')
+                                    ->orWhere('tipo', 'salario');
+                            })
+                            ->groupBy('categoria_id', 'subcategoria_id', 'tipo')
+                            ->get();
+
+        // Forma arrays para montagem do gráfico:
+        // Inicializar arrays para armazenar os dados do gráfico
+        $labels_sub = [];
+        $data_sub = [];
+        $backgroundColor_sub = [];
+        $borderColor_sub = [];
+
+        // Iterar sobre os resultados da consulta
+        foreach ($subcategoriasUs as $categoria) {
+            $label = "";
+            if ($categoria->tipo == "saida") {
+                $label = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+            } else { //salario
+                $label = "Empresa - Salarios";
+            }
+            // Adicionar categoria_id como label
+            $labels_sub[] = $label;//$categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+            // Adicionar total_saida como dado
+            $data_sub[] = $categoria->total_saida;
+            // Gerar cores aleatórias para o gráfico
+            $red = mt_rand(0, 255);
+            $green = mt_rand(0, 255);
+            $blue = mt_rand(0, 255);
+            $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
+            $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
+        }
+
+        // Criar um array associativo com todas as informações
+        $grafico_sub_us = [
+            'labels' => $labels_sub,
+            'data' => $data_sub,
+            'backgroundColor' => $backgroundColor_sub,
+            'borderColor' => $borderColor_sub
+        ];
+
+
+        // 1. Filtrar os caixas que utilizam a moeda U$
+        $caixasGS = Caixa::where('moeda', '=', 'G$')->pluck('id');
+
+        // 2. Filtrar os FechamentoCaixa
+        $fechamentosGS = FechamentoCaixa::whereIn('caixa_id', $caixasGS)
+            ->whereMonth('start_date', $mes)
+            ->whereYear('start_date', $ano)
+            ->pluck('id');
+
+        // 2. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de GASTOS
+        $fluxosGsGastos = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosGS)
+            ->where(function ($query) {
+                $query->where('tipo', 'saida')
+                      ->orWhere('tipo', 'salario');
+            })
+            ->get();
+
+        // 3. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de ENTRADAS (pagamentos)
+        $fluxosGsEntradas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosGS)
+            ->where('tipo', 'entrada')
+            ->get();
+
+        // 4. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de DESPESAS (pagamentos a fornecedores) 
+        $fluxosGsDespesas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosGS)
+            ->where('tipo', 'despesa')
+            ->get();
         
-        $teste = $caixasUS;
+        $subcategoriasGs = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'), 'tipo')
+                            ->whereIn('fechamento_origem_id', $fechamentosGS)
+                            ->where(function ($query) {
+                                $query->where('tipo', 'saida')
+                                    ->orWhere('tipo', 'salario');
+                            })
+                            ->groupBy('categoria_id', 'subcategoria_id', 'tipo')
+                            ->get();
+
+        // Forma arrays para montagem do gráfico:
+        // Inicializar arrays para armazenar os dados do gráfico
+        $labels_sub = [];
+        $data_sub = [];
+        $backgroundColor_sub = [];
+        $borderColor_sub = [];
+
+        // Iterar sobre os resultados da consulta
+        foreach ($subcategoriasGs as $categoria) {
+            $label = "";
+            if ($categoria->tipo == "saida") {
+                $label = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+            } else { //salario
+                $label = "Empresa - Salarios";
+            }
+            // Adicionar categoria_id como label
+            $labels_sub[] = $label;//$categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+            // Adicionar total_saida como dado
+            $data_sub[] = $categoria->total_saida;
+            // Gerar cores aleatórias para o gráfico
+            $red = mt_rand(0, 255);
+            $green = mt_rand(0, 255);
+            $blue = mt_rand(0, 255);
+            $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
+            $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
+        }
+
+        // Criar um array associativo com todas as informações
+        $grafico_sub_gs = [
+            'labels' => $labels_sub,
+            'data' => $data_sub,
+            'backgroundColor' => $backgroundColor_sub,
+            'borderColor' => $borderColor_sub
+        ];
+
+        // 1. Filtrar os caixas que utilizam a moeda U$
+        $caixasRS = Caixa::where('moeda', '=', 'R$')->pluck('id');
+
+        // 2. Filtrar os FechamentoCaixa
+        $fechamentosRS = FechamentoCaixa::whereIn('caixa_id', $caixasRS)
+            ->whereMonth('start_date', $mes)
+            ->whereYear('start_date', $ano)
+            ->pluck('id');
+
+        // 2. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de GASTOS
+        $fluxosRsGastos = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosRS)
+            ->where(function ($query) {
+                $query->where('tipo', 'saida')
+                      ->orWhere('tipo', 'salario');
+            })
+            ->get();
+
+        // 3. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de ENTRADAS (pagamentos)
+        $fluxosRsEntradas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosRS)
+            ->where('tipo', 'entrada')
+            ->get();
+
+        // 4. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de DESPESAS (pagamentos a fornecedores) 
+        $fluxosRsDespesas = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosRS)
+            ->where('tipo', 'despesa')
+            ->get();
+        
+        $subcategoriasRs = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'), 'tipo')
+                            ->whereIn('fechamento_origem_id', $fechamentosRS)
+                            ->where(function ($query) {
+                                $query->where('tipo', 'saida')
+                                    ->orWhere('tipo', 'salario');
+                            })
+                            ->groupBy('categoria_id', 'subcategoria_id', 'tipo')
+                            ->get();
+
+        // Forma arrays para montagem do gráfico:
+        // Inicializar arrays para armazenar os dados do gráfico
+        $labels_sub = [];
+        $data_sub = [];
+        $backgroundColor_sub = [];
+        $borderColor_sub = [];
+
+        // Iterar sobre os resultados da consulta
+        foreach ($subcategoriasRs as $categoria) {
+            $label = "";
+            if ($categoria->tipo == "saida") {
+                $label = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+            } else { //salario
+                $label = "Empresa - Salarios";
+            }
+            // Adicionar categoria_id como label
+            $labels_sub[] = $label;//$categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+            // Adicionar total_saida como dado
+            $data_sub[] = $categoria->total_saida;
+            // Gerar cores aleatórias para o gráfico
+            $red = mt_rand(0, 255);
+            $green = mt_rand(0, 255);
+            $blue = mt_rand(0, 255);
+            $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
+            $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
+        }
+
+        // Criar um array associativo com todas as informações
+        $grafico_sub_rs = [
+            'labels' => $labels_sub,
+            'data' => $data_sub,
+            'backgroundColor' => $backgroundColor_sub,
+            'borderColor' => $borderColor_sub
+        ];
     
-        return view('admin.relatoriogastos.index', compact('teste','fluxosUsGastos', 'fluxosUsEntradas', 'fluxosUsDespesas'));
+        return view('admin.relatoriogastos.index', compact('fluxosUsGastos', 'fluxosUsEntradas', 'fluxosUsDespesas', 'grafico_sub_us', 'fluxosGsGastos', 'fluxosGsEntradas', 'fluxosGsDespesas', 'grafico_sub_gs', 'fluxosRsGastos', 'fluxosRsEntradas', 'fluxosRsDespesas', 'grafico_sub_rs'));
     }
 }

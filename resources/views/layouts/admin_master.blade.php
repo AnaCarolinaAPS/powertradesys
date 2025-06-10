@@ -177,6 +177,14 @@
                 initializeDataTableWithButtons("datatable-buttons");
                 initializeDataTableWithButtons("datatable-totals");
                 initializeDataTableWithButtonsDate("datatable-date");
+                initializeDataTableWithButtonsDate("datatable-date2");
+                initializeDataTableWithButtonsDate("datatable-date3");
+                initializeDataTableWithButtonsDate("datatable-date4");
+                initializeDataTableWithButtonsDate("datatable-date5");
+                initializeDataTableWithButtonsDate("datatable-date6");
+                initializeDataTableWithButtonsDate("datatable-date7");
+                initializeDataTableWithButtonsDate("datatable-date8");
+                initializeDataTableWithButtonsDate("datatable-date9");
                 initializeDataTableWithButtons("dGastoUs");
                 initializeDataTableWithButtons("dGastoRs");
                 initializeDataTableWithButtons("dGastoGs");

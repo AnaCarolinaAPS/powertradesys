@@ -26,44 +26,79 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Relatório de Gastos {{ \Carbon\Carbon::create($ano, $mes)->format('F Y') }}</h4>
-                        <!-- <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
-                            <i class="fas fa-plus"></i> Nova
-                        </button> -->
-                        <!-- <div class="col">
-                            Lucro REAL: <b>{{number_format($lucroReal, 2, ',', '.');}} U$</b>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Gastos da Semana</h4>
+                            </div>                            
+                            <div class="col">
+                                <b>{{$totalGastosRs === null ? "" : "Total R$: ".number_format($totalGastosRs, 2, ',', '.');}} {{$totalGastosRs === null ? "" : "[U$ ".number_format(($totalGastosRs/5.85), 2, ',', '.')."]";}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastosGs === null ? "" : "Total G$: ".number_format($totalGastosGs, 0, ',', '.');}} {{$totalGastosGs === null ? "" : "[U$ ".number_format(($totalGastosGs/7950), 0, ',', '.')."]";}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastosUs === null ? "" : "Total U$: ".number_format($totalGastosUs, 2, ',', '.');}}</b>
+                            </div>
                         </div>
-                        <div class="col">
-                            Lucro Previsto com Cargas: <b>{{number_format($lucroTotal, 2, ',', '.');}} U$</b>
-                        </div> -->
-                        <div class="table-responsive">
-                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Data</th>
-                                        <th>Categoria</th>
-                                        <th>Descrição</th>
-                                        <th>Subcategoria</th>
-                                        <th>Valor</th>
-                                    </tr>
-                                </thead><!-- end thead -->
-                                <tbody>
-                                    @foreach($detalhes as $detalhe)
-                                        @if ($detalhe['totais']['total'] <> 0)
-                                            <tr>
-                                                <td>{{ $detalhe['caixa']->id }}</td>
-                                                <td>{{ $detalhe['caixa']->nome ?? 'Sem Nome' }}</td>
-                                                <td>{{ number_format($detalhe['totais']['despesas'], 2, ',', '.') }}</td>
-                                                <td>{{ number_format($detalhe['totais']['entradas'], 2, ',', '.') }}</td>
-                                                <td>{{ number_format($detalhe['totais']['lucroreal'], 2, ',', '.') }}</td>
-                                                <td>{{ number_format($detalhe['totais']['total'], 2, ',', '.') }}</td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                     <!-- end -->
-                                </tbody><!-- end tbody -->
-                            </table> <!-- end table -->
+                        <div class="row">
+                            <div class="col">
+                                <table id="dGastoUs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Valor U$</th>
+                                            <th>Data</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosUs as $gasto)
+                                        <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 2, '.', ',') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($gasto->data)->format('d/m/Y'); }}</td>
+                                            <td>{{ $gasto->descricao }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <table id="dGastoRs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Valor R$</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosRs as $gasto)
+                                        <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 2, '.', ',') }}</td>
+                                            <td>{{ $gasto->descricao }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
+                            <div class="col">
+                                <table id="dGastoGs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Valor G$</th>
+                                            <th>Descrição</th>
+                                        </tr>
+                                    </thead><!-- end thead -->
+                                    <tbody>
+                                        @foreach ($gastosGs as $gasto)
+                                        <tr>
+                                            <td>{{ number_format($gasto->valor_origem, 0, '.', ',') }}</td>
+                                            <td>{{ $gasto->descricao }}</td>
+                                        </tr>
+                                        @endforeach                                        
+                                    </tbody><!-- end tbody -->
+                                </table> <!-- end table -->
+                            </div>
                         </div>
                     </div><!-- end card -->
                 </div><!-- end card -->

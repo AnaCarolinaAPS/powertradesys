@@ -142,7 +142,7 @@
                             <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
                             <li><a href="{{ route('relatorioCarga.index'); }}">Cargas</a></li>
                             <!-- <li><a href="layouts-compact-sidebar.html">Lucros</a></li> -->
-                            <li><a href="{{ route('relatorioGastos.index'); }}">Gastos</a></li>
+                            <li><a href="{{ route('relatorioGastos.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos</a></li>
                         </ul>
                     </li>
                 @endrole

@@ -352,7 +352,8 @@ Route::middleware('auth')->group(function () {
 
         // Controlador de Relatórios
         Route::prefix('/admin/relatorios')->group(function () {
-            Route::get('gastos/', [RelatorioController::class, 'indexGastos'])->name('relatorioGastos.index');
+            // Route::get('mensal/', [RelatorioController::class, 'indexGastosMensais'])->name('relatorio.mensal');
+            Route::get('gastos/', [RelatorioController::class, 'indexGastosMensais'])->name('relatorioGastos.index');
             Route::get('/gastos/{periodo}', [RelatorioController::class, 'showGastos'])->name('relatorioGastos.show');
             Route::get('carga/', [RelatorioController::class, 'indexCarga'])->name('relatorioCarga.index');
             Route::get('carga/{faturacarga}', [RelatorioController::class, 'showCargas'])->name('relatorioCarga.show');

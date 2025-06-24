@@ -54,39 +54,37 @@
                             <div class="col">
                                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="us-tab" data-bs-toggle="tab" data-bs-target="#us" type="button" role="tab" aria-controls="home" aria-selected="true">Gastos U$</button>
+                                        <button class="nav-link active" id="total-tab" data-bs-toggle="tab" data-bs-target="#total" type="button" role="tab" aria-controls="total" aria-selected="true">Total Gastos</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="gs-tab" data-bs-toggle="tab" data-bs-target="#gs" type="button" role="tab" aria-controls="profile" aria-selected="false">Gastos G$</button>
+                                        <button class="nav-link" id="us-tab" data-bs-toggle="tab" data-bs-target="#us" type="button" role="tab" aria-controls="us" aria-selected="true">Gastos U$</button>
                                     </li>
                                     <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="rs-tab" data-bs-toggle="tab" data-bs-target="#rs" type="button" role="tab" aria-controls="contact" aria-selected="false">Gastos R$</button>
+                                        <button class="nav-link" id="gs-tab" data-bs-toggle="tab" data-bs-target="#gs" type="button" role="tab" aria-controls="gs" aria-selected="false">Gastos G$</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="rs-tab" data-bs-toggle="tab" data-bs-target="#rs" type="button" role="tab" aria-controls="rs" aria-selected="false">Gastos R$</button>
                                     </li>
                                 </ul>
                                 <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="us" role="tabpanel" aria-labelledby="us-tab">
+                                    <div class="tab-pane fade show active" id="total" role="tabpanel" aria-labelledby="total-tab">
                                         <div class="row mt-4">
                                             <div class="col">
-                                                <h4 class="card-title mb-4">Gastos U$</h4>
+                                                <h4 class="card-title mb-4">Total Gastos U$</h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">ENTRADAS:
-                                                    {{ number_format($fluxosUsEntradas->sum('valor_origem'), 2, ',', '.') }} U$
+                                                    {{ number_format($totais_combinados['entradas'], 2, ',', '.') }} U$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">DESPESAS:
-                                                    {{ number_format($fluxosUsDespesas->sum('valor_origem'), 2, ',', '.') }} U$
+                                                    {{ number_format($totais_combinados['despesas'], 2, ',', '.') }} U$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">GASTOS:
-                                                    {{ number_format($fluxosUsGastos->sum('valor_origem'), 2, ',', '.') }} U$
-                                                </h4>
-                                            </div>
-                                            <div class="col">
-                                                <h4 class="card-title mb-4">SALDO:
-                                                    {{ number_format($fluxosUsEntradas->sum('valor_origem')+$fluxosUsDespesas->sum('valor_origem')+$fluxosUsGastos->sum('valor_origem'), 2, ',', '.') }} U$
+                                                    {{ number_format($totais_combinados['gastos'], 2, ',', '.') }} U$
                                                 </h4>
                                             </div>
                                         </div>
@@ -104,8 +102,23 @@
                                                                 <th>Valor</th>
                                                             </tr>
                                                         </thead><!-- end thead -->
+                                                        @php
+                                                            $cotacoes = [
+                                                                'G$' => 7850.0,
+                                                                'R$' => 5.80,
+                                                                'U$' => 1.0,
+                                                            ];
+                                                            $total = 0;
+                                                        @endphp
                                                         <tbody>
-                                                            @foreach($fluxosUsGastos as $fluxo)
+                                                            @foreach($dados_combinados['gastos'] as $fluxo)
+                                                                @php
+                                                                    $moeda = $fluxo->fechamentoOrigem->caixa->moeda;
+                                                                    $valor = floatval($fluxo->valor_origem);
+                                                                    $cotacao = $cotacoes[$moeda] ?? 1;
+                                                                    $valor_convertido = $valor / $cotacao;
+                                                                    $total += $valor_convertido;
+                                                                @endphp
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -147,8 +160,97 @@
                                                                     @endif
                                                                 </td>
                                                                 <td>
-                                                                    {{ number_format($fluxo->valor_origem, 2, ',', '') }}
+                                                                    {{ number_format($valor_convertido, 2, ',', '') }} 
+                                                                    {{ $fluxo->fechamentoOrigem->caixa->moeda == 'U$' ? '' : '('.$fluxo->fechamentoOrigem->caixa->moeda.' '.number_format($fluxo->valor_origem, 0, ',', '.').')' }}
                                                                 </td>
+                                                                </tr>
+                                                            @endforeach
+                                                            <!-- end -->
+                                                        </tbody><!-- end tbody -->
+                                                    </table> <!-- end table -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade show" id="us" role="tabpanel" aria-labelledby="us-tab">
+                                        <div class="row mt-4">
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">Gastos U$</h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">ENTRADAS:
+                                                    {{ number_format($dados_us['entradas']->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">DESPESAS:
+                                                    {{ number_format($dados_us['despesas']->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">GASTOS:
+                                                    {{ number_format($dados_us['gastos']->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">SALDO:
+                                                    {{ number_format($dados_us['entradas']->sum('valor_origem')+$dados_us['despesas']->sum('valor_origem')+$dados_us['gastos']->sum('valor_origem'), 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="table-responsive">
+                                                    <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th>Data</th>
+                                                                <th>Data</th>
+                                                                <th>Categoria</th>
+                                                                <th>Descrição</th>
+                                                                <th>Subcategoria</th>
+                                                                <th>Valor</th>
+                                                            </tr>
+                                                        </thead><!-- end thead -->
+                                                        <tbody>
+                                                            @foreach($dados_us['gastos'] as $fluxo)
+                                                                <tr class="" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                                                    <td>{{ $fluxo->data.' '.$fluxo->id }}</td>
+                                                                    <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
+                                                                    <td>
+                                                                        @if ($fluxo->tipo == 'saida')
+                                                                            {{ $fluxo->categoria->nome }}
+                                                                        @elseif ($fluxo->tipo == 'entrada')
+                                                                            {{ 'Pagamento' }}
+                                                                        @elseif ($fluxo->tipo == 'despesa')
+                                                                            {{ 'Despesa' }}
+                                                                        @elseif ($fluxo->tipo == 'salario')
+                                                                            {{ 'Empresa' }}
+                                                                        @elseif ($fluxo->tipo == 'transferencia')
+                                                                            {{ 'Transferencia' }}
+                                                                        @elseif ($fluxo->tipo == 'cambio')
+                                                                            {{ 'Cambio' }}
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>{{ $fluxo->descricao }}</td>
+                                                                    <td>
+                                                                        @if ($fluxo->tipo == 'saida')
+                                                                            {{ $fluxo->subcategoria->nome }}
+                                                                        @elseif ($fluxo->tipo == 'entrada')
+                                                                            {{ 'Pagamento' }}
+                                                                        @elseif ($fluxo->tipo == 'despesa')
+                                                                            {{ 'Despesa' }}
+                                                                        @elseif ($fluxo->tipo == 'salario')
+                                                                            {{ 'Salario' }}
+                                                                        @elseif ($fluxo->tipo == 'transferencia')
+                                                                            {{ 'Transferencia' }}
+                                                                        @elseif ($fluxo->tipo == 'cambio')
+                                                                            {{ 'Cambio' }}
+                                                                        @endif
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ number_format($fluxo->valor_origem, 2, ',', '') }}
+                                                                    </td>
                                                                 </tr>
                                                             @endforeach
                                                             <!-- end -->
@@ -176,7 +278,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosUsEntradas as $fluxo)
+                                                            @foreach($dados_us['entradas'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -225,7 +327,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosUsDespesas as $fluxo)
+                                                            @foreach($dados_us['despesas'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -255,22 +357,22 @@
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">ENTRADAS:
-                                                    {{ number_format($fluxosGsEntradas->sum('valor_origem'), 0, ',', '.') }} G$
+                                                    {{ number_format($dados_gs['entradas']->sum('valor_origem'), 0, ',', '.') }} G$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">DESPESAS:
-                                                    {{ number_format($fluxosGsDespesas->sum('valor_origem'), 0, ',', '.') }} G$
+                                                    {{ number_format($dados_gs['despesas']->sum('valor_origem'), 0, ',', '.') }} G$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">GASTOS:
-                                                   {{ number_format($fluxosGsGastos->sum('valor_origem'), 0, ',', '.') }} G$
+                                                   {{ number_format($dados_gs['gastos']->sum('valor_origem'), 0, ',', '.') }} G$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">SALDO:
-                                                    {{ number_format($fluxosGsEntradas->sum('valor_origem')+$fluxosGsDespesas->sum('valor_origem')+$fluxosGsGastos->sum('valor_origem'), 2, ',', '.') }} U$
+                                                    {{ number_format($dados_gs['entradas']->sum('valor_origem')+$dados_gs['despesas']->sum('valor_origem')+$dados_gs['gastos']->sum('valor_origem'), 0, ',', '.') }} G$
                                                 </h4>
                                             </div>
                                         </div>
@@ -289,7 +391,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosGsGastos as $fluxo)
+                                                            @foreach($dados_gs['gastos'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -360,7 +462,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosGsEntradas as $fluxo)
+                                                            @foreach($dados_gs['entradas'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -409,7 +511,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosGsDespesas as $fluxo)
+                                                            @foreach($dados_gs['despesas'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -439,22 +541,22 @@
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">ENTRADAS:
-                                                    {{ number_format($fluxosRsEntradas->sum('valor_origem'), 2, ',', '.') }} R$
+                                                    {{ number_format($dados_rs['entradas']->sum('valor_origem'), 2, ',', '.') }} R$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">DESPESAS:
-                                                    {{ number_format($fluxosRsDespesas->sum('valor_origem'), 2, ',', '.') }} R$
+                                                    {{ number_format($dados_rs['despesas']->sum('valor_origem'), 2, ',', '.') }} R$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">GASTOS:
-                                                   {{ number_format($fluxosRsGastos->sum('valor_origem'), 2, ',', '.') }} R$
+                                                   {{ number_format($dados_rs['gastos']->sum('valor_origem'), 2, ',', '.') }} R$
                                                 </h4>
                                             </div>
                                             <div class="col">
                                                 <h4 class="card-title mb-4">SALDO:
-                                                    {{ number_format($fluxosRsEntradas->sum('valor_origem')+$fluxosRsDespesas->sum('valor_origem')+$fluxosRsGastos->sum('valor_origem'), 2, ',', '.') }} U$
+                                                    {{ number_format($dados_rs['entradas']->sum('valor_origem')+$dados_rs['despesas']->sum('valor_origem')+$dados_rs['gastos']->sum('valor_origem'), 2, ',', '.') }} U$
                                                 </h4>
                                             </div>
                                         </div>
@@ -473,7 +575,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosRsGastos as $fluxo)
+                                                            @foreach($dados_rs['gastos'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -544,7 +646,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosRsEntradas as $fluxo)
+                                                            @foreach($dados_rs['entradas'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -593,7 +695,7 @@
                                                             </tr>
                                                         </thead><!-- end thead -->
                                                         <tbody>
-                                                            @foreach($fluxosRsDespesas as $fluxo)
+                                                            @foreach($dados_rs['despesas'] as $fluxo)
                                                                 @if ($fluxo->tipo == 'entrada')
                                                                     <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                                                 @elseif ($fluxo->tipo == 'despesa')
@@ -656,7 +758,7 @@
       }
     };
 
-    var dadossub = @json($grafico_sub_us);
+    var dadossub = @json($dados_us['grafico']);
 
     var datapiesub = {
       labels: dadossub.labels,
@@ -677,7 +779,7 @@
       options: optionspie
     });    
 
-    var dadossub = @json($grafico_sub_gs);
+    var dadossub = @json($dados_gs['grafico']);
 
     var datapiesub = {
       labels: dadossub.labels,
@@ -698,7 +800,7 @@
       options: optionspie
     });
 
-    var dadossub = @json($grafico_sub_rs);
+    var dadossub = @json($dados_rs['grafico']);
 
     var datapiesub = {
       labels: dadossub.labels,

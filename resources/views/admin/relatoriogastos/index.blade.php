@@ -87,11 +87,16 @@
                                                     {{ number_format($totais_combinados['gastos'], 2, ',', '.') }} U$
                                                 </h4>
                                             </div>
+                                            <div class="col">
+                                                <h4 class="card-title mb-4">SALDO:
+                                                    {{ number_format($totais_combinados['entradas']+$totais_combinados['despesas']+$totais_combinados['gastos'], 2, ',', '.') }} U$
+                                                </h4>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="col">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -171,6 +176,55 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-xl-6">
+                                                <h4 class="card-title mb-4">Despesas TOTAIS U$ Categorias x Subcategorias</h4>
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <h4 class="card-title mb-4">Despesas U$</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xl-6">
+                                                <canvas id="TotalUSChart"></canvas>
+                                            </div>   
+
+                                            <div class="col-6">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th>Data</th>
+                                                                <th>Data</th>
+                                                                <th>Descrição</th>
+                                                                <th>Valor</th>
+                                                            </tr>
+                                                        </thead><!-- end thead -->
+                                                        <tbody>
+                                                            @foreach($dados_combinados['despesas'] as $fluxo)
+                                                                @if ($fluxo->tipo == 'entrada')
+                                                                    <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                                                @elseif ($fluxo->tipo == 'despesa')
+                                                                    <tr class="table-danger" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                                                @else
+                                                                    <tr class="" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                                                @endif
+                                                                <td>{{ $fluxo->data.' '.$fluxo->id }}</td>
+                                                                <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
+                                                                <td>{{ $fluxo->descricao }}</td>
+                                                                <td>
+                                                                    {{ number_format($fluxo->valor_origem, 0, ',', '') }}
+                                                                </td>
+                                                                </tr>
+                                                            @endforeach
+                                                            <!-- end -->
+                                                        </tbody><!-- end tbody -->
+                                                    </table> <!-- end table -->
+                                                </div>
+                                            </div> 
+                                        </div>
+
                                     </div>
                                     <div class="tab-pane fade show" id="us" role="tabpanel" aria-labelledby="us-tab">
                                         <div class="row mt-4">
@@ -201,7 +255,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -268,7 +322,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date2" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -317,7 +371,7 @@
 
                                             <div class="col-6">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date3" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -379,7 +433,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date4" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -452,7 +506,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date5" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -501,7 +555,7 @@
 
                                             <div class="col-6">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date6" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -563,7 +617,7 @@
                                         <div class="row">
                                             <div class="col">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date7" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -636,7 +690,7 @@
                                         <div class="row">
                                             <div class="col-12">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date8" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -685,7 +739,7 @@
 
                                             <div class="col-6">
                                                 <div class="table-responsive">
-                                                    <table id="datatable-date9" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                                         <thead class="table-light">
                                                             <tr>
                                                                 <th>Data</th>
@@ -744,7 +798,8 @@
         });
     });
 
-    // // Opções do gráfico
+
+    // Opções do gráfico
     var optionspie = {
       responsive: true,
       plugins: {
@@ -758,7 +813,33 @@
       }
     };
 
+    // TOTAIS CONVERTIDO EM U$
+    var dadossubt = @json($dados_combinados['grafico']);
+
+    var datapiesub = {
+      labels: dadossubt.labels,
+      datasets: [{
+        // label: 'My First Dataset',
+        data: dadossubt.data,
+        backgroundColor: dadossubt.backgroundColor,
+        borderColor: dadossubt.borderColor,
+        borderWidth: 1
+      }]
+    };
+
+    // Criando o gráfico de pizza
+    var ctxpie0 = document.getElementById('TotalUSChart').getContext('2d');
+    var myPieChart0 = new Chart(ctxpie0, {
+      type: 'pie',
+      data: datapiesub,
+      options: optionspie
+    });    
+
+    // TOTAIS EM U$
+    // Opções do gráfico
     var dadossub = @json($dados_us['grafico']);
+
+    console.log(dadossub);
 
     var datapiesub = {
       labels: dadossub.labels,
@@ -777,7 +858,9 @@
       type: 'pie',
       data: datapiesub,
       options: optionspie
-    });    
+    });
+
+    // Dados Gráfico de G$
 
     var dadossub = @json($dados_gs['grafico']);
 
@@ -799,6 +882,8 @@
       data: datapiesub,
       options: optionspie
     });
+
+    // Dados Gráfico de R$
 
     var dadossub = @json($dados_rs['grafico']);
 

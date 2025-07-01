@@ -247,7 +247,6 @@ class RelatorioController extends Controller
         $dados_gs = $this->getRelatorioPorMoeda('G$', $ano, $mes);
         $dados_rs = $this->getRelatorioPorMoeda('R$', $ano, $mes);
 
-        
         $cotacoes = [
             'G$' => 7850.0,
             'R$' => 5.80,
@@ -294,6 +293,8 @@ class RelatorioController extends Controller
             "grafico" => $this->getGraficoCombinados($ano, $mes),
         ];
 
+        // dd($dados_us['grafico']);
+
         $totais_combinados = [
             "gastos"    => $total_gastos_convertido,
             "entradas" => $total_entradas_convertido,
@@ -314,7 +315,7 @@ class RelatorioController extends Controller
             ->pluck('id');
         
         // 6. Montar o array para exibir o gráfico
-        $grafico = $this->montarGrafico($fechamentos);
+        $grafico = $this->montarGrafico($fechamentos, 'U$');
 
         return $grafico;
     }
@@ -348,7 +349,7 @@ class RelatorioController extends Controller
             ->get();
 
         // 6. Montar o array para exibir o gráfico
-        $grafico = $this->montarGrafico($fechamentos);
+        $grafico = $this->montarGrafico($fechamentos, $moeda);
 
         return [
             "gastos"    => $gastos,
@@ -358,28 +359,44 @@ class RelatorioController extends Controller
         ];
     }
 
-    private function montarGrafico($fechamentos) {
+    private function montarGrafico($fechamentos, $moedaDestino) {
         $labels = [];
         $data = [];
         $backgroundColor = [];
         $borderColor = [];
 
-        // 6. Somar os gastos (totais) por categora e subcategoria 
-        $subCategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'), 'tipo')
-                            ->whereIn('fechamento_origem_id', $fechamentos)
-                            ->where(function ($query) {
-                                $query->where('tipo', 'saida')
-                                    ->orWhere('tipo', 'salario');
-                            })
-                            ->groupBy('categoria_id', 'subcategoria_id', 'tipo')
-                            ->get();
+        // Cotações fixas (podem vir do banco, se preferir)
+        $cotacoes = [
+            'G$' => 7850.0,
+            'R$' => 5.80,
+            'U$' => 1.0,
+        ];
 
-        foreach ($subCategorias as $categoria) {
-            $label = $categoria->tipo == "salario" ? "Empresa - Salários" :
-                ($categoria->categoria->nome ?? '') . " - " . ($categoria->subcategoria->nome ?? '');
+        $fluxos = FluxoCaixa::with(['categoria', 'subcategoria', 'fechamentoOrigem.caixa'])
+                    ->whereIn('fechamento_origem_id', $fechamentos)
+                    ->whereIn('tipo', ['saida', 'salario'])
+                    ->get();
 
+        $agrupados = [];
+
+        foreach ($fluxos as $fluxo) {
+            $moedaOrigem = $fluxo->fechamentoOrigem->caixa->moeda ?? 'U$';
+            $cotacaoOrigem = $cotacoes[$moedaOrigem] ?? 1;
+            $cotacaoDestino = $cotacoes[$moedaDestino] ?? 1;
+
+            // Converte da moeda original para a moeda destino
+            $valor_convertido = $fluxo->valor_origem * ($cotacaoDestino / $cotacaoOrigem);
+
+            $key = $fluxo->tipo === 'salario'
+                ? 'Empresa - Salários'
+                : ($fluxo->categoria->nome ?? 'Sem Categoria') . ' - ' . ($fluxo->subcategoria->nome ?? 'Sem Subcategoria');
+
+            $agrupados[$key] = ($agrupados[$key] ?? 0) + $valor_convertido;
+        }
+
+        foreach ($agrupados as $label => $total_convertido) {
             $labels[] = $label;
-            $data[] = $categoria->total_saida;
+            $data[] = $total_convertido;
 
             $red = mt_rand(0, 255);
             $green = mt_rand(0, 255);
@@ -388,6 +405,31 @@ class RelatorioController extends Controller
             $backgroundColor[] = "rgba($red, $green, $blue, 0.5)";
             $borderColor[] = "rgba($red, $green, $blue, 1)";
         }
+
+        // // 6. Somar os gastos (totais) por categora e subcategoria 
+        // $subCategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'), 'tipo')
+        //                     ->whereIn('fechamento_origem_id', $fechamentos)
+        //                     ->where(function ($query) {
+        //                         $query->where('tipo', 'saida')
+        //                             ->orWhere('tipo', 'salario');
+        //                     })
+        //                     ->groupBy('categoria_id', 'subcategoria_id', 'tipo')
+        //                     ->get();
+
+        // foreach ($subCategorias as $categoria) {
+        //     $label = $categoria->tipo == "salario" ? "Empresa - Salários" :
+        //         ($categoria->categoria->nome ?? '') . " - " . ($categoria->subcategoria->nome ?? '');
+
+        //     $labels[] = $label;
+        //     $data[] = $categoria->total_saida;
+
+        //     $red = mt_rand(0, 255);
+        //     $green = mt_rand(0, 255);
+        //     $blue = mt_rand(0, 255);
+
+        //     $backgroundColor[] = "rgba($red, $green, $blue, 0.5)";
+        //     $borderColor[] = "rgba($red, $green, $blue, 1)";
+        // }
 
         return [
             "labels"    => $labels,

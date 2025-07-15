@@ -41,16 +41,41 @@
                                         <th>Data Pedido</th>    
                                         <th>Rastreio</th>
                                         <th>Cliente</th>
+                                        <th>Previsão Entrega</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_items as $pacote)
-                                    <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                    @if (\Carbon\Carbon::parse($pacote->previsao_entrega)->isToday())
+                                        <tr class="abrirModal table-warning" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                    @elseif (\Carbon\Carbon::parse($pacote->previsao_entrega)->isFuture())
+                                        <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                    @else
+                                        <tr class="abrirModal table-danger" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                    @endif
                                         <td>{{ $pacote->data_pedido }}</td>
                                         <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y').' ('.\Carbon\Carbon::parse($pacote->data_pedido)->diffInDays(now()).' dias)' }}</td>
                                         <td><h6 class="mb-0">'{{ $pacote->rastreio }}</h6></td>
                                         <td>{{ '('.$pacote->cliente->caixa_postal.') '.$pacote->cliente->apelido }}</td>
+                                        <td>
+                                            @if($pacote->previsao_entrega)
+                                                @php
+                                                    $previsao = \Carbon\Carbon::parse($pacote->previsao_entrega);
+                                                    $hoje = now();
+                                                @endphp
+                                                {{ $previsao->format('d/m/Y') }}
+                                                @if($previsao->isPast() && !$previsao->isToday())
+                                                    (há {{ $previsao->diffInDays($hoje) }} dias)
+                                                @elseif($previsao->isToday())
+                                                    (hoje)
+                                                @else
+                                                    (em {{ $hoje->diffInDays($previsao) }} dias)
+                                                @endif
+                                            @else 
+                                                Sem Previsão
+                                            @endif   
+                                        </td>
                                         <td>
                                             @if($pacote->status == 'aguardando')
                                                 <i class="ri-checkbox-blank-circle-line font-size-10 text-secondary align-middle me-2"></i> Aguardando
@@ -224,8 +249,8 @@
                             <div class="row mt-3"> 
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="data">"Recebido" em</label>
-                                        <input class="form-control" type="date" id="dDataRecebido" name="data_recebido">
+                                        <label for="data">Previsão de Entrega</label>
+                                        <input class="form-control" type="date" id="dPrevisaoEntrega" name="previsao_entrega">
                                     </div>
                                 </div>                               
                                 <div class="col">
@@ -281,7 +306,7 @@ document.querySelectorAll('.abrirModal').forEach(item => {
                     document.getElementById('dRastreio').value = data.rastreio;
                     document.getElementById('dCliente_id').value = data.cliente_id;
                     document.getElementById('dDataPedido').value = data.data_pedido;
-                    document.getElementById('dDataRecebido').value = data.data_recebido;
+                    document.getElementById('dPrevisaoEntrega').value = data.previsao_entrega;
                     document.getElementById('dStatus').value = data.status;
                     $('.selectpicker').selectpicker('refresh');
 
@@ -292,23 +317,6 @@ document.querySelectorAll('.abrirModal').forEach(item => {
                     var form2 = document.getElementById('formDeletePctModal');
                     var novaAction2 = "{{ route('pacotes_pendentes.destroy', ['pacotependente' => ':id']) }}".replace(':id', data.id);
                     form2.setAttribute('action', novaAction2);
-
-                    // if (data.carga_id  !== null) {
-                    //     // Se carga_id estiver presente, mostrar o botão e atribuir o link adequado
-                    //     var link = "{{ route('cargas.show', ['carga' => ':cargaId']) }}";
-                    //     link = link.replace(':cargaId', data.carga_id);
-                    //     // $('#cargaBotao').show().attr('href', link);
-                    //     $('#cargaBotao').show().on('click', function () {
-                    //         window.location.href = link;
-                    //     });
-                    //     console.error('Erro:', data.carga_id);
-                    // } else {
-                    //     // Se carga_id não estiver presente, esconder o botão
-                    //     $('#cargaBotao').hide();
-                    // }
-                    // // console.error('Erro:', data);
-                    // // Preencha o conteúdo do modal com os dados do pacote recebido
-                    // // Exemplo: document.getElementById('modalTitle').innerText = data.titulo;
                 })
                 .catch(error => console.error('Erro:', error));
         });

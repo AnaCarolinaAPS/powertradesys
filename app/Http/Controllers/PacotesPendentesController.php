@@ -122,6 +122,7 @@ class PacotesPendentesController extends Controller
                 'cliente_id' => 'nullable|exists:clientes,id',
                 'status' => 'required|in:aguardando,solicitado,buscando,em sistema,encontrado,naorecebido',
                 'referencia' => 'nullable|string',
+                'previsao_entrega' => 'nullable|date',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -132,6 +133,7 @@ class PacotesPendentesController extends Controller
                 'data_recebido' => $request->input('data_recebido'),
                 'status' => $request->input('status'),
                 'referencia' => $request->input('status'),
+                'previsao_entrega' => $request->input('previsao_entrega'),
                 // Adicione outros campos conforme necessário
             ]);
 

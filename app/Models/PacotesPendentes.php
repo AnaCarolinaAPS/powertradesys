@@ -21,6 +21,7 @@ class PacotesPendentes extends Model
         'pacote_id',
         'status',
         'referencia',
+        'previsao_entrega',
     ];
 
     public function cliente()

@@ -46,13 +46,13 @@
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    @foreach ($all_items as $pacote)
-                                    @if (\Carbon\Carbon::parse($pacote->previsao_entrega)->isToday())
+                                    @foreach ($all_items as $pacote)                                    
+                                    @if (is_null($pacote->previsao_entrega))
                                         <tr class="abrirModal table-warning" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
-                                    @elseif (\Carbon\Carbon::parse($pacote->previsao_entrega)->isFuture())
-                                        <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
-                                    @else
+                                    @elseif (\Carbon\Carbon::parse($pacote->previsao_entrega)->isPast() && $pacote->status == 'buscando' )
                                         <tr class="abrirModal table-danger" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                    @else
+                                        <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
                                     @endif
                                         <td>{{ $pacote->data_pedido }}</td>
                                         <td>{{\Carbon\Carbon::parse($pacote->data_pedido)->format('d/m/Y').' ('.\Carbon\Carbon::parse($pacote->data_pedido)->diffInDays(now()).' dias)' }}</td>

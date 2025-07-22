@@ -300,9 +300,133 @@ class RelatorioController extends Controller
             "entradas" => $total_entradas_convertido,
             "despesas" => $total_despesas_convertido,
         ];
+
+        $totalGastosbyCategoria = $this->getTotaisByCategoria($ano, $mes);
     
-        return view('admin.relatoriogastos.index', compact('dados_us', 'dados_gs', 'dados_rs', 'dados_combinados', 'totais_combinados'));
+        return view('admin.relatoriogastos.index', compact('dados_us', 'dados_gs', 'dados_rs', 'dados_combinados', 'totais_combinados', 'totalGastosbyCategoria'));
     } 
+
+    private function getTotaisByCategoria(int $ano, int $mes) {    
+        
+        // Cotações de outras moedas para Dólar
+        $cotacaoRS = 5.50;
+        $cotacaoGS = 7500;
+
+        // 1. Filtrar os caixas que utilizam dólar
+        $caixas = Caixa::where('moeda', '=', 'U$')->pluck('id');
+
+        // 2. Filtrar os FechamentoCaixa
+        $fechamentos = FechamentoCaixa::whereIn('caixa_id', $caixas)
+            ->whereMonth('start_date', $mes)
+            ->whereYear('start_date', $ano)
+            ->pluck('id');
+
+        // 3. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de GASTOS
+        $gastosUS = FluxoCaixa::selectRaw('categoria_id, subcategoria_id, SUM(valor_origem) as total')
+            ->whereIn('fechamento_origem_id', $fechamentos)
+            ->with(['categoria', 'subcategoria'])
+            ->where(function ($query) {
+                $query->where('tipo', 'saida')
+                      ->orWhere('tipo', 'salario');
+            })
+            ->groupBy('categoria_id', 'subcategoria_id')
+            ->get(); 
+        
+        // 4. Transformar em array indexado por categoria-subcategoria para facilitar merge
+        $gastosCombinados = [];
+
+        foreach ($gastosUS as $item) {
+            $key = $item->categoria_id . '-' . ($item->subcategoria_id ?? 'null');
+            $gastosCombinados[$key] = [
+                'categoria_id' => $item->categoria_id,
+                'subcategoria_id' => $item->subcategoria_id,
+                'total' => $item->total,
+                'categoria' => $item->categoria,
+                'subcategoria' => $item->subcategoria,
+            ];
+        }
+
+        // 1. Filtrar os caixas que utilizam Reais
+        $caixas = Caixa::where('moeda', '=', 'R$')->pluck('id');
+
+        // 2. Filtrar os FechamentoCaixa
+        $fechamentos = FechamentoCaixa::whereIn('caixa_id', $caixas)
+            ->whereMonth('start_date', $mes)
+            ->whereYear('start_date', $ano)
+            ->pluck('id');
+
+        // 3. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de GASTOS
+        $gastosRS = FluxoCaixa::selectRaw('categoria_id, subcategoria_id, SUM(valor_origem) as total')
+            ->whereIn('fechamento_origem_id', $fechamentos)
+            ->with(['categoria', 'subcategoria'])
+            ->where(function ($query) {
+                $query->where('tipo', 'saida')
+                      ->orWhere('tipo', 'salario');
+            })
+            ->groupBy('categoria_id', 'subcategoria_id')
+            ->get();
+
+
+        foreach ($gastosRS as $item) {
+            $key = $item->categoria_id . '-' . ($item->subcategoria_id ?? 'null');
+            $valorConvertido = $item->total / $cotacaoRS;
+
+            if (isset($gastosCombinados[$key])) {
+                // Soma ao valor existente
+                $gastosCombinados[$key]['total'] += $valorConvertido;
+            } else {
+                // Novo item
+                $gastosCombinados[$key] = [
+                    'categoria_id' => $item->categoria_id,
+                    'subcategoria_id' => $item->subcategoria_id,
+                    'total' => $valorConvertido,
+                    'categoria' => $item->categoria,
+                    'subcategoria' => $item->subcategoria,
+                ];
+            }
+        }
+
+        // 1. Filtrar os caixas que utilizam Guaranies
+        $caixas = Caixa::where('moeda', '=', 'G$')->pluck('id');
+
+        // 2. Filtrar os FechamentoCaixa
+        $fechamentos = FechamentoCaixa::whereIn('caixa_id', $caixas)
+            ->whereMonth('start_date', $mes)
+            ->whereYear('start_date', $ano)
+            ->pluck('id');
+
+        // 3. Filtrar os fluxos de caixa com a Moeda + Ano e Mês escolhidos + Filtro de GASTOS
+        $gastosGS = FluxoCaixa::selectRaw('categoria_id, subcategoria_id, SUM(valor_origem) as total')
+            ->whereIn('fechamento_origem_id', $fechamentos)
+            ->with(['categoria', 'subcategoria'])
+            ->where(function ($query) {
+                $query->where('tipo', 'saida')
+                      ->orWhere('tipo', 'salario');
+            })
+            ->groupBy('categoria_id', 'subcategoria_id')
+            ->get(); 
+
+        foreach ($gastosGS as $item) {
+            $key = $item->categoria_id . '-' . ($item->subcategoria_id ?? 'null');
+            $valorConvertido = $item->total / $cotacaoGS;
+
+            if (isset($gastosCombinados[$key])) {
+                // Soma ao valor existente
+                $gastosCombinados[$key]['total'] += $valorConvertido;
+            } else {
+                // Novo item
+                $gastosCombinados[$key] = [
+                    'categoria_id' => $item->categoria_id,
+                    'subcategoria_id' => $item->subcategoria_id,
+                    'total' => $valorConvertido,
+                    'categoria' => $item->categoria,
+                    'subcategoria' => $item->subcategoria,
+                ];
+            }
+        }
+        
+        return collect($gastosCombinados)->values();
+    }
 
     private function getGraficoCombinados(int $ano, int $mes): array {
         // 1. Filtrar os caixas que utilizam a moeda enviada

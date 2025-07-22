@@ -70,9 +70,6 @@
                                     <div class="tab-pane fade show active" id="total" role="tabpanel" aria-labelledby="total-tab">
                                         <div class="row mt-4">
                                             <div class="col">
-                                                <h4 class="card-title mb-4">Total Gastos U$</h4>
-                                            </div>
-                                            <div class="col">
                                                 <h4 class="card-title mb-4">ENTRADAS:
                                                     {{ number_format($totais_combinados['entradas'], 2, ',', '.') }} U$
                                                 </h4>
@@ -93,6 +90,54 @@
                                                 </h4>
                                             </div>
                                         </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-xl-6">
+                                                <h4 class="card-title mb-4">Gastos TOTAIS U$ Categorias x Subcategorias</h4>
+                                                <canvas id="TotalUSChart"></canvas>
+                                            </div>
+                                            <div class="col-xl-6">
+                                                <h4 class="card-title mb-4">Totais Gastos U$ Categorias x Subcategorias</h4>                                             
+                                                <div class="row">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                                            <thead class="table-light">
+                                                                <tr>
+                                                                    <th>Valor</th>
+                                                                    <th>%</th>
+                                                                    <th>Categoria</th>
+                                                                </tr>
+                                                            </thead><!-- end thead -->
+                                                            <tbody>
+                                                                @foreach($totalGastosbyCategoria as $fluxo)
+                                                                    <tr>
+                                                                        <td>
+                                                                            {{ number_format($fluxo['total'], 0, ',', '') }}
+                                                                        </td>
+                                                                        <td>{{ number_format(($fluxo['total'] / $totalGastosbyCategoria->sum('total')) * 100, 1, ',', '') }}% </td>
+                                                                        <td>
+                                                                            @if ($fluxo['categoria'])
+                                                                                {{ $fluxo['categoria']->nome . ' ['.$fluxo['subcategoria']->nome.']' }}
+                                                                            @else 
+                                                                                Empresa [Salários]
+                                                                            @endif
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                                <!-- end -->
+                                                            </tbody><!-- end tbody -->
+                                                        </table> <!-- end table -->
+                                                    </div>
+                                                </div> 
+                                            </div> 
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-xl-6">
+                                                <h4 class="card-title mb-4">Total Gastos U$</h4>
+                                            </div>
+                                        </div>
+
                                         <div class="row">
                                             <div class="col">
                                                 <div class="table-responsive">
@@ -175,54 +220,6 @@
                                                     </table> <!-- end table -->
                                                 </div>
                                             </div>
-                                        </div>
-
-                                        <div class="row mt-4">
-                                            <div class="col-xl-6">
-                                                <h4 class="card-title mb-4">Despesas TOTAIS U$ Categorias x Subcategorias</h4>
-                                            </div>
-                                            <div class="col-xl-6">
-                                                <h4 class="card-title mb-4">Despesas U$</h4>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xl-6">
-                                                <canvas id="TotalUSChart"></canvas>
-                                            </div>   
-
-                                            <div class="col-6">
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped table-bordered dt-responsive nowrap datatable-date-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                                                        <thead class="table-light">
-                                                            <tr>
-                                                                <th>Data</th>
-                                                                <th>Data</th>
-                                                                <th>Descrição</th>
-                                                                <th>Valor</th>
-                                                            </tr>
-                                                        </thead><!-- end thead -->
-                                                        <tbody>
-                                                            @foreach($dados_combinados['despesas'] as $fluxo)
-                                                                @if ($fluxo->tipo == 'entrada')
-                                                                    <tr class="table-success" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                                                @elseif ($fluxo->tipo == 'despesa')
-                                                                    <tr class="table-danger" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                                                @else
-                                                                    <tr class="" data-item-id="{{ $fluxo->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                                                @endif
-                                                                <td>{{ $fluxo->data.' '.$fluxo->id }}</td>
-                                                                <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($fluxo->data)->format('d/m/Y') }}</h6></td>
-                                                                <td>{{ $fluxo->descricao }}</td>
-                                                                <td>
-                                                                    {{ number_format($fluxo->valor_origem, 0, ',', '') }}
-                                                                </td>
-                                                                </tr>
-                                                            @endforeach
-                                                            <!-- end -->
-                                                        </tbody><!-- end tbody -->
-                                                    </table> <!-- end table -->
-                                                </div>
-                                            </div> 
                                         </div>
 
                                     </div>
@@ -782,6 +779,24 @@
             <!-- end col -->
         </div>
         <!-- end row -->
+
+        <!-- Detalhes -->
+        <div class="modal fade" tabindex="-1" aria-labelledby="ModalDetalhes" aria-hidden="true" style="display: none;" id="modalDetalhes">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloModal">Mais Detalhes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+                    <div class="modal-footer">                            
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
     </div>
 </div>
 <!-- End Page-content -->

@@ -240,6 +240,11 @@
                     inicializarDataTable($(this));
                 });
 
+                // Padrão
+                $(".datatable-default-no-button").each(function () {
+                    inicializarDataTableNoButton($(this));
+                });
+
                 // Com ordenação por data (desc) e ocultar coluna 0
                 $(".datatable-date").each(function () {
                     inicializarDataTable($(this), {

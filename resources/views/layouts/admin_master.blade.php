@@ -178,19 +178,88 @@
                 initializeDataTableWithButtons("datatable-totals");
                 initializeDataTableWithButtonsDate("datatable-date");
                 initializeDataTableWithButtonsDate("datatable-date2");
-                initializeDataTableWithButtonsDate("datatable-date3");
-                initializeDataTableWithButtonsDate("datatable-date4");
-                initializeDataTableWithButtonsDate("datatable-date5");
-                initializeDataTableWithButtonsDate("datatable-date6");
-                initializeDataTableWithButtonsDate("datatable-date7");
-                initializeDataTableWithButtonsDate("datatable-date8");
-                initializeDataTableWithButtonsDate("datatable-date9");
                 initializeDataTableWithButtons("dGastoUs");
                 initializeDataTableWithButtons("dGastoRs");
                 initializeDataTableWithButtons("dGastoGs");
                 initializeDataTableWithButtons("dbcel1");
                 initializeDataTableWithButtons("dbcel2");
                 initializeDataTableWithButtonsDate("tabcel1");
+            });
+
+            $(document).ready(function () {
+                function dataTableBaseConfig() {
+                    return {
+                        lengthChange: false,
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            }
+                        },
+                        drawCallback: function () {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                        },
+                        buttons: ["copy", "excel", "pdf", "colvis"]
+                    };
+                }
+
+                function dataTableBaseConfigNoButton() {
+                    return {
+                        lengthChange: false,
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            }
+                        },
+                        drawCallback: function () {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                        },
+                        // buttons: ["copy", "excel", "pdf", "colvis"]
+                    };
+                }
+
+                function inicializarDataTable($table, customConfig = {}) {
+                    let config = $.extend(true, {}, dataTableBaseConfig(), customConfig);
+                    let dataTable = $table.DataTable(config);
+
+                    dataTable.buttons().container().appendTo($table.closest('.dataTables_wrapper').find('.col-md-6:eq(0)'));
+                    $(".dataTables_length select").addClass("form-select form-select-sm");
+                }
+
+                function inicializarDataTableNoButton($table, customConfig = {}) {
+                    let config = $.extend(true, {}, dataTableBaseConfigNoButton(), customConfig);
+                    let dataTable = $table.DataTable(config);
+
+                    dataTable.buttons().container().appendTo($table.closest('.dataTables_wrapper').find('.col-md-6:eq(0)'));
+                    $(".dataTables_length select").addClass("form-select form-select-sm");
+                }
+
+                // Padrão
+                $(".datatable-default").each(function () {
+                    inicializarDataTable($(this));
+                });
+
+                // Padrão
+                $(".datatable-default-no-button").each(function () {
+                    inicializarDataTableNoButton($(this));
+                });
+
+                // Com ordenação por data (desc) e ocultar coluna 0
+                $(".datatable-date").each(function () {
+                    inicializarDataTable($(this), {
+                        columnDefs: [{ targets: 0, visible: false }],
+                        order: [[0, 'desc']]
+                    });
+                });
+
+                // Com ordenação por data (desc) e ocultar coluna 0
+                $(".datatable-date-no-button").each(function () {
+                    inicializarDataTableNoButton($(this), {
+                        columnDefs: [{ targets: 0, visible: false }],
+                        order: [[0, 'desc']]
+                    });
+                });
             });
         </script>
     </body>

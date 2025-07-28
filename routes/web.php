@@ -357,6 +357,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/gastos/{periodo}', [RelatorioController::class, 'showGastos'])->name('relatorioGastos.show');
             Route::get('carga/', [RelatorioController::class, 'indexCarga'])->name('relatorioCarga.index');
             Route::get('carga/{faturacarga}', [RelatorioController::class, 'showCargas'])->name('relatorioCarga.show');
+            Route::get('categorias/', [RelatorioController::class, 'indexCategorias'])->name('relatorioCategorias.index');
         });
 
         // Pacotes Pendentes CRUD

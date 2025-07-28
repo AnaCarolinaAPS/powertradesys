@@ -172,73 +172,6 @@ class RelatorioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function indexGastos(){
-        $conversoes = [
-            'U$' => 1,
-            'R$' => 1 / 5.85,
-            'G$' => 1 / 7950,
-        ];
-
-        $baseQuery = FechamentoCaixa::query()
-            ->join('fluxo_caixas as transacoes', 'fechamento_caixas.id', '=', 'transacoes.fechamento_origem_id')
-            ->join('caixas', 'fechamento_caixas.caixa_id', '=', 'caixas.id');
-
-        // Retorna cada linha com moeda
-        $dados = $baseQuery
-            ->selectRaw("
-                DATE_FORMAT(fechamento_caixas.start_date, '%Y-%m') as mes,
-                caixas.moeda as moeda,
-                SUM(CASE WHEN transacoes.tipo = 'despesa' THEN transacoes.valor_origem ELSE 0 END) as total_despesas,
-                SUM(CASE WHEN transacoes.tipo = 'entrada' THEN transacoes.valor_origem ELSE 0 END) as total_entradas,
-                SUM(CASE WHEN transacoes.tipo IN ('saida') THEN transacoes.valor_origem ELSE 0 END) as total_gastos,
-                SUM(CASE WHEN transacoes.tipo IN ('salario') THEN transacoes.valor_origem ELSE 0 END) as total_salarios
-            ")
-            ->groupBy(DB::raw("DATE_FORMAT(fechamento_caixas.start_date, '%Y-%m')"), 'moeda')
-            ->get();
-
-        // Consolidar todas moedas por mês (já convertidas para U$)
-        $resultado = [];
-
-        foreach ($dados as $linha) {
-            $mes = $linha->mes;
-            $fator = $conversoes[$linha->moeda] ?? 1;
-
-            $entradas = ($linha->total_entradas ?? 0) * $fator;
-            $despesas = ($linha->total_despesas ?? 0) * $fator;
-            $gastos = ($linha->total_gastos ?? 0) * $fator;
-            $salarios = ($linha->total_salarios ?? 0) * $fator;
-
-            if (!isset($resultado[$mes])) {
-                $resultado[$mes] = [
-                    'mes' => $mes,
-                    'entradas' => 0,
-                    'despesas' => 0,
-                    'gastos' => 0,
-                    'salarios' => 0,
-                ];                
-            }
-
-            $resultado[$mes]['entradas'] += $entradas;
-            $resultado[$mes]['despesas'] += $despesas;
-            $resultado[$mes]['gastos'] += $gastos;
-            $resultado[$mes]['salarios'] += $salarios;
-        }
-
-        // Calcular lucros e saldo final
-        foreach ($resultado as &$valores) {
-            $valores['lucros'] = $valores['entradas'] + $valores['despesas'];
-            $valores['saldo'] = $valores['entradas'] + ($valores['despesas'] + $valores['gastos'] + $valores['salarios'] );
-        }
-
-        // Ordenar por mês
-        ksort($resultado);
-
-        return view('admin.relatoriogastos.index', ['resultado' => $resultado]);
-    }
-
-    /**
-     * Display a listing of the resource.
-     */
     public function indexGastosMensais(Request $request){
         $ano = $request->input('ano', date('Y'));
         $mes = $request->input('mes', date('n'));
@@ -439,7 +372,7 @@ class RelatorioController extends Controller
             ->pluck('id');
         
         // 6. Montar o array para exibir o gráfico
-        $grafico = $this->montarGrafico($fechamentos, 'U$');
+        $grafico = $this->montarGrafico2($fechamentos, 'U$');
 
         return $grafico;
     }
@@ -473,7 +406,7 @@ class RelatorioController extends Controller
             ->get();
 
         // 6. Montar o array para exibir o gráfico
-        $grafico = $this->montarGrafico($fechamentos, $moeda);
+        $grafico = $this->montarGrafico2($fechamentos, $moeda);
 
         return [
             "gastos"    => $gastos,
@@ -483,7 +416,7 @@ class RelatorioController extends Controller
         ];
     }
 
-    private function montarGrafico($fechamentos, $moedaDestino) {
+    private function montarGrafico2($fechamentos, $moedaDestino) {
         $labels = [];
         $data = [];
         $backgroundColor = [];
@@ -562,4 +495,176 @@ class RelatorioController extends Controller
             "borderColor" => $borderColor,
         ];
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexCategorias(Request $request){
+        $all_categorias = Categoria::where('tipo', 'categoria')
+                            ->get();
+        $all_subcategorias = Categoria::where('tipo', 'subcategoria')
+                        ->get();
+
+        // IDs das categorias selecionadas
+        $categorias = $request->input('categoria_id');
+        // IDs das subcategorias selecionadas
+        $subcategorias = $request->input('subcategoria_id');
+        // Data de Inicio do Relatório
+        $data_inicio = $request->input('data_inicio');
+        // Data de FIM do Relatório
+        $data_fim = $request->input('data_fim');
+
+        // Caso o usuário venha diretamente do menu
+        if (empty($categorias)) {
+            $categorias = [];
+        }
+        if (empty($subcategorias)) {
+            $subcategorias = [];
+        }
+
+        if (empty($data_inicio)) {
+            $data_inicio = Carbon::today()->subDays(30)->format('Y-m-d');
+        }
+        if (empty($data_fim)) {
+            $data_fim = Carbon::today()->format('Y-m-d');
+        }
+
+        // Verifica se "Salários" foi selecionado
+        $incluirSalario = in_array('', $subcategorias);
+
+        // Remove a string vazia do array de subcategorias (para evitar erro no whereIn)
+        $subcategoriasFiltradas = array_filter($subcategorias, function ($id) {
+            return $id !== '';
+        });
+        
+        //Incluir ou não Salários na busca
+        $tipos = ['saida'];
+        if ($incluirSalario) {
+            $tipos[] = 'salario';
+        }
+
+        // Filtrar os Fluxos 
+        $fluxos = FluxoCaixa::with(['categoria', 'subcategoria', 'fechamentoOrigem'])
+                    ->whereIn('tipo', $tipos)
+                    ->whereBetween('data', [$data_inicio, $data_fim]);
+
+        if ($incluirSalario) {
+            $fluxos->where(function ($query) use ($subcategoriasFiltradas, $incluirSalario) {
+                // Caso tenha subcategorias selecionadas, filtra
+                if (!empty($subcategoriasFiltradas)) {
+                    $query->whereIn('subcategoria_id', $subcategoriasFiltradas);
+                }
+
+                // Caso "salário" tenha sido marcado, inclui registros SEM subcategoria (null)
+                if ($incluirSalario) {
+                    $query->orWhere(function ($q) {
+                        $q->whereNull('subcategoria_id')
+                        ->where('tipo', 'salario');
+                    });
+                }
+            });
+        } else {
+            $fluxos->whereIn('categoria_id', (array) $categorias);
+            $fluxos->whereIn('subcategoria_id', (array) $subcategorias);
+        }        
+        $fluxos = $fluxos->orderBy('data', 'desc')->get();
+
+        $cotacoes = [
+            'G$' => 7850.0,
+            'R$' => 5.80,
+            'U$' => 1.0,
+        ];
+
+        $moedaDestino = 'U$';
+
+        $grafico = $this->montarGrafico($fluxos, $cotacoes, $moedaDestino);
+        $gastosAgrupados = $this->getTotaisByCategoria2($fluxos, $cotacoes, $moedaDestino);
+
+        return view('admin.relatoriocategorias.index', compact('all_categorias', 'all_subcategorias', 'fluxos', 'grafico', 'gastosAgrupados'));
+    } 
+
+    private function montarGrafico($fluxos, $cotacoes, $moedaDestino) {
+        $labels = [];
+        $data = [];
+        $backgroundColor = [];
+        $borderColor = [];
+
+        if (empty($cotacoes))  {
+            // Cotações fixas (podem vir do banco, se preferir)
+            $cotacoes = [
+                'G$' => 7850.0,
+                'R$' => 5.80,
+                'U$' => 1.0,
+            ];
+        }
+
+        $agrupados = [];
+
+        foreach ($fluxos as $fluxo) {
+            $moedaOrigem = $fluxo->fechamentoOrigem->caixa->moeda ?? 'U$';
+            $cotacaoOrigem = $cotacoes[$moedaOrigem] ?? 1;
+            $cotacaoDestino = $cotacoes[$moedaDestino] ?? 1;
+
+            // Converte da moeda original para a moeda destino
+            $valor_convertido = $fluxo->valor_origem * ($cotacaoDestino / $cotacaoOrigem);
+
+            $key = $fluxo->tipo === 'salario'
+                ? 'Empresa - Salários'
+                : ($fluxo->categoria->nome ?? 'Sem Categoria') . ' - ' . ($fluxo->subcategoria->nome ?? 'Sem Subcategoria');
+
+            $agrupados[$key] = ($agrupados[$key] ?? 0) + $valor_convertido;
+        }
+
+        foreach ($agrupados as $label => $total_convertido) {
+            $labels[] = $label;
+            $data[] = $total_convertido;
+
+            $red = mt_rand(0, 255);
+            $green = mt_rand(0, 255);
+            $blue = mt_rand(0, 255);
+
+            $backgroundColor[] = "rgba($red, $green, $blue, 0.5)";
+            $borderColor[] = "rgba($red, $green, $blue, 1)";
+        } 
+
+        return [
+            "labels"    => $labels,
+            "data" => $data,
+            "backgroundColor" => $backgroundColor,
+            "borderColor" => $borderColor,
+        ];
+    }
+
+    private function getTotaisByCategoria2($fluxos, $cotacoes, $moedaDestino) {    
+        
+        if (empty($cotacoes))  {
+            // Cotações fixas (podem vir do banco, se preferir)
+            $cotacoes = [
+                'G$' => 7850.0,
+                'R$' => 5.80,
+                'U$' => 1.0,
+            ];
+        }
+
+        $agrupados = [];
+
+        foreach ($fluxos as $fluxo) {
+            $moedaOrigem = $fluxo->fechamentoOrigem->caixa->moeda ?? 'U$';
+            $cotacaoOrigem = $cotacoes[$moedaOrigem] ?? 1;
+            $cotacaoDestino = $cotacoes[$moedaDestino] ?? 1;
+
+            // Converte da moeda original para a moeda destino
+            $valor_convertido = $fluxo->valor_origem * ($cotacaoDestino / $cotacaoOrigem);
+
+            $key = $fluxo->tipo === 'salario'
+                ? 'Empresa - Salários'
+                : ($fluxo->categoria->nome ?? 'Sem Categoria') . ' - ' . ($fluxo->subcategoria->nome ?? 'Sem Subcategoria');
+
+            $agrupados[$key] = ($agrupados[$key] ?? 0) + $valor_convertido;
+        }        
+        
+        // dd($agrupados);
+        return $agrupados;
+    }
+
 }

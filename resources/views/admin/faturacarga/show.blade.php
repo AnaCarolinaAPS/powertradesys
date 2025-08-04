@@ -31,30 +31,25 @@
                             @method('PUT') <!-- Método HTTP para update -->
                             <h4 class="card-title mb-4">Carga</h4>
                             <div class="row">
-                                <div class="col">
+                                <div class="col-sm-12 col-md-2 mb-2">
                                     <div class="form-group">
                                         <label for="data_recebida">Data Recebida</label>
                                         <input class="form-control" type="date" value="{{  $faturacarga->carga->data_recebida; }}" id="data_recebida" name="data_recebida" readonly>
                                     </div>
                                 </div>
-                                <div class="col">
+                                <div class="col-sm-12 col-md-5 mb-2">
                                     <div class="form-group">
                                         <label for="status">Tipo Serviço</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="" name="" disabled>
-                                            <option value="" {{ is_null($faturacarga->servico) ? 'selected' : '' }}>Nenhum</option>
-                                            @foreach ($all_servicos as $servico)
-                                                <option value="{{ $servico->id }}" {{ optional($faturacarga->servico)->id == $servico->id ? 'selected' : '' }}> {{ $servico->descricao." (".$servico->preco." U$)" }} </option>
-                                            @endforeach
-                                        </select>
+                                        <input class="form-control" type="text"  value="{{ $faturacarga->servico->descricao.' ('.$faturacarga->servico->preco.' U$)' }}" id="servico_id" name="servico_id" placeholder="Tipo de Serviço" maxlength="255" readonly>                                        
                                     </div>
                                 </div>
-                                <div class="col">
+                                <div class="col-sm-12 col-md-2 mb-2">
                                     <div class="form-group">
                                         <label for="peso">Peso Guia</label>
                                         <input class="form-control" type="number" value="{{  $faturacarga->carga->peso_guia ?? '0.0'; }}" step="0.10" id="peso_guia" name="peso_guia">
                                     </div>
                                 </div>
-                                <div class="col">
+                                <div class="col-sm-12 col-md-3 mb-2">
                                     <div class="form-group">
                                         <label for="guia_aerea">Numero de Guia Aérea</label>
                                         <input type="text" class="form-control" value="{{  $faturacarga->carga->guia_aerea ?? ''; }}" id="guia_aerea" name="guia_aerea" placeholder="Numero de Guia Aérea" maxlength="255">
@@ -72,33 +67,25 @@
                                     <div id="flush-collapseDetalhes" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionDetalhes">
                                         <div class="accordion-body">
                                             <div class="row">
-                                                <div class="col">
+                                                <div class="col-sm-12 col-md-3 mb-2">
                                                     <div class="form-group">
                                                         <label for="data_enviada">Data Enviada</label>
                                                         <input class="form-control" type="date" value="{{  $faturacarga->carga->data_enviada; }}" id="data_enviada" name="data_enviada" readonly>
                                                     </div>
                                                 </div>
-                                                <div class="col">
+                                                <div class="col-sm-12 col-md-3 mb-2">
                                                     <div class="form-group">
                                                         <label for="embarcador_id">Embarcador</label>
-                                                        <select class="selectpicker form-control" data-live-search="true" id="embarcador_id" name="embarcador_id" disabled>
-                                                            @foreach ($all_embarcadores as $embarcador)
-                                                                <option value="{{ $embarcador->id }}" {{ $faturacarga->carga->embarcador->id == $embarcador->id ? 'selected' : '' }}> {{ $embarcador->nome }} </option>
-                                                            @endforeach
-                                                        </select>
+                                                        <input class="form-control" type="text" value="{{  $faturacarga->carga->embarcador->nome; }}" id="embarcador_id" readonly>
                                                     </div>
                                                 </div>
-                                                <div class="col">
+                                                <div class="col-sm-12 col-md-3 mb-2">
                                                     <div class="form-group">
                                                         <label for="embarcador_id">Despachante</label>
-                                                        <select class="selectpicker form-control" data-live-search="true" id="despachante_id" name="despachante_id" disabled>
-                                                            @foreach ($all_despachantes as $despachante)
-                                                                <option value="{{ $despachante->id }}" {{ $faturacarga->carga->despachante->id == $despachante->id ? 'selected' : '' }}> {{ $despachante->nome }} </option>
-                                                            @endforeach
-                                                        </select>
+                                                        <input class="form-control" type="text" value="{{  $faturacarga->carga->despachante->nome; }}" id="despachante_id" readonly>
                                                     </div>
                                                 </div>
-                                                <div class="col">
+                                                <div class="col-sm-12 col-md-3 mb-2">
                                                     <div class="form-group">
                                                         <label for="transportadora_id">Transportadora</label>
                                                         <select class="selectpicker form-control" data-live-search="true" id="transportadora_id" name="transportadora_id">
@@ -138,7 +125,6 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <!-- <h4 class="card-title mb-4">Invoices</h4>                         -->
                         <div class="row">
                             <div class="col">
                                 <h4 class="card-title mb-4">Invoices</h4>
@@ -162,7 +148,7 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable" class="table table-striped table-bordered dt-responsive nowrap datatable-default" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Cliente</th>
@@ -219,7 +205,7 @@
                                 </button>
                             </div>
                             <div class="col">
-                                {{-- Peso Total: <b>{{$resumo ? $resumo->soma_peso : '0'}} kgs</b> --}}
+                                
                             </div>
                             <div class="col">
                                 Valor Total: <b>{{number_format($faturacarga->despesas_total(), 2, ',', '.');}} U$</b>
@@ -228,7 +214,7 @@
                                 Falta PAGAR : <b>{{number_format($faturacarga->despesas_total() - $faturacarga->despesas_pagas(), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
-                        <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                        <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead class="table-light">
                                 <tr>
                                     <th>Fornececdor</th>
@@ -277,19 +263,38 @@
                         </div>
                         <div class="row">
                             <div class="col">
-                                <table id="dGastoUs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="dtGastos" class="table table-striped table-bordered dt-responsive nowrap datatable-date" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
-                                            <th>Valor U$</th>
                                             <th>Data</th>
+                                            <th>Data</th>
+                                            <th>Valor U$</th>
                                             <th>Descrição</th>
                                         </tr>
                                     </thead><!-- end thead -->
                                     <tbody>
-                                        @foreach ($gastosUs as $gasto)
+                                        @php
+                                            $cotacoes = [
+                                                'G$' => 7850.0,
+                                                'R$' => 5.80,
+                                                'U$' => 1.0,
+                                            ];
+                                            $total = 0;
+                                        @endphp
+                                        @foreach ($fluxos as $gasto)
+                                            @php
+                                                $moeda = $gasto->fechamentoOrigem->caixa->moeda;
+                                                $valor = floatval($gasto->valor_origem);
+                                                $cotacao = $cotacoes[$moeda] ?? 1;
+                                                $valor_convertido = $valor / $cotacao;
+                                            @endphp
                                         <tr>
-                                            <td>{{ number_format($gasto->valor_origem, 2, '.', ',') }}</td>
+                                            <td>{{ $gasto->data; }}</td>
                                             <td>{{ \Carbon\Carbon::parse($gasto->data)->format('d/m/Y'); }}</td>
+                                            <td>
+                                                {{ number_format($valor_convertido, 2, '.', ',') }}
+                                                {{ $gasto->fechamentoOrigem->caixa->moeda == 'U$' ? '' : '('.$gasto->fechamentoOrigem->caixa->moeda.' '.number_format($gasto->valor_origem, 0, ',', '.').')' }}
+                                            </td>
                                             <td>{{ $gasto->descricao }}</td>
                                         </tr>
                                         @endforeach                                        
@@ -297,9 +302,10 @@
                                 </table> <!-- end table -->
                             </div>
                         </div>
+                        {{-- 
                         <div class="row">
                             <div class="col">
-                                <table id="dGastoRs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="dtGastosRs" class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Valor R$</th>
@@ -317,7 +323,7 @@
                                 </table> <!-- end table -->
                             </div>
                             <div class="col">
-                                <table id="dGastoGs" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="dtGastosGs" class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Valor G$</th>
@@ -335,6 +341,7 @@
                                 </table> <!-- end table -->
                             </div>
                         </div>
+                        --}}
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

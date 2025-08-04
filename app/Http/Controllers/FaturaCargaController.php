@@ -71,18 +71,6 @@ class FaturaCargaController extends Controller
                 ]);
             }
 
-            // try {
-            //     // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
-            //     $invoices = InvoiceController::criarInvoices($faturacarga);
-            // } catch (\Exception $e) {
-            //     // Exibir toastr de Erro
-            //     return redirect()->route('faturacargas.index')->with('toastr', [
-            //         'type'    => 'error',
-            //         'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga: <br>'. $e->getMessage(),
-            //         'title'   => 'Erro',
-            //     ]);
-            // }
-
             // Exibir toastr de sucesso
             return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
                 'type'    => 'success',
@@ -107,8 +95,6 @@ class FaturaCargaController extends Controller
         try {
             // Buscar o shipper pelo ID
             $faturacarga = FaturaCarga::findOrFail($id);
-            $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
-            $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
             $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
             $carga = $faturacarga->carga;
             $all_fornecedors = Fornecedor::whereIn('id', [$carga->despachante_id, $carga->embarcador_id, $carga->transportadora_id])->get();
@@ -134,114 +120,44 @@ class FaturaCargaController extends Controller
 
             $all_despesas = Despesa::where('fatura_carga_id', $faturacarga->id)->get();
 
-            // Suponha que $data seja a data que você está consultando
-            // $data = Carbon::parse($faturacarga->carga->data_recebida); // Altere para a data desejada
-
             // 1. Calcular o início e o fim da semana dessa data
             $startOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->startOfWeek(\Carbon\Carbon::SUNDAY); // Começo da semana (segunda-feira)
-            $endOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->endOfWeek(\Carbon\Carbon::SUNDAY); // Fim da semana (domingo)
+            $endOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->endOfWeek(\Carbon\Carbon::SUNDAY); // Fim da semana (domingo)           
 
-            $mes = Carbon::parse($faturacarga->carga->data_recebida)->month;
-            $ano = Carbon::parse($faturacarga->carga->data_recebida)->year;
-
-            // 2. Filtrar os caixas que utilizam a mesma moeda
-            $caixasComMoeda = Caixa::where('moeda', '=', 'U$')->pluck('id');
-
-            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
-            // $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
-            //     ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
-            //     ->pluck('id');
-
-            //
-            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
-            $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
-                ->whereMonth('start_date', $mes)
-                ->whereYear('start_date', $ano)
-                ->pluck('id');
-
-            // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
-            $gastosUs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
-                // ->where('tipo', '=', 'saida')
-                ->where(function ($query) {
-                    $query->where('tipo', 'saida')
-                          ->orWhere('tipo', 'salario');
-                })
-                ->whereBetween('data', [$startOfWeek, $endOfWeek])
-                ->get();
-
-            $totalGastosUs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
-                // ->where('tipo', '=', 'saida')
-                ->where(function ($query) {
-                    $query->where('tipo', 'saida')
-                          ->orWhere('tipo', 'salario');
-                })
-                ->whereBetween('data', [$startOfWeek, $endOfWeek])
-                ->sum('valor_origem');
+            //Filtra caixas U$ 
+            $totalGastosUs = FluxoCaixa::whereHas('fechamentoOrigem.caixa', function ($query) {
+                                $query->where('moeda', 'U$');
+                            })
+                            ->whereIn('tipo', ['salario','saida'])
+                            ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                            ->sum('valor_origem');
 
             //GASTOS EM GUARANIS
-            // 2. Filtrar os caixas que utilizam a mesma moeda
-            $caixasComMoeda = Caixa::where('moeda', '=', 'G$')->pluck('id');
-
-            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
-            $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
-                // ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
-                ->whereMonth('start_date', $mes)
-                ->whereYear('start_date', $ano)
-                ->pluck('id');
-
-            // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
-            $gastosGs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
-                // ->where('tipo', '=', 'saida')
-                ->where(function ($query) {
-                    $query->where('tipo', 'saida')
-                          ->orWhere('tipo', 'salario');
-                })
-                ->whereBetween('data', [$startOfWeek, $endOfWeek])
-                ->get();
-
-            $totalGastosGs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
-                // ->where('tipo', '=', 'saida')
-                ->where(function ($query) {
-                    $query->where('tipo', 'saida')
-                          ->orWhere('tipo', 'salario');
-                })
-                ->whereBetween('data', [$startOfWeek, $endOfWeek])
-                ->sum('valor_origem');
+            $totalGastosGs = FluxoCaixa::whereHas('fechamentoOrigem.caixa', function ($query) {
+                                $query->where('moeda', 'G$');
+                            })
+                            ->whereIn('tipo', ['salario','saida'])
+                            ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                            ->sum('valor_origem');           
 
             //GASTOS EM REAIS
-            // 2. Filtrar os caixas que utilizam a mesma moeda
-            $caixasComMoeda = Caixa::where('moeda', '=', 'R$')->pluck('id');
+            $totalGastosRs = FluxoCaixa::whereHas('fechamentoOrigem.caixa', function ($query) {
+                                $query->where('moeda', 'R$');
+                            })
+                            ->whereIn('tipo', ['salario','saida'])
+                            ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                            ->sum('valor_origem');           
 
-            // 3. Filtrar os FechamentoCaixa que estão dentro da semana
-            $fechamentosNaSemana = FechamentoCaixa::whereIn('caixa_id', $caixasComMoeda)
-                // ->whereBetween('start_date', [$startOfWeek, $endOfWeek])
-                ->whereMonth('start_date', $mes)
-                ->whereYear('start_date', $ano)
-                ->pluck('id');
-
-            // 4. Filtrar os FluxoCaixa do tipo 'saida' para esses fechamentos
-            $gastosRs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
-                // ->where('tipo', '=', 'saida')
-                ->where(function ($query) {
-                    $query->where('tipo', 'saida')
-                          ->orWhere('tipo', 'salario');
-                })
-                ->whereBetween('data', [$startOfWeek, $endOfWeek])
-                ->get();
-            
-            $totalGastosRs = FluxoCaixa::whereIn('fechamento_origem_id', $fechamentosNaSemana)
-                // ->where('tipo', '=', 'saida')
-                ->where(function ($query) {
-                    $query->where('tipo', 'saida')
-                          ->orWhere('tipo', 'salario');
-                })
-                ->whereBetween('data', [$startOfWeek, $endOfWeek])
-                ->sum('valor_origem');
+            // Filtrar os Fluxos 
+            $fluxos = FluxoCaixa::with(['categoria', 'subcategoria', 'fechamentoOrigem'])
+                        ->whereIn('tipo', ['salario','saida'])
+                        ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                        ->orderBy('data', 'desc')->get();
 
             session(['previous_url' => route('faturacargas.show', ['faturacarga' => $faturacarga->id])]);
 
             // Retornar a view com os detalhes
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas', 'gastosUs', 'gastosGs', 'gastosRs', 'totalGastosUs', 'totalGastosGs', 'totalGastosRs'));
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas', 'totalGastosUs', 'totalGastosGs', 'totalGastosRs', 'fluxos'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

@@ -84,6 +84,8 @@ class ContasFixasController extends Controller
             $request->validate([
                 'descricao' => 'required|string|max:255',
                 'ativo' => 'required|boolean',
+                'valor' => 'required|numeric',
+                'data_vencimento' => 'required|date',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
@@ -93,6 +95,8 @@ class ContasFixasController extends Controller
             $contasFixas->update([
                 'descricao' => $request->input('descricao'),
                 'ativa' => $request->input('ativo'),
+                'valor' => $request->input('valor'),
+                'data_vencimento' => $request->input('data_vencimento'),
                 // Adicione outros campos conforme necessário
             ]);
 

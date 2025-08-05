@@ -34,25 +34,19 @@
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
-                                        <!-- <th>ID</th> -->
                                         <th>Data Vencimento</th>
                                         <th>Categoria</th>
                                         <th>Nome</th>
                                         <th>Valor</th>
-                                        <!-- <th>Data Criação</th> -->
-                                        <!-- <th>Ativa</th> -->
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_items as $conta)
                                     <tr class="abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                        <!-- <td><h6 class="mb-0">{{ $conta->id }}</h6></td> -->
                                         <td>{{ \Carbon\Carbon::parse($conta->data_vencimento)->format('d') }}</td>
                                         <td>{{ $conta->categoria->nome }} [{{ $conta->subcategoria->nome }}]</td>
                                         <td>{{ $conta->descricao }}</td>
                                         <td>{{ $conta->valor }} {{ $conta->moeda }}</td>
-                                        <!-- <td>{{ \Carbon\Carbon::parse($conta->created_at)->format('d/m/Y H:i') }}</td> -->
-                                        <!-- <td>{{ $conta->ativa }}</td> -->
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -80,7 +74,6 @@
                                         <th>Nome</th>
                                         <th>Valor</th>
                                         <th>Data Criação</th>
-                                        <!-- <th>Ativa</th> -->
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -92,7 +85,6 @@
                                         <td>{{ $conta->descricao }}</td>
                                         <td>{{ $conta->valor }} {{ $conta->moeda }}</td>
                                         <td>{{ \Carbon\Carbon::parse($conta->created_at)->format('d/m/Y H:i') }}</td>
-                                        <!-- <td>{{ $conta->ativa }}</td> -->
                                     </tr>
                                     @endforeach
                                      <!-- end -->
@@ -193,20 +185,34 @@
                     @method('PUT') <!-- Método HTTP para update -->
                     <div class="modal-body">
                         <div class="row">
-                            <input type="hidden" name="id" value="" id="did">
                             <div class="col">
                                 <div class="form-group">
-                                    <label for="nome">Descrição</label>
-                                    <input type="text" class="form-control" id="ddescricao" name="descricao" placeholder="Descrição da Conta Fixa" maxlength="255" required>
+                                    <label for="data">Data</label>
+                                    <input class="form-control" type="date" id="ddata_vencimento" name="data_vencimento">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="valor">Valor</label>
+                                    <input class="form-control" type="number" step="0.10" id="dvalor" name="valor">
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-2">
                                 <div class="form-group">
                                     <label for="ativo">Status</label>
                                     <select class="selectpicker form-control" id="dativo" name="ativo">
                                         <option value="1"> Ativo </option>
                                         <option value="0"> Inativo </option>
                                     </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="hidden" name="id" value="" id="did">
+                            <div class="col mb-2">
+                                <div class="form-group">
+                                    <label for="nome">Descrição</label>
+                                    <input type="text" class="form-control" id="ddescricao" name="descricao" placeholder="Descrição da Conta Fixa" maxlength="255" required>
                                 </div>
                             </div>
                         </div>
@@ -262,6 +268,8 @@
                     document.getElementById('tituloModal').innerText = 'Conta Fixa: '+data.descricao;
                     document.getElementById('did').value = data.id;
                     document.getElementById('ddescricao').value = data.descricao;
+                    document.getElementById('dvalor').value = data.valor;
+                    document.getElementById('ddata_vencimento').value = data.data_vencimento;
                     document.getElementById('dativo').value = data.ativa;
                     $('.selectpicker').selectpicker('refresh');
 

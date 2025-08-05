@@ -252,10 +252,10 @@
                                 <h4 class="card-title mb-4">Gastos da Semana</h4>
                             </div>                            
                             <div class="col">
-                                <b>{{$totalGastosRs === null ? "" : "Total R$: ".number_format($totalGastosRs, 2, ',', '.');}}</b>
+                                <b>{{$totalGastosRs === null ? "" : "Total R$: ".number_format($totalGastosRs, 2, ',', '.');}}</b> {{$totalGastosRs === null ? "" : "(".number_format($totalGastosRs/5.5, 2, ',', '.')." U$)";}}
                             </div>
                             <div class="col">
-                                <b>{{$totalGastosGs === null ? "" : "Total G$: ".number_format($totalGastosGs, 0, ',', '.');}}</b>
+                                <b>{{$totalGastosGs === null ? "" : "Total G$: ".number_format($totalGastosGs, 0, ',', '.');}}</b> {{$totalGastosGs === null ? "" : "(".number_format($totalGastosGs/7300, 2, ',', '.')." U$)";}}
                             </div>
                             <div class="col">
                                 <b>{{$totalGastosUs === null ? "" : "Total U$: ".number_format($totalGastosUs, 2, ',', '.');}}</b>

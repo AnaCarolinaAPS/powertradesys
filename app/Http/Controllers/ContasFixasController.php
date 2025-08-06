@@ -19,7 +19,12 @@ class ContasFixasController extends Controller
         $all_subcategorias = Categoria::where('tipo', 'subcategoria')
                         ->get();
         $all_inativas = ContasFixas::where('ativa', false)->get();
-        return view('admin.contafixa.index', compact('all_items', 'all_categorias', 'all_subcategorias', 'all_inativas'));
+
+        $totalFixoRs = ContasFixas::where('ativa', true)->where('moeda', 'R$')->sum('valor');
+        $totalFixoGs = ContasFixas::where('ativa', true)->where('moeda', 'G$')->sum('valor');
+        $totalFixoUs = ContasFixas::where('ativa', true)->where('moeda', 'U$')->sum('valor');
+
+        return view('admin.contafixa.index', compact('all_items', 'all_categorias', 'all_subcategorias', 'all_inativas', 'totalFixoRs', 'totalFixoGs', 'totalFixoUs'));
     }
 
     /**

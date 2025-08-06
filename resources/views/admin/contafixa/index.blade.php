@@ -26,7 +26,20 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Contas Fixas</h4>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Contas Fixas</h4>
+                            </div>                            
+                            <div class="col">
+                                <b>{{$totalFixoRs === null ? "" : "Total R$: ".number_format($totalFixoRs, 2, ',', '.')." (".number_format($totalFixoRs/5.5, 2, ',', '.')." U$)";}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalFixoGs === null ? "" : "Total G$: ".number_format($totalFixoGs, 0, ',', '.')." (".number_format($totalFixoGs/7300, 2, ',', '.')." U$)";}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalFixoUs === null ? "" : "Total U$: ".number_format($totalFixoUs, 2, ',', '.');}}</b>
+                            </div>
+                        </div>                        
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" id="btnCategoria" onclick="abrirModal('categoria')">
                             <i class="fas fa-plus"></i> Nova
                         </button>

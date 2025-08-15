@@ -26,10 +26,34 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Contas a Pagar</h4>
+                        <h4 class="card-title mb-4">Contas a Pagar</h4>                        
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" id="btnCategoria" onclick="abrirModal('categoria')">
                             <i class="fas fa-plus"></i> Nova
                         </button>
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddContaFixa">
+                            <i class="fas fa-plus"></i> Add Conta Fixa
+                        </button>
+                        <div class="row mb-2">
+                            <form method="GET" action="{{ route('contaspagar.index') }}">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <select class="selectpicker form-control" data-live-search="true" id="ano" name="ano" onchange="this.form.submit()">
+                                                <option value="2025"> 2025 </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 align-center">
+                                        @foreach(range(1, 12) as $mes)
+                                            <a href="{{ route('contaspagar.index', ['ano' => request('ano', date('Y')), 'mes' => $mes]) }}"
+                                            class="btn waves-effect {{ request('mes') == $mes ? 'selected btn-primary' : 'btn-light' }}">
+                                                {{ DateTime::createFromFormat('!m', $mes)->format('M') }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </form> 
+                        </div>
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -42,8 +66,14 @@
                                 </thead><!-- end thead -->
                                 <tbody>
                                     @foreach ($all_items as $conta)
-                                    <tr class="abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
-                                        <td>{{ \Carbon\Carbon::parse($conta->data_vencimento)->format('d') }}</td>
+                                    @if (\Carbon\Carbon::parse($conta->data_vencimento)->isToday())
+                                        <tr class="table-warning abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    @elseif (\Carbon\Carbon::parse($conta->data_vencimento)->isPast())
+                                        <tr class="table-danger abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    @else
+                                        <tr class="abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    @endif
+                                        <td>{{ \Carbon\Carbon::parse($conta->data_vencimento)->format('d/m/Y') }}</td>
                                         <td>{{ $conta->categoria->nome }} [{{ $conta->subcategoria->nome }}]</td>
                                         <td>{{ $conta->descricao }}</td>
                                         <td>{{ $conta->valor }} {{ $conta->moeda }}</td>
@@ -150,16 +180,44 @@
                     <div class="modal-body">
                         <div class="row">
                             <input type="hidden" name="id" value="" id="did">
-                            <div class="col">
+                            <div class="col-3 mb-2">
+                                <div class="form-group">
+                                    <label for="data">Data</label>
+                                    <input class="form-control" type="date" id="ddata_vencimento" name="data_vencimento">
+                                </div>
+                            </div>
+                            <div class="col mb-2">
                                 <div class="form-group">
                                     <label for="nome">Descrição</label>
                                     <input type="text" class="form-control" id="ddescricao" name="descricao" placeholder="Descrição da Conta Fixa" maxlength="255" required>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                        </div>
+                        <div class="row">
+                            <div class="col mb-2">
                                 <div class="form-group">
                                     <label for="valor_origem">Valor</label>
                                     <input class="form-control" type="number" value="0.00" step="0.10" id="dvalor" name="valor">
+                                </div>
+                            </div>
+                            <div class="col-3 mb-2" id="div_categoria">
+                                <div class="form-group">
+                                    <label for="categoria_id">Categoria</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="dcategoria_id" name="categoria_id">
+                                        @foreach ($all_categorias as $categoria)
+                                            <option value="{{ $categoria->id }}"> {{ $categoria->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col mb-2" id="div_subcategoria">
+                                <div class="form-group">
+                                    <label for="subcategoria_id">Subcategoria</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="dsubcategoria_id" name="subcategoria_id">
+                                        @foreach ($all_subcategorias as $subcategoria)
+                                            <option value="{{ $subcategoria->id }}"> {{ $subcategoria->nome }} </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -200,6 +258,40 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" tabindex="-1" aria-labelledby="ModalAddContaFixa" aria-hidden="true" style="display: none;" id="ModalAddContaFixa">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Adicionar Contas Fixas</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('contaspagar.addcontasfixas') }}" id="formAddContasFixas">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <input type="hidden" id="mes" name="mes" value="{{ request('mes') }}" required>
+                            <input type="hidden" id="ano" name="ano" value="{{ request('ano') }}" required>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="contas_fixa_id">Contas Fixas</label>
+                                    <select class="selectpicker form-control" multiple data-live-search="true" id="contas_fixa_id" name="contas_fixa_id[]" required>
+                                        @foreach ($contasFixasNaoCriadas as $conta)
+                                            <option value="{{ $conta->id }}"> [{{ \Carbon\Carbon::parse($conta->data_vencimento)->format('d').'/'.request('mes').'/'.request('ano'); }}] {{ $conta->descricao }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAddContasFixas">Adicionar</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 </div>
 <!-- End Page-content -->
 
@@ -216,6 +308,9 @@
                     document.getElementById('did').value = data.id;
                     document.getElementById('ddescricao').value = data.descricao;
                     document.getElementById('dvalor').value = data.valor;
+                    document.getElementById('ddata_vencimento').value = data.data_vencimento;
+                    document.getElementById('dcategoria_id').value = data.categoria_id;
+                    document.getElementById('dsubcategoria_id').value = data.subcategoria_id;
                     // document.getElementById('dativo').value = data.ativa;
                     $('.selectpicker').selectpicker('refresh');
 

@@ -389,6 +389,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{conta}', [ContasPagarController::class, 'show'])->name('contaspagar.show');
             Route::put('/{conta}', [ContasPagarController::class, 'update'])->name('contaspagar.update');
             Route::delete('/{conta}', [ContasPagarController::class, 'destroy'])->name('contaspagar.destroy');
+            Route::post('/conta-fixa', [ContasPagarController::class, 'addContasFixas'])->name('contaspagar.addcontasfixas');
         });
         
         Route::prefix('/admin/gerar-pdf')->group(function () {

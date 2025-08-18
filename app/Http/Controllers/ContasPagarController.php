@@ -190,6 +190,7 @@ class ContasPagarController extends Controller
                         'data_vencimento' => $data,
                         'categoria_id' => $contasFixas->categoria_id,
                         'subcategoria_id' => $contasFixas->subcategoria_id,
+                        'contas_fixa_id' => $contasFixas->id,
                         // Adicione outros campos conforme necessário
                     ]);
                 }

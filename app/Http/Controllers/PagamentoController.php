@@ -96,6 +96,7 @@ class PagamentoController extends Controller
                 $contaapagar = ContasPagar::findOrFail($request->input('contas_pagar_id'));
                 $descricao = ''.$contaapagar->descricao.' (Pago '.$request->input('valor').')';
                 $tipo = 'saida';
+
                 if ($request->input('valor_pgto') > 0) {
                     $valor_pgto = $request->input('valor_pgto')*-1;
                 } else {
@@ -105,7 +106,15 @@ class PagamentoController extends Controller
                     $valor = $request->input('valor')*-1;
                 } else {
                     $valor = $request->input('valor');
-                }                
+                }
+                
+                if ($contaapagar->valor_pendente() < $valor*-1) {
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'error',
+                        'message' => 'O valor PAGO, não pode ser maior do que o valor total da conta a ser PAGA!',
+                        'title'   => 'Erro',
+                    ]);
+                }
             } else {
                 // Validação dos dados do formulário
                 $request->validate([

@@ -35,6 +35,11 @@ class Pagamento extends Model
         return $this->belongsToMany(FolhaPagamento::class, 'folha_pagamento_pagamentos')->withPivot('valor_recebido');
     }
 
+    public function contas_pagar()
+    {
+        return $this->belongsToMany(ContasPagar::class, 'conta_pagar_pagamentos')->withPivot('valor_recebido');
+    }
+
     public function fluxo_caixa()
     {
         return $this->belongsTo(FluxoCaixa::class);

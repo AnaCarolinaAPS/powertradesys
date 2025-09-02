@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ContasPagar;
 use App\Models\ContasFixas;
 use App\Models\Categoria;
+use App\Models\Caixa;
 use Illuminate\Http\Request;
 
 class ContasPagarController extends Controller
@@ -48,8 +49,10 @@ class ContasPagarController extends Controller
         $nao_criadas = $contas_fixas_ativas->diff($fixas_criadas);
 
         $contasFixasNaoCriadas = ContasFixas::whereIn('id', $nao_criadas)->get();
+
+        $all_caixas = Caixa::all();
         
-        return view('admin.contaspagar.index', compact('all_items', 'all_categorias', 'all_subcategorias', 'contasFixasNaoCriadas'));
+        return view('admin.contaspagar.index', compact('all_items', 'all_categorias', 'all_subcategorias', 'contasFixasNaoCriadas', 'all_caixas'));
     }
 
     /**
@@ -103,7 +106,11 @@ class ContasPagarController extends Controller
      */
     public function show($id)
     {
-        $conta = ContasPagar::find($id);
+        // $conta = ContasPagar::with(['pagamentos.caixa'])->find($id);
+        $conta = ContasPagar::with([
+            'pagamentos.fluxo_caixa' // carrega só o ID do fechamentoOrigem
+        ])->findOrFail($id);
+        
         return response()->json($conta);
     }
 
@@ -114,6 +121,7 @@ class ContasPagarController extends Controller
     {
         try {
             $request->validate([
+                'data_vencimento' => 'required|date',
                 'descricao' => 'required|string|max:255',
                 'valor' => 'required|numeric',
                 // Adicione outras regras de validação conforme necessário
@@ -123,6 +131,7 @@ class ContasPagarController extends Controller
 
             // Atualizar os dados
             $contasPagar->update([
+                'data_vencimento' => $request->input('data_vencimento'),
                 'descricao' => $request->input('descricao'),
                 'valor' => $request->input('valor'),
                 // Adicione outros campos conforme necessário

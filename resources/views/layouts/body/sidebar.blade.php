@@ -86,11 +86,12 @@
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="{{ route('caixas.index'); }}">Caixas</a></li>
                                     <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
+                                    <li><a href="{{ route('contasfixas.index'); }}">Contas Fixas</a></li>
                                 </ul>
                             </li>
                             <li><a href="{{ route('registro_caixa.index', ['tipo' => 'ultimos']); }}">Registro de Caixa</a></li>
                             <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
+                            <li><a href="{{ route('contaspagar.index'); }}">Contas a Pagar</a></li>
                             <li><a href="{{ route('invoices.index'); }}">Contas a Receber</a></li>
                         </ul>
                     </li>

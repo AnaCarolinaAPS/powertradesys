@@ -44,6 +44,8 @@ use App\Http\Controllers\ItemCompraController;
 use App\Http\Controllers\VendaController;
 use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ScrapingController;
+use App\Http\Controllers\ContasFixasController;
+use App\Http\Controllers\ContasPagarController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -376,6 +378,25 @@ Route::middleware('auth')->group(function () {
             Route::get('/{ferias}', [FeriasController::class, 'show'])->name('ferias.show');
             Route::put('/{ferias}', [FeriasController::class, 'update'])->name('ferias.update');
             Route::delete('/{ferias}', [FeriasController::class, 'destroy'])->name('ferias.destroy');
+        });
+
+        // Contas Fixas CRUD
+        Route::prefix('/admin/contasfixas')->group(function () {
+            Route::get('/', [ContasFixasController::class, 'index'])->name('contasfixas.index');
+            Route::post('/', [ContasFixasController::class, 'store'])->name('contasfixas.store');
+            Route::get('/{conta}', [ContasFixasController::class, 'show'])->name('contasfixas.show');
+            Route::put('/{conta}', [ContasFixasController::class, 'update'])->name('contasfixas.update');
+            Route::delete('/{conta}', [ContasFixasController::class, 'destroy'])->name('contasfixas.destroy');
+        });
+
+        // Contas a Pagar CRUD
+        Route::prefix('/admin/contaspagar')->group(function () {
+            Route::get('/', [ContasPagarController::class, 'index'])->name('contaspagar.index');
+            Route::post('/', [ContasPagarController::class, 'store'])->name('contaspagar.store');
+            Route::get('/{conta}', [ContasPagarController::class, 'show'])->name('contaspagar.show');
+            Route::put('/{conta}', [ContasPagarController::class, 'update'])->name('contaspagar.update');
+            Route::delete('/{conta}', [ContasPagarController::class, 'destroy'])->name('contaspagar.destroy');
+            Route::post('/conta-fixa', [ContasPagarController::class, 'addContasFixas'])->name('contaspagar.addcontasfixas');
         });
         
         Route::prefix('/admin/gerar-pdf')->group(function () {

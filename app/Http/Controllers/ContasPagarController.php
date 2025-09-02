@@ -66,7 +66,7 @@ class ContasPagarController extends Controller
                 $request->validate([
                     'descricao' => 'required|string|max:255',
                     'moeda' => 'required|in:U$,R$,G$,outros',
-                    'valor' => 'required|numeric',
+                    'valor' => 'required|numeric|gt:0',
                     'data_vencimento' => 'required|date',
                     'categoria_id' => 'required_if:tipo,entrada,saida|exists:categorias,id',
                     'subcategoria_id' => 'required_if:tipo,entrada,saida|exists:categorias,id',
@@ -110,7 +110,7 @@ class ContasPagarController extends Controller
         $conta = ContasPagar::with([
             'pagamentos.fluxo_caixa' // carrega só o ID do fechamentoOrigem
         ])->findOrFail($id);
-        
+
         return response()->json($conta);
     }
 
@@ -123,7 +123,7 @@ class ContasPagarController extends Controller
             $request->validate([
                 'data_vencimento' => 'required|date',
                 'descricao' => 'required|string|max:255',
-                'valor' => 'required|numeric',
+                'valor' => 'required|numeric|gt:0',
                 // Adicione outras regras de validação conforme necessário
             ]);
 

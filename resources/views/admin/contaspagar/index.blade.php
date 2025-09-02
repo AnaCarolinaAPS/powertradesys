@@ -128,7 +128,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="valor_origem">Valor</label>
-                                    <input class="form-control" type="number" value="0.00" step="0.10" id="valor" name="valor">
+                                    <input class="form-control" type="number" value="0.00" step="0.10" id="valor" name="valor" min="1">
                                 </div>
                             </div>
                         </div> 
@@ -205,7 +205,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="dmoeda">U$</span>
                                         </div>
-                                        <input class="form-control" type="number" value="0.00" step="0.10" id="dvalor" name="valor">
+                                        <input class="form-control" type="number" value="0.00" step="0.10" id="dvalor" name="valor" min="1">
                                     </div>  
                                 </div>                                
                             </div>
@@ -345,7 +345,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="contato">Valor Pagamento</label>
-                                    <input class="form-control" type="number" step="0.10" id="ddvalor" name="valor" required>
+                                    <input class="form-control" type="number" step="0.10" id="ddvalor" name="valor" required min="1">
                                 </div>
                             </div>
                         <!-- </div>
@@ -363,7 +363,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="contato">Saída em Caixa</label>
-                                    <input class="form-control" type="number" step="0.10" id="ddvalor_pgto" name="valor_pgto" required>
+                                    <input class="form-control" type="number" step="0.10" id="ddvalor_pgto" name="valor_pgto" required min="1">
                                 </div>
                             </div>
                         </div>

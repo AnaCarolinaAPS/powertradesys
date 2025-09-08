@@ -26,13 +26,28 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Contas a Pagar</h4>                        
-                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" id="btnCategoria" onclick="abrirModal('categoria')">
-                            <i class="fas fa-plus"></i> Nova
-                        </button>
-                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddContaFixa">
-                            <i class="fas fa-plus"></i> Add Conta Fixa
-                        </button>
+                        <div class="row">
+                            <h4 class="card-title mb-4">Contas a Pagar</h4>                            
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" id="btnCategoria" onclick="abrirModal('categoria')">
+                                    <i class="fas fa-plus"></i> Nova
+                                </button>
+                                <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddContaFixa">
+                                    <i class="fas fa-plus"></i> Add Conta Fixa
+                                </button>
+                            </div>
+                            <div class="col">
+                                Atrasados (U$): <b>{{number_format($totais['atrasadosUS'], 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                Atrasados (R$): <b>{{number_format($totais['atrasadosRS'], 2, ',', '.');}} R$</b>
+                            </div>
+                            <div class="col">
+                                Atrasados (G$): <b>{{number_format($totais['atrasadosGS'], 2, ',', '.');}} G$</b>
+                            </div>
+                        </div>
                         <div class="row mb-2">
                             <form method="GET" action="{{ route('contaspagar.index') }}">
                                 <div class="row">
@@ -80,13 +95,24 @@
                                         <td>{{ $conta->categoria->nome }} [{{ $conta->subcategoria->nome }}]</td>
                                         <td>{{ $conta->descricao }}</td>
                                         <td>{{ $conta->valor }} {{ $conta->moeda }}</td>
-                                        <td>{{ $conta->valor_pendente() > 0 ? 'PENDENTE' : 'PAGO'; }}</td>
+                                        <td>{{ $conta->valor_pendente() > 0 ? ''.$conta->valor_pendente().' '.$conta->moeda. ' Pendente' : 'PAGO'; }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
+                        <div class="row text-center">
+                            <div class="col">
+                                Total Previsto de U$: <b> {{number_format($totais['totalUs'], 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                Total Previsto de R$: <b>{{number_format($totais['totalRs'], 2, ',', '.');}} R$</b>
+                            </div>
+                            <div class="col">
+                                Total Previsto de G$: <b>{{number_format($totais['totalGs'], 0, ',', '.');}} G$</b>
+                            </div>
+                       </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

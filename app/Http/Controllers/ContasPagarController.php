@@ -27,9 +27,19 @@ class ContasPagarController extends Controller
             $mes = $request->input('mes');
         }
 
-        $all_items = ContasPagar::whereMonth('data_vencimento', $mes)
-                                ->whereYear('data_vencimento', $ano)
-                                ->get();
+        // $all_items = ContasPagar::whereMonth('data_vencimento', $mes)
+        //                         ->whereYear('data_vencimento', $ano)
+        //                         ->get();
+
+        
+        $dataCorte = \Carbon\Carbon::create($ano, $mes, 1)->endOfMonth();
+
+        $all_items = ContasPagar::whereDate('data_vencimento', '<', $dataCorte)
+                    ->get()
+                    ->filter(function ($conta) {
+                        return $conta->valor_pendente() > 0;
+                    });
+
         $all_categorias = Categoria::where('tipo', 'categoria')
                             ->get();
         $all_subcategorias = Categoria::where('tipo', 'subcategoria')
@@ -50,9 +60,55 @@ class ContasPagarController extends Controller
 
         $contasFixasNaoCriadas = ContasFixas::whereIn('id', $nao_criadas)->get();
 
+        $totalUS = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->where('moeda', 'U$')
+                                ->sum('valor');
+
+        $totalRS = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->where('moeda', 'R$')
+                                ->sum('valor');
+        
+        $totalGS = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->where('moeda', 'G$')
+                                ->sum('valor');
+        
+        $hoje = \Carbon\Carbon::today(); // data de hoje, sem hora
+
+        $atrasadosUS = ContasPagar::whereDate('data_vencimento', '<=', $hoje)
+                                ->where('moeda', 'U$')
+                                ->get()
+                                ->sum(function ($conta) {
+                                    return $conta->valor_pendente();
+                                });
+
+        $atrasadosRS = ContasPagar::whereDate('data_vencimento', '<=', $hoje)
+                                ->where('moeda', 'R$')
+                                ->get()
+                                ->sum(function ($conta) {
+                                    return $conta->valor_pendente();
+                                });
+        
+        $atrasadosGS = ContasPagar::whereDate('data_vencimento', '<=', $hoje)
+                                ->where('moeda', 'G$')
+                                ->get()
+                                ->sum(function ($conta) {
+                                    return $conta->valor_pendente();
+                                });
+
+        $totais = ['totalUs' => $totalUS,
+                    'totalRs' => $totalRS,
+                    'totalGs' => $totalGS,
+                    'atrasadosUS' => $atrasadosUS,
+                    'atrasadosRS' => $atrasadosRS,
+                    'atrasadosGS' => $atrasadosGS,
+                ];
+
         $all_caixas = Caixa::all();
         
-        return view('admin.contaspagar.index', compact('all_items', 'all_categorias', 'all_subcategorias', 'contasFixasNaoCriadas', 'all_caixas'));
+        return view('admin.contaspagar.index', compact('all_items', 'all_categorias', 'all_subcategorias', 'contasFixasNaoCriadas', 'all_caixas', 'totais'));
     }
 
     /**

@@ -279,7 +279,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{fechamento}', [FechamentoCaixaController::class, 'show'])->name('registro_caixa.show');
             // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
             // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
-            Route::get('/caixas/{tipo}', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
+            Route::get('/', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
             Route::post('/', [FechamentoCaixaController::class, 'store'])->name('registro_caixa.store');
             Route::get('/caixas/saldo-final/{id}', [FechamentoCaixaController::class, 'getSaldoFinal'])->name('registro_caixa.getsaldo');
         });

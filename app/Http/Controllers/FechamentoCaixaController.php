@@ -14,42 +14,40 @@ class FechamentoCaixaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($tipo = null)
-    {        
-        $totalSaldoUS = null;
-        $totalSaldoRS = null;
-        $totalSaldoGS = null;
-        $totalGastoUS = null;
-        $totalGastoRS = null;
-        $totalGastoGS = null;
-
-        if ($tipo == 'all') {
-            $all_caixas = Caixa::all();
-            $all_items = FechamentoCaixa::all();
+    public function index(Request $request)
+    {
+        if (!$request->has('ano')) {
+            $ano = date('Y');
         } else {
-            $all_caixas = Caixa::where('aberto', true)->get();
-            $totalSaldoUS = 0;
-            $totalSaldoRS = 0;
-            $totalSaldoGS = 0;
-            // Para cada caixa, buscar a última entrada de FechamentoCaixa
-            foreach ($all_caixas as $caixa) {
-                $fechamento = FechamentoCaixa::where('caixa_id', $caixa->id)
-                    ->orderBy('start_date', 'desc')->with('caixa')
-                    ->first();
-                if ($fechamento) {
-                    $all_items[] = $fechamento;
-                    if ($fechamento->caixa->moeda === 'U$') {
-                        $totalSaldoUS += $fechamento->calculaSaldo();
-                    } else if ($fechamento->caixa->moeda === 'G$') {
-                        $totalSaldoGS += $fechamento->calculaSaldo();
-                    } else {
-                        $totalSaldoRS += $fechamento->calculaSaldo();
-                    }
-                }
-            }
-        }        
-        // $all_items = FechamentoCaixa::all();
-        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totalSaldoUS', 'totalSaldoGS', 'totalSaldoRS', 'totalGastoUS', 'totalGastoGS', 'totalGastoRS'));
+            $ano = $request->input('ano');
+        }
+
+        if (!$request->has('mes')) {
+            $mes = date('n');
+        } else {
+            $mes = $request->input('mes');
+        }
+
+        $anos = FechamentoCaixa::selectRaw('YEAR(start_date) as ano')
+                                ->distinct()
+                                ->orderBy('ano', 'desc')
+                                ->pluck('ano');
+
+        $all_items = FechamentoCaixa::whereMonth('start_date', $mes)
+                    ->whereYear('start_date', $ano)
+                    ->get();
+                
+        $all_caixas = Caixa::where('aberto', true)->get();
+
+        $saldosTotais = $all_items->groupBy(fn($item) => $item->caixa->moeda)
+                            ->map(fn($grupo) => $grupo->sum(fn($fechamento) => $fechamento->calculaSaldo()));
+
+        $totais = ['saldoUS' => $saldosTotais['U$'] ?? 0,
+                    'saldoRS' => $saldosTotais['G$'] ?? 0,
+                    'saldoGS' => $saldosTotais['R$'] ?? 0,
+                ];
+
+        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totais', 'anos'));
     }
 
     /**

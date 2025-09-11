@@ -248,8 +248,11 @@
                 // Com ordenação por data (desc) e ocultar coluna 0
                 $(".datatable-date").each(function () {
                     inicializarDataTable($(this), {
-                        columnDefs: [{ targets: 0, visible: false }],
-                        order: [[0, 'desc']]
+                        columnDefs: [
+                            { targets: 0, visible: false }, // esconde a data bruta
+                            { targets: 1, orderData: 0 }    // ordena pela coluna 0, mas mostra a 1
+                        ],
+                        order: [[0, 'asc']] // mais antigo primeiro
                     });
                 });
 

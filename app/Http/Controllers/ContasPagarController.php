@@ -26,19 +26,20 @@ class ContasPagarController extends Controller
         } else {
             $mes = $request->input('mes');
         }
-
-        // $all_items = ContasPagar::whereMonth('data_vencimento', $mes)
-        //                         ->whereYear('data_vencimento', $ano)
-        //                         ->get();
-
         
         $dataCorte = \Carbon\Carbon::create($ano, $mes, 1)->endOfMonth();
 
-        $all_items = ContasPagar::whereDate('data_vencimento', '<', $dataCorte)
+        $contas_atrasadas = ContasPagar::whereDate('data_vencimento', '<', $dataCorte)
                     ->get()
                     ->filter(function ($conta) {
                         return $conta->valor_pendente() > 0;
-                    });
+                    })
+                    ->pluck('id');
+
+        $all_items = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->orWhereIn('id', $contas_atrasadas)
+                                ->get();
 
         $all_categorias = Categoria::where('tipo', 'categoria')
                             ->get();

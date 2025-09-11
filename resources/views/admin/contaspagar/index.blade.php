@@ -260,7 +260,7 @@
                         </div>
                         <div class="row" id="divPagamentos">
                             <div class="table-responsive table accordion">
-                                <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <table id="dt_pagtos" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Data</th>

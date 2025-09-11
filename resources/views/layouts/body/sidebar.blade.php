@@ -89,7 +89,7 @@
                                     <li><a href="{{ route('contasfixas.index'); }}">Contas Fixas</a></li>
                                 </ul>
                             </li>
-                            <li><a href="{{ route('registro_caixa.index', ['tipo' => 'ultimos']); }}">Registro de Caixa</a></li>
+                            <li><a href="{{ route('registro_caixa.index', ['ano' => date('Y'), 'mes' => date('m')]); }}">Registro de Caixa</a></li>
                             <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
                             <li><a href="{{ route('contaspagar.index', ['ano' => date('Y'), 'mes' => date('m')]); }}">Contas a Pagar</a></li>
                             <li><a href="{{ route('invoices.index'); }}">Contas a Receber</a></li>

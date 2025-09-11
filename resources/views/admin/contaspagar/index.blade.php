@@ -70,12 +70,13 @@
                             </form> 
                         </div>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="dt_contas" class="table table-striped table-bordered dt-responsive datatable-date nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Data Vencimento</th>
+                                        <th>Data Vencimento</th>
                                         <th>Categoria</th>
-                                        <th>Nome</th>
+                                        <th>Descrição</th>
                                         <th>Valor</th>
                                         <th>Situação</th>
                                     </tr>
@@ -91,6 +92,7 @@
                                     @else
                                         <tr class="abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                     @endif
+                                        <td>{{ $conta->data_vencimento; }}</td>
                                         <td>{{ \Carbon\Carbon::parse($conta->data_vencimento)->format('d/m/Y') }}</td>
                                         <td>{{ $conta->categoria->nome }} [{{ $conta->subcategoria->nome }}]</td>
                                         <td>{{ $conta->descricao }}</td>

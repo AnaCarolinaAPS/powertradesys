@@ -36,6 +36,16 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\TextController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\CreditoController;
+use App\Http\Controllers\PacotesPendentesController;
+use App\Http\Controllers\FeriasController;
+use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\CompraController;
+use App\Http\Controllers\ItemCompraController;
+use App\Http\Controllers\VendaController;
+use App\Http\Controllers\ItemVendaController;
+use App\Http\Controllers\ScrapingController;
+use App\Http\Controllers\ContasFixasController;
+use App\Http\Controllers\ContasPagarController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -111,6 +121,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/{warehouse}', [WarehouseController::class, 'show'])->name('warehouses.show');
             Route::put('/{warehouse}', [WarehouseController::class, 'update'])->name('warehouses.update');
             Route::delete('/{warehouse}', [WarehouseController::class, 'destroy'])->name('warehouses.destroy');
+            Route::get('/scrape/{warehouse}', [ScrapingController::class, 'scrape'])->name('warehouses.scrape');
         });
 
         // Pacotes CRUD
@@ -123,6 +134,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/atualizar-carga', [PacoteController::class, 'atualizarCarga'])->name('pacotes.atualizarCarga');
             Route::post('/atualizar-carga-wr', [PacoteController::class, 'atualizarCargaWR'])->name('pacotes.atualizarCargaWR');
             Route::post('/{pacotes}', [PacoteController::class, 'excluirPctCarga'])->name('pacotes.excluirPctCarga');
+            Route::post('/pacotes/scaper', [ScrapingController::class, 'scrape'])->name('pacotes.scrape');
         });
 
         // Despachantes CRUD
@@ -193,6 +205,7 @@ Route::middleware('auth')->group(function () {
         // INVOICES CRUD
         Route::prefix('/admin/invoicespacotes')->group(function () {
             // Route::get('/', [InvoicePacoteController::class, 'index'])->name('invoices.index');
+            Route::post('/varios/{invoice}', [InvoicePacoteController::class, 'addPacoteCarga'])->name('invoices_pacotes.addPacoteCarga');
             Route::post('/', [InvoicePacoteController::class, 'store'])->name('invoices_pacotes.store');
             Route::get('/{invoicespacotes}', [InvoicePacoteController::class, 'show'])->name('invoices_pacotes.show');
             Route::put('/{invoicespacotes}', [InvoicePacoteController::class, 'update'])->name('invoices_pacotes.update');
@@ -266,8 +279,9 @@ Route::middleware('auth')->group(function () {
             Route::get('/{fechamento}', [FechamentoCaixaController::class, 'show'])->name('registro_caixa.show');
             // Route::put('/{fluxocaixa}', [FluxoCaixaController::class, 'update'])->name('fluxo_caixa.update');
             // Route::delete('/{fluxocaixa}', [FluxoCaixaController::class, 'destroy'])->name('fluxo_caixa.destroy');
-            Route::get('/caixas/{tipo}', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
+            Route::get('/', [FechamentoCaixaController::class, 'index'])->name('registro_caixa.index');
             Route::post('/', [FechamentoCaixaController::class, 'store'])->name('registro_caixa.store');
+            Route::get('/caixas/saldo-final/{id}', [FechamentoCaixaController::class, 'getSaldoFinal'])->name('registro_caixa.getsaldo');
         });
 
         // Pagamento CRUD
@@ -340,15 +354,98 @@ Route::middleware('auth')->group(function () {
 
         // Controlador de Relatórios
         Route::prefix('/admin/relatorios')->group(function () {
-            // Route::post('/', [FolhaPagamentoItemController::class, 'store'])->name('folhas_items.store');
-            // Route::get('/carga/{folhaitem}', [FolhaPagamentoItemController::class, 'show'])->name('folhas_items.show');
-            // Route::put('/{folhaitem}', [FolhaPagamentoItemController::class, 'update'])->name('folhas_items.update');
-            // Route::delete('/{folhaitem}', [FolhaPagamentoItemController::class, 'destroy'])->name('folhas_items.destroy');
+            // Route::get('mensal/', [RelatorioController::class, 'indexGastosMensais'])->name('relatorio.mensal');
+            Route::get('gastos/', [RelatorioController::class, 'indexGastosMensais'])->name('relatorioGastos.index');
+            Route::get('/gastos/{periodo}', [RelatorioController::class, 'showGastos'])->name('relatorioGastos.show');
             Route::get('carga/', [RelatorioController::class, 'indexCarga'])->name('relatorioCarga.index');
+            Route::get('carga/{faturacarga}', [RelatorioController::class, 'showCargas'])->name('relatorioCarga.show');
+            Route::get('categorias/', [RelatorioController::class, 'indexCategorias'])->name('relatorioCategorias.index');
         });
 
+        // Pacotes Pendentes CRUD
+        Route::prefix('/admin/pacotespendentes')->group(function () {
+            Route::get('/', [PacotesPendentesController::class, 'index'])->name('pacotes_pendentes.index');
+            Route::post('/', [PacotesPendentesController::class, 'store'])->name('pacotes_pendentes.store');
+            Route::get('/{pacotependente}', [PacotesPendentesController::class, 'show'])->name('pacotes_pendentes.show');
+            Route::put('/{pacotependente}', [PacotesPendentesController::class, 'update'])->name('pacotes_pendentes.update');
+            Route::delete('/{pacotependente}', [PacotesPendentesController::class, 'destroy'])->name('pacotes_pendentes.destroy');
+        });
+
+        // Férias CRUD
+        Route::prefix('/admin/funcionarios/ferias')->group(function () {
+            // Route::get('/', [FeriasController::class, 'index'])->name('ferias.index');
+            Route::post('/', [FeriasController::class, 'store'])->name('ferias.store');
+            Route::get('/{ferias}', [FeriasController::class, 'show'])->name('ferias.show');
+            Route::put('/{ferias}', [FeriasController::class, 'update'])->name('ferias.update');
+            Route::delete('/{ferias}', [FeriasController::class, 'destroy'])->name('ferias.destroy');
+        });
+
+        // Contas Fixas CRUD
+        Route::prefix('/admin/contasfixas')->group(function () {
+            Route::get('/', [ContasFixasController::class, 'index'])->name('contasfixas.index');
+            Route::post('/', [ContasFixasController::class, 'store'])->name('contasfixas.store');
+            Route::get('/{conta}', [ContasFixasController::class, 'show'])->name('contasfixas.show');
+            Route::put('/{conta}', [ContasFixasController::class, 'update'])->name('contasfixas.update');
+            Route::delete('/{conta}', [ContasFixasController::class, 'destroy'])->name('contasfixas.destroy');
+        });
+
+        // Contas a Pagar CRUD
+        Route::prefix('/admin/contaspagar')->group(function () {
+            Route::get('/', [ContasPagarController::class, 'index'])->name('contaspagar.index');
+            Route::post('/', [ContasPagarController::class, 'store'])->name('contaspagar.store');
+            Route::get('/{conta}', [ContasPagarController::class, 'show'])->name('contaspagar.show');
+            Route::put('/{conta}', [ContasPagarController::class, 'update'])->name('contaspagar.update');
+            Route::delete('/{conta}', [ContasPagarController::class, 'destroy'])->name('contaspagar.destroy');
+            Route::post('/conta-fixa', [ContasPagarController::class, 'addContasFixas'])->name('contaspagar.addcontasfixas');
+        });
+        
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
+            Route::get('/invoice-pdf/{invoice}', [PDFController::class, 'invoicePDF'])->name('invoices.pdf');
+            Route::get('/venda-pdf/{venda}', [PDFController::class, 'vendaPDF'])->name('vendas.pdf');
+        });
+
+        // Produtos CRUD
+        Route::prefix('/admin/produtos')->group(function () {
+            Route::get('/', [ProdutoController::class, 'index'])->name('produtos.index');
+            Route::post('/', [ProdutoController::class, 'store'])->name('produtos.store');
+            Route::get('/{produto}', [ProdutoController::class, 'show'])->name('produtos.show');
+            Route::put('/{produto}', [ProdutoController::class, 'update'])->name('produtos.update');
+            Route::delete('/{produto}', [ProdutoController::class, 'destroy'])->name('produtos.destroy');
+        });
+
+        // Compra CRUD
+        Route::prefix('/admin/compras')->group(function () {
+            Route::get('/', [CompraController::class, 'index'])->name('compras.index');
+            Route::post('/', [CompraController::class, 'store'])->name('compras.store');
+            Route::get('/{compra}', [CompraController::class, 'show'])->name('compras.show');
+            Route::put('/{compra}', [CompraController::class, 'update'])->name('compras.update');
+            Route::delete('/{compra}', [CompraController::class, 'destroy'])->name('compras.destroy');
+        });
+
+        // Item Compra CRUD
+        Route::prefix('/admin/compras/item')->group(function () {
+            Route::post('/', [ItemCompraController::class, 'store'])->name('compras_item.store');
+            Route::get('/{itemcompra}', [ItemCompraController::class, 'show'])->name('compras_item.show');
+            Route::put('/{itemcompra}', [ItemCompraController::class, 'update'])->name('compras_item.update');
+            Route::delete('/{itemcompra}', [ItemCompraController::class, 'destroy'])->name('compras_item.destroy');
+        });
+
+        // Venda CRUD
+        Route::prefix('/admin/vendas')->group(function () {
+            Route::get('/', [VendaController::class, 'index'])->name('vendas.index');
+            Route::post('/', [VendaController::class, 'store'])->name('vendas.store');
+            Route::get('/{venda}', [VendaController::class, 'show'])->name('vendas.show');
+            Route::put('/{venda}', [VendaController::class, 'update'])->name('vendas.update');
+            Route::delete('/{venda}', [VendaController::class, 'destroy'])->name('vendas.destroy');
+        });
+
+        // Item Venda CRUD
+        Route::prefix('/admin/vendas/item')->group(function () {
+            Route::post('/', [ItemVendaController::class, 'store'])->name('vendas_item.store');
+            Route::get('/{itemvenda}', [ItemVendaController::class, 'show'])->name('vendas_item.show');
+            Route::put('/{itemvenda}', [ItemVendaController::class, 'update'])->name('vendas_item.update');
+            Route::delete('/{itemvenda}', [ItemVendaController::class, 'destroy'])->name('vendas_item.destroy');
         });
 
     });
@@ -361,6 +458,11 @@ Route::middleware('auth')->group(function () {
             Route::get('/historico', [PacoteController::class, 'clienteHistorico'])->name('pacotes.historico');
             Route::get('/previsao', [PacoteController::class, 'clientePrevisao'])->name('pacotes.previsao');
             Route::get('/emprocesso', [PacoteController::class, 'clienteProcesso'])->name('pacotes.processo');
+            Route::get('/pendentes', [PacotesPendentesController::class, 'clientePendentes'])->name('pacotes.pendentes');
+            Route::post('/pendentes', [PacotesPendentesController::class, 'clientePendentesStore'])->name('pacotes.pendentes.store');
+            Route::put('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesUpdate'])->name('pacotes.pendentes.update');
+            Route::get('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesShow'])->name('pacotes.pendentes.show');
+            Route::delete('/pendentes/{pacotependente}', [PacotesPendentesController::class, 'clientePendentesDestroy'])->name('pacotes.pendentes.destroy');
         });
 
         // Pacotes Carga
@@ -375,6 +477,12 @@ Route::middleware('auth')->group(function () {
 Route::get('/processar-texto',  [TextController::class, 'showForm'])->name('text.form');
 Route::post('/processar-texto', [TextController::class, 'processText'])->name('text.process');
 
+
+Route::get('/reset-cache', function () {
+    app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+    
+    return "Cache de permissões limpo!";
+});
 
 // Route::middleware(['auth', ''])->group(function () {
 //     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

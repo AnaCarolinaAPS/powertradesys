@@ -38,14 +38,25 @@
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="fas fa-box-open"></i>
+                            <span>Produtos / Serviços</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li><a href="{{ route('produtos.index'); }}">Produtos</a></li>
+                            <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
+                            <li><a href="{{ route('compras.index'); }}">Compras</a></li>
+                            <li><a href="{{ route('vendas.index'); }}">Vendas</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-truck"></i>
                             <span>Logistica</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
                             <li>
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
-                                    {{-- <li><a href="{{ route('admin.client'); }}">Clientes</a></li>
-                                    <li><a href="layouts-compact-sidebar.html">Fornecedores</a></li> --}}
                                     <li><a href="{{ route('shippers.index'); }}">Shippers</a></li>
                                     <li><a href="{{ route('freteiros.index'); }}">Freteiros</a></li>
                                 </ul>
@@ -54,6 +65,12 @@
                             <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
                             <li><a href="{{ route('pacotes.index'); }}">Pacotes</a></li>
                             <li><a href="{{ route('entregas.index'); }}">Entrega de Carga</a></li>
+                            <li><a href="{{ route('pacotes_pendentes.index'); }}">Pacotes Pendentes
+                                @if($pendingPacotesCount > 0)
+                                    <span class="badge rounded-pill bg-success float-end">{{ $pendingPacotesCount }}</span>
+                                @endif
+                                </a>
+                            </li>
                         </ul>
                     </li>
 
@@ -68,13 +85,13 @@
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="{{ route('caixas.index'); }}">Caixas</a></li>
-                                    <li><a href="{{ route('servicos.index'); }}">Serviços</a></li>
                                     <li><a href="{{ route('categorias.index'); }}">Categorias</a></li>
+                                    <li><a href="{{ route('contasfixas.index'); }}">Contas Fixas</a></li>
                                 </ul>
                             </li>
-                            <li><a href="{{ route('registro_caixa.index', ['tipo' => 'ultimos']); }}">Registro de Caixa</a></li>
+                            <li><a href="{{ route('registro_caixa.index', ['ano' => date('Y'), 'mes' => date('m')]); }}">Registro de Caixa</a></li>
                             <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Contas a Pagar</a></li>
+                            <li><a href="{{ route('contaspagar.index', ['ano' => date('Y'), 'mes' => date('m')]); }}">Contas a Pagar</a></li>
                             <li><a href="{{ route('invoices.index'); }}">Contas a Receber</a></li>
                         </ul>
                     </li>
@@ -99,7 +116,7 @@
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
                             <li><a href="{{ route('funcionarios.index'); }}">Funcionários</a></li>
-                            <li><a href="layouts-dark-sidebar.html">Férias</a></li>
+                            {{--<li><a href="{{ route('ferias.index'); }}">Férias</a></li>--}}
                             <li><a href="{{ route('folhapagamentos.index'); }}">Folha de Pagamento</a></li>
                         </ul>
                     </li>
@@ -117,7 +134,7 @@
                         </ul>
                     </li>-->
                     
-                    {{--<li>
+                    <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-line-chart-line"></i>
                             <span>Relatórios</span>
@@ -125,10 +142,10 @@
                         <ul class="sub-menu" aria-expanded="true">
                             <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
                             <li><a href="{{ route('relatorioCarga.index'); }}">Cargas</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Lucros</a></li>
-                            <li><a href="layouts-compact-sidebar.html">Gastos</a></li>
+                            <li><a href="{{ route('relatorioCategorias.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos</a></li>
+                            <li><a href="{{ route('relatorioGastos.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos Mensais</a></li>
                         </ul>
-                    </li>--}}
+                    </li>
                 @endrole
                 @role('client')
                     <li>
@@ -137,6 +154,11 @@
                             <span>Logistica</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">                        
+                            <li><a href="{{ route('pacotes.pendentes'); }}">Pendentes
+                                @if($pendingPacotesCount > 0)
+                                    <span class="badge rounded-pill bg-success float-end">{{ $pendingPacotesCount }}</span>
+                                @endif
+                            </a></li>
                             <li><a href="{{ route('pacotes.previsao'); }}">Previsões</a></li>
                             <li><a href="{{ route('pacotes.processo'); }}">Em Processo</a></li>
                             <li><a href="{{ route('cargas.cliente.index'); }}">Carga</a></li>

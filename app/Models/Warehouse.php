@@ -36,4 +36,20 @@ class Warehouse extends Model
     {
         return $this->belongsTo(Fornecedor::class, 'embarcador_id');
     }
+
+    //Para resgatar a quantidade dos pacotes (Total de Pacotes da Warehouse)
+    public function total_pacotes()
+    {
+        return $this->pacotes->sum(function($pacote) {
+            return $pacote->qtd ?? 0;
+        });
+    }
+
+    //Para resgatar os valores dos pacotes (Total do Peso da Warehouse)
+    public function total_peso()
+    {
+        return $this->pacotes->sum(function($pacote) {
+            return $pacote->peso ?? 0;
+        });
+    }
 }

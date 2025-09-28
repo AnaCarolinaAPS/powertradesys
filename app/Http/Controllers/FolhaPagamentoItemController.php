@@ -76,6 +76,7 @@ class FolhaPagamentoItemController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'id' => 'required|exists:folha_pagamento_items,id',
+                'data' => 'required|date',
                 'valor' => 'required|numeric',
                 // Adicione outras regras de validação conforme necessário
             ]);
@@ -85,6 +86,7 @@ class FolhaPagamentoItemController extends Controller
 
             $folha->update([
                 'valor' => $request->input('valor'),
+                'data' => $request->input('data'),
                 // Adicione outros campos conforme necessário
             ]);
 

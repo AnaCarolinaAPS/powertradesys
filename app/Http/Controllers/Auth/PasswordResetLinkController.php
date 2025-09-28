@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
+use Symfony\Component\Mailer\Transport\Smtp\SmtpTransport;
 
 class PasswordResetLinkController extends Controller
 {

@@ -48,7 +48,7 @@
                                         <td>{{ $funcionario->nome }}</td>
                                         <td>{{ $funcionario->contato }}</td>
                                         <td>{{ $funcionario->cargo }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($funcionario->data_contratacao)->format('d/m/Y H:i') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($funcionario->data_contratacao)->format('d/m/Y') }} ({{ \Carbon\Carbon::parse($funcionario->data_contratacao)->diffInYears(\Carbon\Carbon::now()); }} anos)</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

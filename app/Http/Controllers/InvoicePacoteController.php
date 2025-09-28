@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\InvoicePacote;
 use App\Models\Invoice;
 use App\Models\Pacote;
+use App\Models\PacotesPendentes;
+use Illuminate\Support\Facades\Cache;
 
 class InvoicePacoteController extends Controller
 {
@@ -43,6 +45,33 @@ class InvoicePacoteController extends Controller
                 // Adicione outros campos conforme necessário
             ]);
 
+            //Busca para ver se o pacote adicionado existe entre as pendencias
+            $pacotePendente = PacotesPendentes::where('rastreio', 'like', '%' .$request->input('rastreio'). '%')->first();
+
+            // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
+            if ($pacotePendente) {
+                //Se quem é o "dono" ou fez o pedido do pacote é a pessoa que o sistema cadastrou
+                if ($pacotePendente->cliente->id == $pacote->pacote->cliente->id) {
+                    $pacotePendente->delete();
+                    Cache::forget('pending_pacotes_count');
+                    // Exibir toastr de sucesso
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'Pacote atualizado com sucesso!<br>Pacote excluído das Pendencias: '.$pacote->pacote->rastreio,
+                        'title'   => 'Sucesso',
+                    ]);
+                } else { //se não for o mesmo id de cliente, colocar "em sistema"
+                    $pacotePendente->update([
+                        'status' => 'em sistema',
+                    ]);
+                    // Exibir toastr de sucesso
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'warning',
+                        'message' => 'Pacote estava pendente no sistema não é do cliente que foi pedido!<br>Revisar: '.$pacote->pacote->rastreio,
+                        'title'   => 'Sucesso',
+                    ]);
+                }
+            }
             // Exibir toastr de sucesso
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',
@@ -107,11 +136,8 @@ class InvoicePacoteController extends Controller
 
                 if ($pacote) {
                     //Adicionar a criação de "invoicepacotes" para carga pacote marcado na carga
-                    // $valor = $pacote->peso*$invoice->fatura_carga->servico->preco;
-
                     InvoicePacote::create([
                         // 'peso' => $pacote->peso,
-                        'peso' => 0,
                         'peso' => 0,
                         'invoice_id' => $invoice->id,
                         'pacote_id' => $pacote->id,
@@ -127,6 +153,79 @@ class InvoicePacoteController extends Controller
                 'message' => 'Pacotes adicionados com sucesso!',
                 'title'   => 'Sucesso',
             ]);
+        } catch (\Exception $e) {
+            // Exibir toastr de erro se ocorrer uma exceção
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao adicionar os Pacotes: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function addPacoteCarga($id){
+        try {
+            // IDs dos pacotes selecionados
+            $invoice = Invoice::findOrFail($id);   
+            
+            $pacotesAssociadosFatura = $invoice->invoice_pacotes()->pluck('pacote_id')->toArray();
+
+            $all_pacotes = Pacote::whereNotIn('id', $pacotesAssociadosFatura)
+                            ->where('carga_id', $invoice->fatura_carga->carga_id)
+                            ->where('cliente_id', $invoice->cliente_id)
+                            ->where('peso', '>', 0)
+                            ->get();
+
+            $qtdPacotes = 0;
+
+            // Lógica para atualizar os pacotes com o código da carga
+            foreach ($all_pacotes as $pacote) {
+                $invoiceP = InvoicePacote::create([
+                    'peso' => $pacote->peso,
+                    'invoice_id' => $invoice->id,
+                    'pacote_id' => $pacote->id,
+                    'valor' => $pacote->peso*$invoice->fatura_carga->servico->preco,
+                    // Adicione outros campos conforme necessário
+                ]);
+                $qtdPacotes++;
+
+                //Busca para ver se o pacote adicionado existe entre as pendencias
+                $pacotePendente = PacotesPendentes::whereRaw('? LIKE CONCAT("%", rastreio)', [$invoiceP->pacote->rastreio])->first();
+
+                // Se encontrar um rastreio que estava pendente, atualiza e exibe um alerta
+                if ($pacotePendente) {
+                    //Se quem é o "dono" ou fez o pedido do pacote é a pessoa que o sistema cadastrou
+                    if ($pacotePendente->cliente->id == $invoiceP->pacote->cliente->id) {
+                        $pacotePendente->delete();
+                        Cache::forget('pending_pacotes_count');
+
+                    } else { //se não for o mesmo id de cliente, colocar "em sistema"
+                        $pacotePendente->update([
+                            'status' => 'em sistema',
+                        ]);
+                    }
+                } 
+            }
+
+            if ($qtdPacotes > 0) {
+                // Redirecionar após a inclusão bem-sucedida
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'success',
+                    'message' => $qtdPacotes.' Pacotes adicionados com sucesso!',
+                    'title'   => 'Sucesso',
+                ]);
+            } else {
+                // Redirecionar após a inclusão bem-sucedida
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'warning',
+                    'message' => 'Nenhum pacote pesado foi encontrado na carga correspondente!',
+                    'title'   => 'Atenção',
+                ]);
+            }
+            
         } catch (\Exception $e) {
             // Exibir toastr de erro se ocorrer uma exceção
             return redirect()->back()->with('toastr', [

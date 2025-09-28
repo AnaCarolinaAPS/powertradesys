@@ -28,6 +28,7 @@ class Pacote extends Model
         'profundidade',
         'volume',
         'retirado',
+        'codigo',
     ];
 
     public function warehouse()
@@ -53,5 +54,10 @@ class Pacote extends Model
     public function invoice_pacote()
     {
         return $this->hasOne(InvoicePacote::class);
+    }
+
+    public function pacotesPendente()
+    {
+        return $this->belongsTo(PacotesPendente::class);
     }
 }

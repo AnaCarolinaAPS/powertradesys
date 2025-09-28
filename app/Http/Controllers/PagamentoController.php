@@ -12,6 +12,7 @@ use App\Models\FechamentoCaixa;
 use App\Models\Cliente;
 use App\Models\Fornecedor;
 use App\Models\Funcionario;
+use App\Models\ContasPagar;
 use Illuminate\Http\Request;
 
 class PagamentoController extends Controller
@@ -26,7 +27,7 @@ class PagamentoController extends Controller
 
             // Validação dos dados do formulário
             $request->validate([
-                'tipo' => 'required|in:Pagamento,Despesa,Salario',
+                'tipo' => 'required|in:Pagamento,Despesa,Salario,Contas',
                 'data_pagamento' => 'required|date',
                 'valor' => 'required|numeric',
                 'observacoes' => 'nullable|string',
@@ -37,8 +38,8 @@ class PagamentoController extends Controller
 
             //Data retira as das referentas a semana para buscar o fechamento do caixa de DESTINO
             $dataCarbon = \Carbon\Carbon::createFromFormat('Y-m-d', $request->input('data_pagamento'));
-            $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
-            $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+            $start_date = $dataCarbon->startOfMonth()->format('Y-m-d');
+            $end_date = $dataCarbon->endOfMonth()->format('Y-m-d');
 
             $fechamento = FechamentoCaixa::where('caixa_id', $request->input('caixa_origem_id'))->where('start_date', $start_date)->where('end_date', $end_date)->first();
 
@@ -84,6 +85,35 @@ class PagamentoController extends Controller
                     $valor = $request->input('valor')*-1;
                 } else {
                     $valor = $request->input('valor');
+                }
+            } else if ($request->input('tipo') == "Contas") {
+                // Validação dos dados do formulário
+                $request->validate([
+                    'contas_pagar_id' => 'required|exists:contas_pagars,id',
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+
+                $contaapagar = ContasPagar::findOrFail($request->input('contas_pagar_id'));
+                $descricao = ''.$contaapagar->descricao.' (Pago '.$request->input('valor').')';
+                $tipo = 'saida';
+
+                if ($request->input('valor_pgto') > 0) {
+                    $valor_pgto = $request->input('valor_pgto')*-1;
+                } else {
+                    $valor_pgto = $request->input('valor_pgto');
+                }
+                if ($valor = $request->input('valor') > 0) {
+                    $valor = $request->input('valor')*-1;
+                } else {
+                    $valor = $request->input('valor');
+                }
+                
+                if ($contaapagar->valor_pendente() < $valor*-1) {
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'error',
+                        'message' => 'O valor PAGO, não pode ser maior do que o valor total da conta a ser PAGA!',
+                        'title'   => 'Erro',
+                    ]);
                 }
             } else {
                 // Validação dos dados do formulário
@@ -178,6 +208,35 @@ class PagamentoController extends Controller
                         'title'   => 'Sucesso',
                     ]);
                 }
+            } else if ($request->input('tipo') == "Contas") {
+                //Faz o pagamento da CONTA A PAGAR que foi inserido o pagamento
+                $conta = ContasPagar::findOrFail($request->input('contas_pagar_id'));
+
+                $fluxo->update([
+                    'categoria_id' => $conta->categoria_id,
+                    'subcategoria_id' => $conta->subcategoria_id,
+                ]);
+
+                //Cria o Pagamento
+                $pagamentoC = Pagamento::create([
+                    'data_pagamento' => $request->input('data_pagamento'),
+                    'valor' => $valor*-1,
+                    'observacoes' => $request->input('observacoes'),
+                    'fluxo_caixa_id' => $fluxo->id,
+                    'tipo' => 'Contas'
+                    // Adicione outros campos conforme necessário
+                ]);
+                $valorRestante = $valor*-1;
+
+                $conta->pagamentos()->attach($pagamentoC->id, ['valor_recebido' => $valorRestante]);
+                //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
+                if ($valorRestante > 0) {
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'A EMPRESA GEROU UM CREDITO!',
+                        'title'   => 'Sucesso',
+                    ]);
+                }
             } else {
                 //Cria o Pagamento
                 $pagamento = Pagamento::create([
@@ -205,12 +264,7 @@ class PagamentoController extends Controller
                         'title'   => 'Sucesso',
                     ]);
                 }
-
             }
-
-            // Commit da transação
-            // DB::commit();
-
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Pagamento criado com sucesso!',

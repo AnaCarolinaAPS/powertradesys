@@ -126,7 +126,7 @@
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
                                         <td>{{ \Carbon\Carbon::parse($pacote->pacote->carga->data_recebida)->format('d/m/Y') }}</td>
                                         {{-- <td>WR-{{ $pacote->pacote->warehouse->wr }}</td> --}}
-                                        <td><h6 class="mb-0">{{ $pacote->pacote->rastreio." ".$pacote->referencia}} </h6></td>
+                                        <td><h6 class="mb-0">'{{ $pacote->pacote->rastreio." ".$pacote->referencia}} </h6></td>
                                         <td>{{ $pacote->qtd }}</td>
                                         <td>{{ $pacote->peso }}</td>
                                     </tr>

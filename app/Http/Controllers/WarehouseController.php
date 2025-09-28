@@ -8,6 +8,7 @@ use App\Models\Warehouse;
 use Illuminate\Http\Request;
 use App\Models\Shipper;
 use Illuminate\Support\Facades\DB;
+use App\Models\Pacote;
 
 class WarehouseController extends Controller
 {
@@ -17,10 +18,12 @@ class WarehouseController extends Controller
     public function index()
     {
         // $all_items = Warehouse::all();
-        $all_items = Warehouse::select('warehouses.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
-                    ->leftJoin('pacotes', 'warehouses.id', '=', 'pacotes.warehouse_id')
-                    ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.observacoes', 'warehouses.shipper_id', 'warehouses.embarcador_id', 'warehouses.created_at', 'warehouses.updated_at')
-                    ->get();
+        // $all_items = Warehouse::select('warehouses.*', DB::raw('COALESCE(SUM(pacotes.qtd), 0) as quantidade_de_pacotes'))
+        //             ->leftJoin('pacotes', 'warehouses.id', '=', 'pacotes.warehouse_id')
+        //             ->groupBy('warehouses.id', 'warehouses.wr', 'warehouses.data', 'warehouses.observacoes', 'warehouses.shipper_id', 'warehouses.embarcador_id', 'warehouses.created_at', 'warehouses.updated_at')
+        //             ->get();
+
+        $all_items = Warehouse::all();
         $all_shippers = Shipper::all();
         $all_embarcadors = Fornecedor::where('tipo', 'embarcador')->get();
         return view('admin.warehouse.index', compact('all_items', 'all_shippers', 'all_embarcadors'));
@@ -102,9 +105,15 @@ class WarehouseController extends Controller
                     ->groupBy('clientes.id', 'clientes.caixa_postal', 'clientes.apelido')
                     ->get();
 
+            $lastcod = Pacote::where('warehouse_id', $id)->latest()->first();
+            if ($lastcod) {
+                $codigo = $lastcod->codigo;
+            } else {
+                $codigo = 1; //vai ser o primeiro
+            }
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes', 'all_embarcadors', 'totais', 'resumo'));
+            return view('admin.warehouse.show', compact('warehouse', 'all_shippers', 'all_clientes', 'all_embarcadors', 'totais', 'resumo', 'codigo'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('warehouses.index')->with('toastr', [

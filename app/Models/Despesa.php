@@ -52,4 +52,10 @@ class Despesa extends Model
         // return $valor_pago;
     }
 
+    //Para retirar o valor pendente
+    public function valor_pendente()
+    {
+        return $this->valor_total() - $this->valor_pago();
+    }
+
 }

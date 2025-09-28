@@ -14,40 +14,40 @@ class FechamentoCaixaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($tipo = null)
+    public function index(Request $request)
     {
-        $all_caixas = Caixa::all();
-
-        $totalSaldoUS = null;
-        $totalSaldoRS = null;
-        $totalSaldoGS = null;
-
-        if ($tipo == 'all') {
-            $all_items = FechamentoCaixa::all();
+        if (!$request->has('ano')) {
+            $ano = date('Y');
         } else {
-            $totalSaldoUS = 0;
-            $totalSaldoRS = 0;
-            $totalSaldoGS = 0;
-            // Para cada caixa, buscar a última entrada de FechamentoCaixa
-            foreach ($all_caixas as $caixa) {
-                $fechamento = FechamentoCaixa::where('caixa_id', $caixa->id)
-                    ->orderBy('start_date', 'desc')->with('caixa')
-                    ->first();
-                if ($fechamento) {
-                    $all_items[] = $fechamento;
-                }
-
-                if ($fechamento->caixa->moeda === 'U$') {
-                    $totalSaldoUS += $fechamento->calculaSaldo();
-                } else if ($fechamento->caixa->moeda === 'G$') {
-                    $totalSaldoGS += $fechamento->calculaSaldo();
-                } else {
-                    $totalSaldoRS += $fechamento->calculaSaldo();
-                }
-            }
+            $ano = $request->input('ano');
         }
-        // $all_items = FechamentoCaixa::all();
-        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totalSaldoUS', 'totalSaldoGS', 'totalSaldoRS'));
+
+        if (!$request->has('mes')) {
+            $mes = date('n');
+        } else {
+            $mes = $request->input('mes');
+        }
+
+        $anos = FechamentoCaixa::selectRaw('YEAR(start_date) as ano')
+                                ->distinct()
+                                ->orderBy('ano', 'desc')
+                                ->pluck('ano');
+
+        $all_items = FechamentoCaixa::whereMonth('start_date', $mes)
+                    ->whereYear('start_date', $ano)
+                    ->get();
+                
+        $all_caixas = Caixa::where('aberto', true)->get();
+
+        $saldosTotais = $all_items->groupBy(fn($item) => $item->caixa->moeda)
+                            ->map(fn($grupo) => $grupo->sum(fn($fechamento) => $fechamento->calculaSaldo()));
+
+        $totais = ['saldoUS' => $saldosTotais['U$'] ?? 0,
+                    'saldoRS' => $saldosTotais['G$'] ?? 0,
+                    'saldoGS' => $saldosTotais['R$'] ?? 0,
+                ];
+
+        return view('admin.fechamentocaixa.index', compact('all_items', 'all_caixas', 'totais', 'anos'));
     }
 
     /**
@@ -66,82 +66,62 @@ class FechamentoCaixaController extends Controller
             //caixas para transação
             $all_caixas_t = Caixa::where('id', '!=', $fechamento->caixa->id)->where('moeda', '=', $fechamento->caixa->moeda)->get();
             //caixas para cambio
-            $all_caixas_c = Caixa::where('id', '!=', $fechamento->caixa->id)->where('moeda', '!=', $fechamento->caixa->moeda)->get();
+            $all_caixas_c = Caixa::where('id', '!=', $fechamento->caixa->id)->where('moeda', '!=', $fechamento->caixa->moeda)->get();            
 
-            // $soma_categorias = FluxoCaixa::select('categoria_id', DB::raw('SUM(valor_origem) as total_saida'))
-            //                 ->where('tipo', 'saida')
-            //                 ->where('fechamento_origem_id', $id)
-            //                 ->groupBy('categoria_id')
-            //                 ->get();
+            $soma_subcategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'), 'tipo')
+                            // ->where('tipo', 'saida')
+                            ->where(function ($query) {
+                                $query->where('tipo', 'saida')
+                                      ->orWhere('tipo', 'salario');
+                            })
+                            ->where('fechamento_origem_id', $id)
+                            ->groupBy('categoria_id', 'subcategoria_id', 'tipo')
+                            ->get();
+            
+            $all_gastos = FluxoCaixa::where('fechamento_origem_id', $id)
+                                    ->where(function ($query) {
+                                        $query->where('tipo', 'saida')
+                                            ->orWhere('tipo', 'salario');
+                                    })
+                                    ->get();
 
-            // // Forma arrays para montagem do gráfico:
-            // // Inicializar arrays para armazenar os dados do gráfico
-            // $labels = [];
-            // $data = [];
-            // $backgroundColor = [];
-            // $borderColor = [];
+            // Forma arrays para montagem do gráfico:
+            // Inicializar arrays para armazenar os dados do gráfico
+            $labels_sub = [];
+            $data_sub = [];
+            $backgroundColor_sub = [];
+            $borderColor_sub = [];
 
-            // // Iterar sobre os resultados da consulta
-            // foreach ($soma_categorias as $categoria) {
-            //     // Adicionar categoria_id como label
-            //     $labels[] = $categoria->categoria->nome;
-            //     // Adicionar total_saida como dado
-            //     $data[] = $categoria->total_saida;
-            //     // Gerar cores aleatórias para o gráfico
-            //     $red = mt_rand(0, 255);
-            //     $green = mt_rand(0, 255);
-            //     $blue = mt_rand(0, 255);
-            //     $backgroundColor[] = "rgba($red, $green, $blue, 0.5)";
-            //     $borderColor[] = "rgba($red, $green, $blue, 1)";
-            // }
+            // Iterar sobre os resultados da consulta
+            foreach ($soma_subcategorias as $categoria) {
+                $label = "";
+                if ($categoria->tipo == "saida") {
+                    $label = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+                } else { //salario
+                    $label = "Empresa - Salarios";
+                }
+                // Adicionar categoria_id como label
+                $labels_sub[] = $label;//$categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
+                // Adicionar total_saida como dado
+                $data_sub[] = $categoria->total_saida;
+                // Gerar cores aleatórias para o gráfico
+                $red = mt_rand(0, 255);
+                $green = mt_rand(0, 255);
+                $blue = mt_rand(0, 255);
+                $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
+                $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
+            }
 
-            // // Criar um array associativo com todas as informações
-            // $data_grafico = [
-            //     'labels' => $labels,
-            //     'data' => $data,
-            //     'backgroundColor' => $backgroundColor,
-            //     'borderColor' => $borderColor
-            // ];
+            // Criar um array associativo com todas as informações
+            $data_grafico_sub = [
+                'labels' => $labels_sub,
+                'data' => $data_sub,
+                'backgroundColor' => $backgroundColor_sub,
+                'borderColor' => $borderColor_sub
+            ];
 
-            // $soma_subcategorias = FluxoCaixa::select('categoria_id', 'subcategoria_id', DB::raw('SUM(valor_origem) as total_saida'))
-            //                 ->where('tipo', 'saida')
-            //                 ->where('fechamento_origem_id', $id)
-            //                 ->groupBy('categoria_id', 'subcategoria_id')
-            //                 ->get();
-
-            // // Forma arrays para montagem do gráfico:
-            // // Inicializar arrays para armazenar os dados do gráfico
-            // $labels_sub = [];
-            // $data_sub = [];
-            // $backgroundColor_sub = [];
-            // $borderColor_sub = [];
-
-            // // Iterar sobre os resultados da consulta
-            // foreach ($soma_subcategorias as $categoria) {
-            //     // Adicionar categoria_id como label
-            //     $labels_sub[] = $categoria->categoria->nome . " - " . $categoria->subcategoria->nome;
-            //     // Adicionar total_saida como dado
-            //     $data_sub[] = $categoria->total_saida;
-            //     // Gerar cores aleatórias para o gráfico
-            //     $red = mt_rand(0, 255);
-            //     $green = mt_rand(0, 255);
-            //     $blue = mt_rand(0, 255);
-            //     $backgroundColor_sub[] = "rgba($red, $green, $blue, 0.5)";
-            //     $borderColor_sub[] = "rgba($red, $green, $blue, 1)";
-            // }
-
-            // // Criar um array associativo com todas as informações
-            // $data_grafico_sub = [
-            //     'labels' => $labels_sub,
-            //     'data' => $data_sub,
-            //     'backgroundColor' => $backgroundColor_sub,
-            //     'borderColor' => $borderColor_sub
-            // ];
-
-            $data_grafico = [];
-            $data_grafico_sub = [];
             // Retornar a view com os detalhes do shipper
-            return view('admin.fechamentocaixa.show', compact('fechamento', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas_t', 'all_caixas_c', 'data_grafico', 'data_grafico_sub'));
+            return view('admin.fechamentocaixa.show', compact('fechamento', 'all_items', 'all_categorias', 'all_subcategorias', 'all_caixas_t', 'all_caixas_c', 'data_grafico_sub', 'all_gastos'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [
@@ -168,9 +148,8 @@ class FechamentoCaixaController extends Controller
 
             // Converter a data para um objeto Carbon
             $dataCarbon = \Carbon\Carbon::parse($request->input('data'));
-            // Calcular o domingo (início da semana) e o sábado (final da semana)
-            $start_date = $dataCarbon->startOfWeek(\Carbon\Carbon::SUNDAY)->format('Y-m-d');
-            $end_date = $dataCarbon->endOfWeek(\Carbon\Carbon::SATURDAY)->format('Y-m-d');
+            $start_date = $dataCarbon->startOfMonth()->format('Y-m-d');
+            $end_date = $dataCarbon->endOfMonth()->format('Y-m-d');
 
             $fechamentoExiste = FechamentoCaixa::where('start_date', $start_date)->where('end_date', $end_date)->where('caixa_id', $request->input('caixa_id'))->first();
 
@@ -200,11 +179,32 @@ class FechamentoCaixaController extends Controller
             ]);
         } catch (\Exception $e) {
             // Exibir toastr de Erro
-            return redirect()->route('registro_caixa.index')->with('toastr', [
+            return redirect()->back()->with('toastr', [
                 'type'    => 'error',
                 'message' => 'Ocorreu um erro ao criar o Registro de Caixa: <br>'. $e->getMessage(),
                 'title'   => 'Erro',
             ]);
+        }
+    }
+
+    public function getSaldoFinal($id)
+    {
+        try {
+            $caixa = Caixa::findOrFail($id);
+
+            // Supondo que o saldo final esteja no último fechamento de caixa
+            $ultimoFechamento = FechamentoCaixa::where('caixa_id', $id)->latest('end_date')->first();
+            $saldoFinal = $ultimoFechamento ? $ultimoFechamento->calculaSaldo() : 0;
+
+            return response()->json([
+                'success' => true,
+                'saldo_final' => $saldoFinal,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar o saldo final.',
+            ], 500);
         }
     }
 }

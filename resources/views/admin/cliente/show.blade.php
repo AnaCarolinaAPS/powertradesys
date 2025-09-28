@@ -46,6 +46,25 @@
                                         <input type="text" class="form-control" id="apelido" name="apelido" placeholder="Apelido do Cliente" value="{{$cliente->apelido;}}" maxlength="255" required>
                                     </div>
                                 </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="tipo_documento">Tipo Documento</label>
+                                        <select class="selectpicker form-control" id="tipo_documento" name="tipo_documento">
+                                            <option value="">-- Nenhum selecionado --</option>
+                                            <option value="CPF" {{ old('tipo_documento', $cliente->tipo_documento ?? '') == 'CPF' ? 'selected' : '' }}>CPF</option>
+                                            <option value="RG" {{ old('tipo_documento', $cliente->tipo_documento ?? '') == 'RG' ? 'selected' : '' }}>RG</option>
+                                            <option value="RUC" {{ old('tipo_documento', $cliente->tipo_documento ?? '') == 'RUC' ? 'selected' : '' }}>RUC</option>
+                                            <option value="CI" {{ old('tipo_documento', $cliente->tipo_documento ?? '') == 'CI' ? 'selected' : '' }}>CI</option>
+                                            <option value="PASSAPORTE" {{ old('tipo_documento', $cliente->tipo_documento ?? '') == 'PASSAPORTE' ? 'selected' : '' }}>Passaporte</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="numero_documento">Número Documento</label>
+                                        <input type="text" class="form-control" id="numero_documento" name="numero_documento" placeholder="Número do Documento" value="{{$cliente->numero_documento;}}" maxlength="255">
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <!-- Botão de Exclusão -->

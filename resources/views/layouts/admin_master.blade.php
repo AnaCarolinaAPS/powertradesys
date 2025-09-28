@@ -97,7 +97,7 @@
         <script src="{{ asset('backend/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js') }}"></script>
         <script src="{{ asset('backend/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js') }}"></script>
 
-        <script src="{{ asset('backend/assets/js/pages/dashboard.init.js') }}"></script>
+        {{-- <script src="{{ asset('backend/assets/js/pages/dashboard.init.js') }}"></script> --}}
 
         <!-- Datatable init js -->
         {{-- <script src="{{ asset('backend/assets/js/pages/datatables.init.js') }}"></script> --}}
@@ -177,8 +177,93 @@
                 initializeDataTableWithButtons("datatable-buttons");
                 initializeDataTableWithButtons("datatable-totals");
                 initializeDataTableWithButtonsDate("datatable-date");
+                initializeDataTableWithButtonsDate("datatable-date2");
+                initializeDataTableWithButtons("dGastoUs");
+                initializeDataTableWithButtons("dGastoRs");
+                initializeDataTableWithButtons("dGastoGs");
+                initializeDataTableWithButtons("dbcel1");
+                initializeDataTableWithButtons("dbcel2");
+                initializeDataTableWithButtonsDate("tabcel1");
+            });
+
+            $(document).ready(function () {
+                function dataTableBaseConfig() {
+                    return {
+                        lengthChange: false,
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            }
+                        },
+                        drawCallback: function () {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                        },
+                        buttons: ["copy", "excel", "pdf", "colvis"]
+                    };
+                }
+
+                function dataTableBaseConfigNoButton() {
+                    return {
+                        lengthChange: false,
+                        language: {
+                            paginate: {
+                                previous: "<i class='mdi mdi-chevron-left'>",
+                                next: "<i class='mdi mdi-chevron-right'>"
+                            }
+                        },
+                        drawCallback: function () {
+                            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+                        },
+                        // buttons: ["copy", "excel", "pdf", "colvis"]
+                    };
+                }
+
+                function inicializarDataTable($table, customConfig = {}) {
+                    let config = $.extend(true, {}, dataTableBaseConfig(), customConfig);
+                    let dataTable = $table.DataTable(config);
+
+                    dataTable.buttons().container().appendTo($table.closest('.dataTables_wrapper').find('.col-md-6:eq(0)'));
+                    $(".dataTables_length select").addClass("form-select form-select-sm");
+                }
+
+                function inicializarDataTableNoButton($table, customConfig = {}) {
+                    let config = $.extend(true, {}, dataTableBaseConfigNoButton(), customConfig);
+                    let dataTable = $table.DataTable(config);
+
+                    dataTable.buttons().container().appendTo($table.closest('.dataTables_wrapper').find('.col-md-6:eq(0)'));
+                    $(".dataTables_length select").addClass("form-select form-select-sm");
+                }
+
+                // Padrão
+                $(".datatable-default").each(function () {
+                    inicializarDataTable($(this));
+                });
+
+                // Padrão
+                $(".datatable-default-no-button").each(function () {
+                    inicializarDataTableNoButton($(this));
+                });
+
+                // Com ordenação por data (desc) e ocultar coluna 0
+                $(".datatable-date").each(function () {
+                    inicializarDataTable($(this), {
+                        columnDefs: [
+                            { targets: 0, visible: false }, // esconde a data bruta
+                            { targets: 1, orderData: 0 }    // ordena pela coluna 0, mas mostra a 1
+                        ],
+                        order: [[0, 'asc']] // mais antigo primeiro
+                    });
+                });
+
+                // Com ordenação por data (desc) e ocultar coluna 0
+                $(".datatable-date-no-button").each(function () {
+                    inicializarDataTableNoButton($(this), {
+                        columnDefs: [{ targets: 0, visible: false }],
+                        order: [[0, 'desc']]
+                    });
+                });
             });
         </script>
     </body>
-
 </html>

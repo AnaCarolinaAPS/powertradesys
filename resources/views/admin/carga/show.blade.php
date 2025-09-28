@@ -145,10 +145,10 @@
                             <i class="fas fa-plus"></i> Add Warehouse
                         </button>
                         <div class="table-responsive">
-                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>#</th>
                                         <th>WR</th>
                                         <th>Rastreio</th>
                                         <th>Qtd</th>
@@ -160,6 +160,7 @@
                                 <tbody>
                                     @foreach ($carga->pacotes as $pacote)
                                     <tr class="abrirModal" data-pacote-id="{{ $pacote->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesPacoteModal">
+                                        <td>{{ $pacote->codigo ?? 'none'; }}</td>
                                         <td>WR-{{ $pacote->warehouse->wr; }}</td>
                                         <td><h6 class="mb-0">{{ "'".$pacote->rastreio }}</h6></td>
                                         <td>{{ $pacote->qtd }}</td>

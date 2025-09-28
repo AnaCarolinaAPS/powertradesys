@@ -10,7 +10,11 @@ use App\Models\Servico;
 use App\Models\Fornecedor;
 use App\Models\Despesa;
 use App\Models\Cliente;
+use App\Models\Caixa;
+use App\Models\FechamentoCaixa;
+use App\Models\FluxoCaixa;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class FaturaCargaController extends Controller
 {
@@ -67,18 +71,6 @@ class FaturaCargaController extends Controller
                 ]);
             }
 
-            // try {
-            //     // Chamar método de outra classe para criar as Invoices e InvoicesPacotes
-            //     $invoices = InvoiceController::criarInvoices($faturacarga);
-            // } catch (\Exception $e) {
-            //     // Exibir toastr de Erro
-            //     return redirect()->route('faturacargas.index')->with('toastr', [
-            //         'type'    => 'error',
-            //         'message' => 'Ocorreu um erro ao criar as INVOICES da Fatura da Carga: <br>'. $e->getMessage(),
-            //         'title'   => 'Erro',
-            //     ]);
-            // }
-
             // Exibir toastr de sucesso
             return redirect()->route('faturacargas.show', ['faturacarga' => $faturacarga->id])->with('toastr', [
                 'type'    => 'success',
@@ -103,8 +95,6 @@ class FaturaCargaController extends Controller
         try {
             // Buscar o shipper pelo ID
             $faturacarga = FaturaCarga::findOrFail($id);
-            $all_despachantes = Fornecedor::where('tipo', 'despachante')->get();
-            $all_embarcadores = Fornecedor::where('tipo', 'embarcador')->get();
             $all_transportadoras = Fornecedor::where('tipo', 'transportadora')->get();
             $carga = $faturacarga->carga;
             $all_fornecedors = Fornecedor::whereIn('id', [$carga->despachante_id, $carga->embarcador_id, $carga->transportadora_id])->get();
@@ -128,33 +118,46 @@ class FaturaCargaController extends Controller
 
             $all_invoices = Invoice::where('fatura_carga_id', $faturacarga->id)->get();
 
-            // $all_invoices = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-            //                 ->leftJoin('pacotes', 'invoice_pacotes.pacote_id', '=', 'pacotes.id')
-            //                 ->select(
-            //                     'invoices.*',
-            //                     DB::raw('SUM(invoice_pacotes.peso) as invoice_pacotes_sum_peso'),
-            //                     DB::raw('SUM(pacotes.peso) as pacotes_sum_peso'),
-            //                     DB::raw('SUM(invoice_pacotes.valor) as invoice_pacotes_sum_valor')
-            //                 )
-            //                 ->where('fatura_carga_id', $faturacarga->id)
-            //                 ->groupBy('invoices.id','cliente_id', 'data', 'fatura_carga_id', 'created_at', 'updated_at') // Agrupa por invoice para evitar mais de uma linha por invoice_id
-            //                 ->get();
-
-            // $resumo = Invoice::leftJoin('invoice_pacotes', 'invoices.id', '=', 'invoice_pacotes.invoice_id')
-            //             ->select(
-            //                 DB::raw('COALESCE(SUM(invoice_pacotes.peso),0) as soma_peso'),
-            //                 DB::raw('COALESCE(SUM(invoice_pacotes.valor),0) as soma_valor'),
-            //             )
-            //             ->where('fatura_carga_id', $faturacarga->id)
-            //             ->groupBy('invoices.fatura_carga_id')
-            //             ->first();
-
             $all_despesas = Despesa::where('fatura_carga_id', $faturacarga->id)->get();
+
+            // 1. Calcular o início e o fim da semana dessa data
+            $startOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->startOfWeek(\Carbon\Carbon::SUNDAY); // Começo da semana (segunda-feira)
+            $endOfWeek = Carbon::parse($faturacarga->carga->data_recebida)->endOfWeek(\Carbon\Carbon::SUNDAY); // Fim da semana (domingo)           
+
+            //Filtra caixas U$ 
+            $totalGastosUs = FluxoCaixa::whereHas('fechamentoOrigem.caixa', function ($query) {
+                                $query->where('moeda', 'U$');
+                            })
+                            ->whereIn('tipo', ['salario','saida'])
+                            ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                            ->sum('valor_origem');
+
+            //GASTOS EM GUARANIS
+            $totalGastosGs = FluxoCaixa::whereHas('fechamentoOrigem.caixa', function ($query) {
+                                $query->where('moeda', 'G$');
+                            })
+                            ->whereIn('tipo', ['salario','saida'])
+                            ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                            ->sum('valor_origem');           
+
+            //GASTOS EM REAIS
+            $totalGastosRs = FluxoCaixa::whereHas('fechamentoOrigem.caixa', function ($query) {
+                                $query->where('moeda', 'R$');
+                            })
+                            ->whereIn('tipo', ['salario','saida'])
+                            ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                            ->sum('valor_origem');           
+
+            // Filtrar os Fluxos 
+            $fluxos = FluxoCaixa::with(['categoria', 'subcategoria', 'fechamentoOrigem'])
+                        ->whereIn('tipo', ['salario','saida'])
+                        ->whereBetween('data', [$startOfWeek, $endOfWeek])
+                        ->orderBy('data', 'desc')->get();
 
             session(['previous_url' => route('faturacargas.show', ['faturacarga' => $faturacarga->id])]);
 
-            // Retornar a view com os detalhes do shipper
-            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_despachantes', 'all_embarcadores', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas'));
+            // Retornar a view com os detalhes
+            return view('admin.faturacarga.show', compact('faturacarga', 'all_clientes', 'all_invoices', 'all_transportadoras', 'all_servicos', 'all_fornecedors', 'all_despesas', 'totalGastosUs', 'totalGastosGs', 'totalGastosRs', 'fluxos'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('faturacargas.index')->with('toastr', [

@@ -36,6 +36,9 @@
                                     <tr>
                                         <th>Nome</th>
                                         <th>Contato</th>
+                                        @can('visualizar financeiro')
+                                        <th>Total Pendente</th>
+                                        @endcan
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -44,6 +47,9 @@
                                     <tr data-href="{{ route('embarcadores.show', ['embarcador' => $embarcador->id]) }}">
                                         <td>{{ $embarcador->nome }}</td>
                                         <td>{{ $embarcador->contato }}</td>
+                                        @can('visualizar financeiro')
+                                        <td>{{number_format($embarcador->totalPendente(), 2, ',', '.');}} U$</td>
+                                        @endcan
                                     </tr>
                                     @endforeach
                                      <!-- end -->

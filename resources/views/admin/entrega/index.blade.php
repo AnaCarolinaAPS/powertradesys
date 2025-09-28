@@ -78,13 +78,13 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="data">Data</label>
-                                    <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data" name="data">
+                                    <input class="form-control" type="date" value="{{ \Carbon\Carbon::today('America/Asuncion')->format('Y-m-d') ; }}" id="data" name="data">
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
                                     <label for="data">Hora</label>
-                                    <input class="form-control" type="time" value="{{ \Carbon\Carbon::now()->format('H:i') ; }}" id="hora" name="hora">
+                                    <input class="form-control" type="time" value="{{ \Carbon\Carbon::now('America/Asuncion')->format('H:i') ; }}" id="hora" name="hora">
                                 </div>
                             </div>
                             <div class="col">

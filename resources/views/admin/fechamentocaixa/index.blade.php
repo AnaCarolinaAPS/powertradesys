@@ -30,19 +30,48 @@
                             <div class="col">
                                 <h4 class="card-title mb-4">Registro de Caixa</h4>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col">
-                                <b>{{$totalSaldoRS === null ? "" : "Total R$: ".number_format($totalSaldoRS, 2, ',', '.');}}</b>
+                                <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
+                                    <i class="fas fa-plus"></i> Novo
+                                </button>
                             </div>
                             <div class="col">
-                                <b>{{$totalSaldoGS === null ? "" : "Total G$: ".number_format($totalSaldoGS, 0, ',', '.');}}</b>
+                                <b>{{$totais['saldoRS'] === null ? "" : "Total R$: ".number_format($totais['saldoRS'], 2, ',', '.');}}</b>
                             </div>
                             <div class="col">
-                                <b>{{$totalSaldoUS === null ? "" : "Total U$: ".number_format($totalSaldoUS, 2, ',', '.');}}</b>
+                                <b>{{$totais['saldoGS'] === null ? "" : "Total G$: ".number_format($totais['saldoGS'], 0, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totais['saldoUS'] === null ? "" : "Total U$: ".number_format($totais['saldoUS'], 2, ',', '.');}}</b>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoModal">
-                            <i class="fas fa-plus"></i> Novo
-                        </button>
+                        
+                        <div class="row mb-2">
+                            <form method="GET" action="{{ route('registro_caixa.index') }}">
+                                <input type="hidden" value="{{ request('mes') ; }}" id="mes" name="mes">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <select class="selectpicker form-control" data-live-search="true" id="ano" name="ano" onchange="this.form.submit()">
+                                                @foreach($anos as $ano)
+                                                    <option value="{{$ano}}" {{ request('ano') == $ano ? 'selected' : '' }}> {{$ano}} </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-10 align-center">
+                                        @foreach(range(1, 12) as $mes)
+                                            <a href="{{ route('registro_caixa.index', ['ano' => request('ano', date('Y')), 'mes' => $mes]) }}"
+                                            class="btn waves-effect {{ request('mes') == $mes ? 'selected btn-primary' : 'btn-light' }}">
+                                                {{ DateTime::createFromFormat('!m', $mes)->format('M') }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </form> 
+                        </div>
 
                         <div class="row mt-3">
                             <div class="table-responsive">
@@ -83,6 +112,22 @@
                                 </table> <!-- end table -->
                             </div>
                         </div>
+                        {{--
+                        <div class="row mt-3">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Total GASTO:</h4>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastoRS === null ? "" : "Total R$: ".number_format($totalSaldoRS, 2, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastoGS === null ? "" : "Total G$: ".number_format($totalSaldoGS, 0, ',', '.');}}</b>
+                            </div>
+                            <div class="col">
+                                <b>{{$totalGastoUS === null ? "" : "Total U$: ".number_format($totalSaldoUS, 2, ',', '.');}}</b>
+                            </div>
+                        </div>
+                         --}}
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -112,7 +157,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label for="caixa_id">Caixa</label>
-                                    <select class="selectpicker form-control" data-live-search="true" id="caixa_id" name="caixa_id" >
+                                    <select class="selectpicker form-control" data-live-search="true" id="caixa_id" name="caixa_id" onchange="carregarSaldoInicial()">
                                         @foreach ($all_caixas as $caixa)
                                             <option value="{{ $caixa->id }}"> {{ $caixa->nome }} </option>
                                         @endforeach
@@ -148,5 +193,27 @@
             });
         });
     });
+
+    function carregarSaldoInicial() {
+        const caixaId = document.getElementById('caixa_id').value;
+
+        // Verificar se o ID foi selecionado
+        if (caixaId) {
+            const url = "{{ route('registro_caixa.getsaldo', ':id') }}".replace(':id', caixaId);
+            fetch(url)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.success) {
+                        document.getElementById('saldo_inicial').value = data.saldo_final;
+                    } else {
+                        alert('Erro ao carregar o saldo final da caixa. Tente novamente.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar o saldo:', error);
+                    alert('Erro ao carregar o saldo. Verifique sua conexão.');
+                });
+        }
+    }
 </script>
 @endsection

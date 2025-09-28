@@ -97,6 +97,56 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Férias</h4>
+                            </div>
+                            <div class="col">
+                            </div>
+                            <div class="col">
+                                Anos Trabalhados: <b>{{ \Carbon\Carbon::parse($funcionario->data_contratacao)->diffInYears(\Carbon\Carbon::now()); }} anos</b>
+                            </div>
+                            <div class="col">
+                                <b>Férias PENDENTES: {{$funcionario->ferias_pendente();}} dias</b>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#addFerias">
+                            <i class="fas fa-plus"></i> Novo
+                        </button>
+                        <div class="table-responsive">
+                            {{-- <table class="table table-centered mb-0 align-middle table-hover table-nowrap"> --}}
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data Inicio</th>
+                                        <th>Data Inicio</th>
+                                        <th>Data Fim</th>
+                                        <th>Observações</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($funcionario->ferias as $ferias)
+                                    <tr class="abrirFerias" data-item-id="{{ $ferias->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesFerias">
+                                        <td>{{ $ferias->data_inicio; }}</td>
+                                        <td><h6 class="mb-0">{{ \Carbon\Carbon::parse($ferias->data_inicio)->format('d/m/Y') }}</h6></td>
+                                        <td>{{ \Carbon\Carbon::parse($ferias->data_fim)->format('d/m/Y') }}</td>
+                                        <td>({{ \Carbon\Carbon::parse($ferias->data_inicio)->diffInWeekdays(\Carbon\Carbon::parse($ferias->data_fim)) + 1}} dias) {{ $ferias->observacao; }}</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+        <!-- end page title -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
                         <h4 class="card-title mb-4">Serviços</h4>
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
                             <i class="fas fa-plus"></i> Novo
@@ -344,6 +394,125 @@
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
+
+        <!-- Novas Férias -->
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="addFerias" aria-hidden="true" style="display: none;" id="addFerias">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Novas Férias</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('ferias.store') }}" id="formNewItem">
+                        @csrf
+                        <div class="modal-body">
+                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <input type="hidden" name="funcionario_id" value="{{ $funcionario->id }}">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="data_inicio">Data Inicio</label>
+                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_inicio" name="data_inicio">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="data_inicio">Data Fim</label>
+                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_fim" name="data_fim">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="observacoes">Observações</label>
+                                        <textarea name="observacao" id="observacao" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNewItem">Adicionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <!-- Detalhes das Férias -->
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="detalhesFerias" aria-hidden="true" style="display: none;" id="detalhesFerias">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloModal">Férias</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" id="formAtualizacaoFerias" action="">
+                        @csrf
+                        @method('PUT') <!-- Método HTTP para update -->
+                        <div class="modal-body">
+                            <!-- Campo hidden para armazenar o id  -->
+                            <input type="hidden" name="id" value="" id="fId">
+                            <div class="row">                                
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="data_inicio">Data Inicio</label>
+                                        <input class="form-control" type="date" id="fData_inicio" name="data_inicio">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="data_fim">Data Fim</label>
+                                        <input class="form-control" type="date" id="fData_fim" name="data_fim">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="observacao">Observações</label>
+                                        <textarea name="observacao" id="fObservacao" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <!-- Botão de Exclusão -->
+                            <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelFerias">
+                                Excluir
+                            </button>
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacaoFerias">Atualizar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <!-- Modal de Exclusao de Servicos -->
+        <div class="modal fade" id="confirmDelFerias" tabindex="-1" role="dialog" aria-labelledby="confirmDelFerias" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmação de Exclusão</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja excluir Férias?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <!-- Adicionar o botão de exclusão no modal -->
+                        <form method="post" action="" id="formDeleteFerias">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger waves-effect waves-light" form="formDeleteFerias">Excluir</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </div>
@@ -374,6 +543,36 @@
 
                     var form2 = document.getElementById('formDeleteModal');
                     var novaAction2 = "{{ route('servicos_funcionarios.destroy', ['servico' => ':id']) }}".replace(':id', data.id);
+                    form2.setAttribute('action', novaAction2);
+                })
+                .catch(error => console.error('Erro:', error));
+        });
+    });
+
+    // JavaScript para abrir o modal ao clicar na linha da tabela
+    document.querySelectorAll('.abrirFerias').forEach(item => {
+        item.addEventListener('click', event => {
+            const itemId = event.currentTarget.dataset.itemId;
+            const url = "{{ route('ferias.show', ':id') }}".replace(':id', itemId);
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('tituloModal').innerText = data.descricao;
+                    document.getElementById('fId').value = data.id;
+                    document.getElementById('fData_inicio').value = data.data_inicio;
+                    document.getElementById('fData_fim').value = data.data_fim;
+                    if (data.observacao == null) {
+                        document.getElementById('fObservacao').value = "";
+                    } else {
+                        document.getElementById('fObservacao').value = data.observacao;
+                    }
+
+                    var form = document.getElementById('formAtualizacaoFerias');
+                    var novaAction = "{{ route('ferias.update', ['ferias' => ':id']) }}".replace(':id', data.id);
+                    form.setAttribute('action', novaAction);
+
+                    var form2 = document.getElementById('formDeleteFerias');
+                    var novaAction2 = "{{ route('ferias.destroy', ['ferias' => ':id']) }}".replace(':id', data.id);
                     form2.setAttribute('action', novaAction2);
                 })
                 .catch(error => console.error('Erro:', error));

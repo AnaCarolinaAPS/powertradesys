@@ -36,9 +36,10 @@
                             </div>
                         </div>
                         <div class="table-responsive">
-                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
                                     <tr>
+                                        <th>#</th>
                                         <th>Rastreio</th>
                                         <th>Peso</th>
                                         <th>Qtd.</th>
@@ -47,6 +48,7 @@
                                 <tbody>
                                     @foreach ($invoice->invoice_pacotes as $invoicep)
                                     <tr>
+                                        <td>{{ $invoicep->pacote->codigo ?? 'none'}}</td>
                                         <td>'{{ $invoicep->pacote->rastreio}}</td>
                                         <td>{{ $invoicep->peso }}</td>
                                         <td>{{ $invoicep->pacote->qtd}}</td>
@@ -90,11 +92,11 @@
                                         $i = 0;
                                     @endphp
                                     @foreach ($invoice->pagamentos as $pagamento)
-                                    <tr data-bs-toggle="collapse" data-bs-target="#r{{$i}}"> 
+                                    <tr data-bs-toggle="collapse" data-bs-target="#rol{{$i}}"> 
                                         <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
                                         <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForInvoice($invoice->id), 2, ',', '.')." U$)" }}</td>
                                     </tr>
-                                    <tr class="collapse accordion-collapse" id="r{{$i++}}" data-bs-parent=".table">
+                                    <!-- <tr class="collapse accordion-collapse" id="rol{{$i++}}" >
                                         <td colspan="2">
                                             @php
                                                 $total = 0
@@ -124,7 +126,7 @@
                                                 </div>
                                             </div>
                                         </td>
-                                    </tr>
+                                    </tr> -->
                                     @endforeach
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
@@ -149,4 +151,16 @@
     </div>
 </div>
 <!-- End Page-content -->
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var tableRows = document.querySelectorAll('tbody tr[data-href]');
+
+        tableRows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+</script>
 @endsection

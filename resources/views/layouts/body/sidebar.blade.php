@@ -63,7 +63,7 @@
                             </li>
                             <li><a href="{{ route('cargas.index'); }}">Cargas</a></li>
                             <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
-                            <li><a href="{{ route('pacotes.index'); }}">Pacotes</a></li>
+                            <li><a href="{{ route('pacotes.index', ['ano' => date('Y')]); }}">Pacotes</a></li>
                             <li><a href="{{ route('entregas.index'); }}">Entrega de Carga</a></li>
                             <li><a href="{{ route('pacotes_pendentes.index'); }}">Pacotes Pendentes
                                 @if($pendingPacotesCount > 0)
@@ -95,20 +95,6 @@
                             <li><a href="{{ route('invoices.index'); }}">Contas a Receber</a></li>
                         </ul>
                     </li>
-                    @endcan
-                    @can('temporario financeiro')
-                    <li>
-                        <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="fas fa-dollar-sign"></i>
-                            <span>Financeiro</span>
-                        </a>
-                        <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
-                            <li><a href="{{ route('invoices.index'); }}">Contas a Receber</a></li>
-                        </ul>
-                    </li>
-                    @endcan
-                    @can('visualizar financeiro')
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-briefcase-2-line"></i>
@@ -121,29 +107,39 @@
                         </ul>
                     </li>
                     @endcan
-                    <!-- <li>
+
+                    @can('temporario financeiro')
+                    <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
-                            <i class="ri-history-line"></i>
-                            <span>Histórico</span>
+                            <i class="fas fa-dollar-sign"></i>
+                            <span>Financeiro</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Pacotes</a></li> 
-                            @can('visualizar financeiro')
-                            <li><a href="{{ route('registro_caixa.index', ['tipo' => 'all']); }}">Histórico de Caixas</a></li>
-                            @endcan
+                            @if (Auth::user()->id == 335)
+                                <li><a href="{{ route('registro_caixa.index', ['ano' => date('Y'), 'mes' => date('m')]); }}">Registro de Caixa</a></li>
+                            @endif
+
+                            <li><a href="{{ route('faturacargas.index'); }}">Invoices/Cargas</a></li>
+                            <li><a href="{{ route('invoices.index'); }}">Contas a Receber</a></li>
                         </ul>
-                    </li>-->
-                    
+                    </li>
+                    @endcan
+
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-line-chart-line"></i>
                             <span>Relatórios</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
                             <li><a href="{{ route('relatorioCarga.index'); }}">Cargas</a></li>
-                            <li><a href="{{ route('relatorioCategorias.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos</a></li>
-                            <li><a href="{{ route('relatorioGastos.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos Mensais</a></li>
+                            @can('visualizar financeiro')
+                                <li><a href="{{ route('relatorioCategorias.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos</a></li>
+                                <li><a href="{{ route('relatorioGastos.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos Mensais</a></li>
+                            @endcan
+                            @if (Auth::user()->id == 335)
+                                <li><a href="{{ route('relatorioCategorias.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos</a></li>
+                                <li><a href="{{ route('relatorioGastos.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos Mensais</a></li>
+                            @endif
                         </ul>
                     </li>
                 @endrole
@@ -153,7 +149,7 @@
                             <i class="fas fa-box-open"></i>
                             <span>Logistica</span>
                         </a>
-                        <ul class="sub-menu" aria-expanded="true">                        
+                        <ul class="sub-menu" aria-expanded="true">
                             <li><a href="{{ route('pacotes.pendentes'); }}">Pendentes
                                 @if($pendingPacotesCount > 0)
                                     <span class="badge rounded-pill bg-success float-end">{{ $pendingPacotesCount }}</span>
@@ -174,13 +170,13 @@
                         </a>
                     </li> --}}
                 @endrole
-                
 
-               
 
-                
 
-            </ul> 
+
+
+
+            </ul>
         </div>
         <!-- Sidebar -->
     </div>

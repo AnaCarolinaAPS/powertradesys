@@ -398,7 +398,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{conta}', [ContasPagarController::class, 'destroy'])->name('contaspagar.destroy');
             Route::post('/conta-fixa', [ContasPagarController::class, 'addContasFixas'])->name('contaspagar.addcontasfixas');
         });
-        
+
         Route::prefix('/admin/gerar-pdf')->group(function () {
             Route::get('/entrega-pdf/{entrega}', [PDFController::class, 'entregaPDF'])->name('entregas.pdf');
             Route::get('/invoice-pdf/{invoice}', [PDFController::class, 'invoicePDF'])->name('invoices.pdf');
@@ -480,7 +480,7 @@ Route::post('/processar-texto', [TextController::class, 'processText'])->name('t
 
 Route::get('/reset-cache', function () {
     app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
-    
+
     return "Cache de permissões limpo!";
 });
 

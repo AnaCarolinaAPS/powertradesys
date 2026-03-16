@@ -10,17 +10,38 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class PacoteController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $all_items = Pacote::all();
+        if (!$request->has('ano')) {
+            $ano = date('Y');
+        } else {
+            $ano = $request->input('ano');
+        }
+
+        $anos = Warehouse::selectRaw('YEAR(data) as ano')
+                                ->distinct()
+                                ->orderBy('ano', 'desc')
+                                ->pluck('ano');
+
+        if ($anos[0] < $ano) {
+            $ano = $anos[0];
+        }
+
+        $all_items = Pacote::whereHas('warehouse', function ($q) use ($ano) {
+                        $q->whereYear('data', $ano);
+                    })->get();
+
+        // $all_items = Pacote::all();
         $all_clientes = Cliente::all();
-        return view('admin.pacote.index', compact('all_items', 'all_clientes'));
+
+        return view('admin.pacote.index', compact('all_items', 'all_clientes', 'anos'));
     }
 
     /**
@@ -89,12 +110,12 @@ class PacoteController extends Controller
 
                     Cache::forget('pending_pacotes_count');
 
-                    // Exibir toastr de INFO para sinalizar 
+                    // Exibir toastr de INFO para sinalizar
                     return redirect()->back()->with('toastr', [
                         'type'    => 'info',
                         'message' => 'Pacote criado foi pedido por um cliente!<br>[Revisar Pacotes Pendentes]'.$pacotePendente->status,
                         'title'   => 'Sucesso',
-                    ]);                
+                    ]);
                 } else {
                     // Exibir toastr de sucesso
                     return redirect()->back()->with('toastr', [
@@ -171,7 +192,7 @@ class PacoteController extends Controller
                     // Adicione outros campos conforme necessário
                 ]);
 
-                //Verificar com os clientes se não é interessante excluir a pendencia quando o pacote é recebido 
+                //Verificar com os clientes se não é interessante excluir a pendencia quando o pacote é recebido
             } else {
                 // Exibir toastr de Erro
                 return redirect()->back()->with('toastr', [
@@ -201,12 +222,12 @@ class PacoteController extends Controller
 
                 Cache::forget('pending_pacotes_count');
 
-                // Exibir toastr de INFO para sinalizar 
+                // Exibir toastr de INFO para sinalizar
                 return redirect()->back()->with('toastr', [
                     'type'    => 'info',
                     'message' => 'Pacote atualizado foi pedido por um cliente!<br>[Revisar Pacotes Pendentes] '.$pacotePendente->status,
                     'title'   => 'Sucesso',
-                ]);         
+                ]);
             } else {
                 // Exibir toastr de sucesso
                 return redirect()->back()->with('toastr', [
@@ -215,7 +236,7 @@ class PacoteController extends Controller
                     'title'   => 'Sucesso',
                 ]);
             }
-            
+
         } catch (\Exception $e) {
             // Exibir toastr de Erro
             return redirect()->back()->with('toastr', [
@@ -351,7 +372,7 @@ class PacoteController extends Controller
      * Display a listing of the resource.
      */
     public function clienteHistorico()
-    {        
+    {
         // Obtenha o usuário autenticado
         $user = Auth::user();
         $all_items = Pacote::with('carga')
@@ -367,7 +388,7 @@ class PacoteController extends Controller
      * Display a listing of the resource.
      */
     public function clientePrevisao()
-    {        
+    {
         // Obtenha o usuário autenticado
         $user = Auth::user();
         $all_items = Pacote::with('carga')
@@ -379,7 +400,7 @@ class PacoteController extends Controller
                     });
             })
             ->get();
-        
+
         return view('client.pacote.previsao', compact('all_items'));
     }
 
@@ -387,7 +408,7 @@ class PacoteController extends Controller
      * Display a listing of the resource.
      */
     public function clienteProcesso()
-    {        
+    {
         // Obtenha o usuário autenticado
         $user = Auth::user();
         $all_items = Pacote::with('carga')
@@ -398,7 +419,7 @@ class PacoteController extends Controller
                     });
             })
             ->get();
-        
+
         return view('client.pacote.emprocesso', compact('all_items'));
     }
 }

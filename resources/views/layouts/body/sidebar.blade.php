@@ -64,7 +64,7 @@
                             <li><a href="{{ route('cargas.index'); }}">Cargas</a></li>
                             <li><a href="{{ route('warehouses.index'); }}">Warehouses</a></li>
                             <li><a href="{{ route('pacotes.index', ['ano' => date('Y')]); }}">Pacotes</a></li>
-                            <li><a href="{{ route('entregas.index'); }}">Entrega de Carga</a></li>
+                            <li><a href="{{ route('entregas.index', ['ano' => date('Y')]); }}">Entrega de Carga</a></li>
                             <li><a href="{{ route('pacotes_pendentes.index'); }}">Pacotes Pendentes
                                 @if($pendingPacotesCount > 0)
                                     <span class="badge rounded-pill bg-success float-end">{{ $pendingPacotesCount }}</span>

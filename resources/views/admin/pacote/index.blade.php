@@ -30,7 +30,7 @@
                             <i class="fas fa-plus"></i> Nova
                         </button> -->
                         <div class="row mb-2">
-                            <form method="GET" action="{{ route('registro_caixa.index') }}">
+                            <form method="GET" action="{{ route('pacotes.index') }}">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group">

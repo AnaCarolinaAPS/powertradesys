@@ -30,8 +30,8 @@ class PacoteController extends Controller
                                 ->orderBy('ano', 'desc')
                                 ->pluck('ano');
 
-        if ($anos[0] < $ano) {
-            $ano = $anos[0];
+        if (!$anos->contains($ano)) {
+            $ano = $anos->first();
         }
 
         $all_items = Pacote::whereHas('warehouse', function ($q) use ($ano) {

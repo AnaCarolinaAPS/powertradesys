@@ -15,9 +15,27 @@ class EntregaController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $all_items = Entrega::all();
+        // Verifica qual filtro de ano enviado
+        if (!$request->has('ano')) {
+            $ano = date('Y');
+        } else {
+            $ano = $request->input('ano');
+        }
+
+        $anos = Entrega::selectRaw('YEAR(data) as ano')
+                                ->distinct()
+                                ->orderBy('ano', 'desc')
+                                ->pluck('ano');
+
+        if (!$anos->contains($ano)) {
+            $ano = $anos->first();
+        }
+
+        $all_items = Entrega::whereYear('data', $ano)->get();
+
+        // $all_items = Entrega::all();
         // $all_clientes = Cliente::all();
         $all_clientes = Cliente::whereHas('pacotes', function ($query) {
             $query->where('retirado', 0)->whereHas('invoice_pacote', function ($query) {
@@ -25,7 +43,7 @@ class EntregaController extends Controller
             });
         })->get();
         $all_freteiros = Freteiro::all();
-        return view('admin.entrega.index', compact('all_items', 'all_clientes', 'all_freteiros'));
+        return view('admin.entrega.index', compact('all_items', 'all_clientes', 'all_freteiros', 'anos'));
     }
 
     /**

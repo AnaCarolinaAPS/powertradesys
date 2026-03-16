@@ -30,6 +30,21 @@
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg">
                             <i class="fas fa-plus"></i> Nova
                         </button>
+                        <div class="row mb-2">
+                            <form method="GET" action="{{ route('entregas.index') }}">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <select class="selectpicker form-control" data-live-search="true" id="ano" name="ano" onchange="this.form.submit()">
+                                                @foreach($anos as $ano)
+                                                    <option value="{{$ano}}" {{ request('ano') == $ano ? 'selected' : '' }}> {{$ano}} </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                         <div class="table-responsive">
                             <table id="datatable-date" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -40,6 +55,7 @@
                                         <th>Freteiro</th>
                                         <th>Qtd.</th>
                                         <th>Peso</th>
+                                        <th>Entregado por</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
@@ -51,6 +67,7 @@
                                         <td>{{ $entrega->freteiro->nome }}</td>
                                         <td>{{ $entrega->entrega_pacotes->sum('qtd') }}</td>
                                         <td>{{ $entrega->entrega_pacotes->sum('peso') }}</td>
+                                        <td>{{ $entrega->responsavel }}</td>
                                     </tr>
                                     @endforeach
                                      <!-- end -->

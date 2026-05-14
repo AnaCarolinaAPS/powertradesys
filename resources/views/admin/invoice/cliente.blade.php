@@ -48,6 +48,7 @@
                                         <th>#</th>
                                         <th>Carga</th>
                                         <th>Peso Cobrado</th>
+                                        <th>Qtd Cxs</th>
                                         <th>Valor Total</th>
                                         <th>Falta Cobrar</th>
                                     </tr>
@@ -63,6 +64,7 @@
                                     <td>{{ $invoice->id}}</td>
                                         <td>{{ \Carbon\Carbon::parse($invoice->fatura_carga->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td>{{ number_format($invoice->invoice_pacotes->sum('peso'), 1, ',', '.'); }}</td>
+                                        <td>{{ $invoice->qtd_pacote_orig(); }}</td>
                                         <td>{{ number_format($invoice->invoice_pacotes->sum('valor'), 2, ',', '.') }} U$</td>
                                         <td>{{ number_format($invoice->valor_pendente(), 2, ',', '.') }} U$</td>
                                     </tr>

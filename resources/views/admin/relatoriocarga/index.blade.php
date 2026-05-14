@@ -81,7 +81,7 @@
                                         <td>{{ \Carbon\Carbon::parse($fatura->carga->data_recebida)->format('d/m/Y') }}</td>
                                         <td>{{ $fatura->carga->despachante->nome; }}</td>
                                         <td>{{ $fatura->carga->peso_guia ?? '0,0' }}</td>
-                                        <td>{{ number_format($fatura->lucro(), 2, ',', '.');  }}</td>
+                                        <td>{{ number_format($fatura->lucro(), 2, ',', '.');  }} U$</td>
                                         <td>{{ $fatura->carga->clientes->count(); }}</td>
                                     </tr>
                                     @endforeach
@@ -157,7 +157,7 @@
         }
     };
 
-    // Transformação dos Dados 
+    // Transformação dos Dados
     var dadosBarjson = @json($data_grafico_mes);
     var dataBar = {
         labels: dadosBarjson.labels,
@@ -194,7 +194,7 @@
         }
     };
 
-    // Transformação dos Dados 
+    // Transformação dos Dados
     var dadospiejson = @json($data_grafico_ano);
     var datapie = {
         labels: dadospiejson.labels,

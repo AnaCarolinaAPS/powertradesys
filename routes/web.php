@@ -46,6 +46,8 @@ use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ScrapingController;
 use App\Http\Controllers\ContasFixasController;
 use App\Http\Controllers\ContasPagarController;
+use App\Http\Controllers\MotorController;
+use App\Http\Controllers\OrdemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -446,6 +448,24 @@ Route::middleware('auth')->group(function () {
             Route::get('/{itemvenda}', [ItemVendaController::class, 'show'])->name('vendas_item.show');
             Route::put('/{itemvenda}', [ItemVendaController::class, 'update'])->name('vendas_item.update');
             Route::delete('/{itemvenda}', [ItemVendaController::class, 'destroy'])->name('vendas_item.destroy');
+        });
+
+        // Produtos CRUD
+        Route::prefix('/admin/motores')->group(function () {
+            Route::get('/', [MotorController::class, 'index'])->name('motores.index');
+            Route::post('/', [MotorController::class, 'store'])->name('motores.store');
+            Route::get('/{motor}', [MotorController::class, 'show'])->name('motores.show');
+            Route::put('/{motor}', [MotorController::class, 'update'])->name('motores.update');
+            Route::delete('/{motor}', [MotorController::class, 'destroy'])->name('motores.destroy');
+        });
+
+        // ORDEM CRUD
+        Route::prefix('/admin/ordem')->group(function () {
+            Route::get('/', [OrdemController::class, 'index'])->name('ordem.index');
+            Route::post('/', [OrdemController::class, 'store'])->name('ordem.store');
+            Route::get('/{ordem}', [OrdemController::class, 'show'])->name('ordem.show');
+            Route::put('/{ordem}', [OrdemController::class, 'update'])->name('ordem.update');
+            Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');
         });
 
     });

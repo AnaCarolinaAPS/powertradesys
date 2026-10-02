@@ -127,6 +127,23 @@
 
                     <li>
                         <a href="javascript: void(0);" class="has-arrow waves-effect">
+                            <i class="fas fa-truck"></i>
+                            <span>Ordem de Vendas</span>
+                        </a>
+                        <ul class="sub-menu" aria-expanded="true">
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
+                                <ul class="sub-menu" aria-expanded="true">
+                                    <li><a href="{{ route('motores.index'); }}">Motores</a></li>
+                                    <li><a href="#">Despesas</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="{{ route('ordem.index'); }}">Venda de Motores</a></li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript: void(0);" class="has-arrow waves-effect">
                             <i class="ri-line-chart-line"></i>
                             <span>Relatórios</span>
                         </a>

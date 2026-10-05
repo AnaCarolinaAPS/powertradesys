@@ -22,10 +22,16 @@ class MotorProovedorServico extends Model
         'data_inicio',
         'data_fim',
         'motor_proovedor_id',
+        'motor_id',
     ];
 
     public function proovedor()
     {
         return $this->belongsTo(MotorProovedor::class);
+    }
+
+    public function motor()
+    {
+        return $this->belongsTo(Motor::class);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MotorProovedor;
+use App\Models\Motor;
 use Illuminate\Http\Request;
 
 class MotorProovedorController extends Controller
@@ -63,9 +64,10 @@ class MotorProovedorController extends Controller
         try {
             // Buscar o item pelo ID
             $item = MotorProovedor::findOrFail($id);
+            $all_items = Motor::all();
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.motorproovedor.show', compact('item'));
+            return view('admin.motorproovedor.show', compact('item', 'all_items'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->route('motorproovedores.index')->with('toastr', [

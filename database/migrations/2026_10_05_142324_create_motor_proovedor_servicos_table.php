@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('motor_proovedor_servicos', function (Blueprint $table) {
             $table->id();
             $table->enum('tipo_servico', ['compra', 'despacho', 'envio', 'pickup', 'travessia', 'nota', 'outros'])->default('compra');
-            $table->string('descricao');
+            $table->string('descricao')->nullable();
             $table->decimal('preco', 10, 2)->nullable();
             $table->enum('tipo_moeda', ['dolar', 'reais', 'guaranis'])->nullable();
             $table->date('data_inicio');
             $table->date('data_fim')->nullable();
             $table->unsignedBigInteger('motor_proovedor_id');
             $table->foreign('motor_proovedor_id')->references('id')->on('motor_proovedors');
+            $table->unsignedBigInteger('motor_id');
+            $table->foreign('motor_id')->references('id')->on('motors');
             $table->timestamps();
         });
     }

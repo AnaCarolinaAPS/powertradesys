@@ -472,7 +472,7 @@ Route::middleware('auth')->group(function () {
         });
 
         // Serviços Proovedores CRUD
-        Route::prefix('/admin/proovedores/servicos')->group(function () {
+        Route::prefix('/admin/motorproovedoresservicos')->group(function () {
             Route::post('/', [MotorProovedorServicoController::class, 'store'])->name('proovedor_servicos.store');
             Route::get('/{item}', [MotorProovedorServicoController::class, 'show'])->name('proovedor_servicos.show');
             Route::put('/{item}', [MotorProovedorServicoController::class, 'update'])->name('proovedor_servicos.update');

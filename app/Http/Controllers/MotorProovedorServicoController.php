@@ -24,17 +24,18 @@ class MotorProovedorServicoController extends Controller
             // Validação dos dados do formulário
             $request->validate([
                 'tipo_servico' => 'required|in:compra,despacho,envio,pickup,travessia,nota,outros',
-                'descricao' => 'required|string|max:255',
+                'descricao' => 'nullable|string|max:255',
                 'preco' => 'required|numeric',
                 'tipo_moeda' => 'nullable|in:dolar,reais,guaranis',
                 'data_inicio' => 'required|date',
                 'data_fim' => 'nullable|date',
                 'motor_proovedor_id' => 'required|exists:motor_proovedors,id',
+                'motor_id' => 'required|exists:motors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
-            // Criação de um novo Shipper no banco de dados
-            ServicosFornecedor::create([
+            // Criação de um novo item no banco de dados
+            MotorProovedorServico::create([
                 'tipo_servico' => $request->input('tipo_servico'),
                 'descricao' => $request->input('descricao'),
                 'preco' => $request->input('preco'),
@@ -42,6 +43,7 @@ class MotorProovedorServicoController extends Controller
                 'data_inicio' => $request->input('data_inicio'),
                 'data_fim' => $request->input('data_fim'),
                 'motor_proovedor_id' => $request->input('motor_proovedor_id'),
+                'motor_id' => $request->input('motor_id'),
                 // Adicione outros campos conforme necessário
             ]);
 
@@ -79,11 +81,12 @@ class MotorProovedorServicoController extends Controller
             // Validação dos dados do formulário
             $validatedData = $request->validate([
                 'tipo_servico' => 'required|in:compra,despacho,envio,pickup,travessia,nota,outros',
-                'descricao' => 'required|string|max:255',
+                'descricao' => 'nullable|string|max:255',
                 'preco' => 'required|numeric',
                 'tipo_moeda' => 'nullable|in:dolar,reais,guaranis',
                 'data_inicio' => 'required|date',
                 'data_fim' => 'nullable|date',
+                'motor_id' => 'required|exists:motors,id',
                 // Adicione outras regras de validação conforme necessário
             ]);
 

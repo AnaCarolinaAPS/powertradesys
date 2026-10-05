@@ -27,14 +27,13 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
-                                <h4 class="card-title mb-4">Calendario de Contas a Pagar de ({{\Carbon\Carbon::createFromDate(request('ano'), request('mes'))->format('m/Y');}})</h4>
+                                <h4 class="card-title mb-4">Contas a Pagar</h4>
                             </div>
                             <div class="col">
-                                Total a Pagar no mês em U$ <b> {{number_format($totais['totalUs']+($totais['totalRs']/5.45)+(($totais['totalGs']/7100)), 2, ',', '.');}} U$</b>
+                                Total Previsto de Gastos: <b> {{number_format(($totais['totalUs']+($totais['totalRs']/5.5)+($totais['totalGs']/7100)), 2, ',', '.');}} U$</b>
                             </div>
                         </div>
                         <div class="row">
-                            <button id="btnOpenModal" type="button" data-bs-toggle="modal" data-bs-target="#detalhesModal" style="display:none;"></button>
                             <div class="col">
                                 <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target=".bs-example-modal-lg" id="btnCategoria" onclick="abrirModal('categoria')">
                                     <i class="fas fa-plus"></i> Nova
@@ -54,7 +53,7 @@
                             </div>
                         </div>
                         <div class="row mb-2">
-                            <form method="GET" action="{{ route('contaspagar.index') }}">
+                            <form method="GET" action="{{ route('relatorioContasPagar.index') }}">
                                 <div class="row">
                                     <div class="col-md-2">
                                         <div class="form-group">
@@ -65,7 +64,7 @@
                                     </div>
                                     <div class="col-md-10 align-center">
                                         @foreach(range(1, 12) as $mes)
-                                            <a href="{{ route('contaspagar.index', ['ano' => request('ano', date('Y')), 'mes' => $mes]) }}"
+                                            <a href="{{ route('relatorioContasPagar.index', ['ano' => request('ano', date('Y')), 'mes' => $mes]) }}"
                                             class="btn waves-effect {{ request('mes') == $mes ? 'selected btn-primary' : 'btn-light' }}">
                                                 {{ DateTime::createFromFormat('!m', $mes)->format('M') }}
                                             </a>
@@ -74,9 +73,41 @@
                                 </div>
                             </form> 
                         </div>
-                        <div class="row mb-2">
-                            <div id="calendar"></div>
-                        </div>                        
+                        <div class="table-responsive">
+                            <table id="dt_contas" class="table table-striped table-bordered dt-responsive datatable-date nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data Vencimento</th>
+                                        <th>Data Vencimento</th>
+                                        <th>Categoria</th>
+                                        <th>Descrição</th>
+                                        <th>Valor</th>
+                                        <th>Situação</th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @foreach ($all_items as $conta)
+                                    @if (\Carbon\Carbon::parse($conta->data_vencimento)->isToday() && $conta->valor_pendente() > 0)
+                                        <tr class="table-warning abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    @elseif (\Carbon\Carbon::parse($conta->data_vencimento)->isPast() && $conta->valor_pendente() > 0)
+                                        <tr class="table-danger abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    @elseif ($conta->valor_pendente() <= 0)
+                                        <tr class="table-success abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    @else
+                                        <tr class="abrirModal" data-item-id="{{ $conta->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesModal">
+                                    @endif
+                                        <td>{{ $conta->data_vencimento; }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($conta->data_vencimento)->format('d/m/Y') }}</td>
+                                        <td>{{ $conta->categoria->nome }} [{{ $conta->subcategoria->nome }}]</td>
+                                        <td>{{ $conta->descricao }}</td>
+                                        <td>{{ $conta->valor }} {{ $conta->moeda }}</td>
+                                        <td>{{ $conta->valor_pendente() > 0 ? ''.$conta->valor_pendente().' '.$conta->moeda. ' Pendente' : 'PAGO'; }}</td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
+                            </table> <!-- end table -->
+                        </div>
                         <div class="row text-center">
                             <div class="col">
                                 Atrasados (U$): <b>{{number_format($totais['atrasadosUS'], 2, ',', '.');}} U$</b>
@@ -172,7 +203,7 @@
     </div>
 
     <!-- Modal para DETALHES das Conta a Pagar -->
-    <div class="modal fade" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
+    <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="detalhesModal" aria-hidden="true" style="display: none;" id="detalhesModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -383,24 +414,10 @@
 
 <script>
     // JavaScript para abrir o modal ao clicar na linha da tabela
-    document.querySelectorAll('.abrirModalPgto').forEach(item => {
+    document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {
             const itemId = event.currentTarget.dataset.itemId;
             const url = "{{ route('contaspagar.show', ':id') }}".replace(':id', itemId);
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('tituloModalPgto').innerText = 'Pagamento de : '+data.descricao;
-                    document.getElementById('contas_pagar_id').value = data.id;
-                    document.getElementById('ddvalor').value = data.valor;
-                    document.getElementById('ddvalor_pgto').value = data.valor;
-                })
-                .catch(error => console.error('Erro:', error));
-        });
-    });
-
-    function abrirModalConta(itemId) {
-        const url = "{{ route('contaspagar.show', ':id') }}".replace(':id', itemId);
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -475,30 +492,30 @@
                         });
                     } 
 
-                    document.getElementById('btnOpenModal').click();
-
                 })
                 .catch(error => console.error('Erro:', error));
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        var calendarEl = document.getElementById('calendar');
-
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: 'pt-br',
-            events: '/admin/contaspagar/calendar/2025',
-            eventClick: function(info) {
-                // alert("Conta: " + info.event.title);
-                abrirModalConta(info.event.id);
-            },
-            validRange: {
-                start: '{{ \Carbon\Carbon::create(request('ano', date('Y')), request('mes', date('m')), 1)->startOfMonth()->format('Y-m-d') }}',
-                end: '{{ \Carbon\Carbon::create(request('ano', date('Y')), request('mes', date('m')), 1)->endOfMonth()->addDay()->format('Y-m-d') }}'
-            },
         });
-
-        calendar.render();
     });
+
+    // JavaScript para abrir o modal ao clicar na linha da tabela
+    document.querySelectorAll('.abrirModalPgto').forEach(item => {
+        item.addEventListener('click', event => {
+            const itemId = event.currentTarget.dataset.itemId;
+            const url = "{{ route('contaspagar.show', ':id') }}".replace(':id', itemId);
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('tituloModalPgto').innerText = 'Pagamento de : '+data.descricao;
+                    document.getElementById('contas_pagar_id').value = data.id;
+                    document.getElementById('ddvalor').value = data.valor;
+                    document.getElementById('ddvalor_pgto').value = data.valor;
+
+                    // var form = document.getElementById('formAtualizacao');
+                    // var novaAction = "{{ route('contaspagar.update', ['conta' => ':id']) }}".replace(':id', data.id);
+                    // form.setAttribute('action', novaAction);
+                })
+                .catch(error => console.error('Erro:', error));
+        });
+    });    
 </script>
 @endsection

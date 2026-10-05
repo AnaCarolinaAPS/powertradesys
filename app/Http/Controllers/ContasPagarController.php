@@ -33,12 +33,12 @@ class ContasPagarController extends Controller
                     ->get()
                     ->filter(function ($conta) {
                         return $conta->valor_pendente() > 0;
-                    })
-                    ->pluck('id');
+                    });
+                    // ->pluck('id');
 
         $all_items = ContasPagar::whereMonth('data_vencimento', $mes)
                                 ->whereYear('data_vencimento', $ano)
-                                ->orWhereIn('id', $contas_atrasadas)
+                                // ->orWhereIn('id', $contas_atrasadas)
                                 ->get();
 
         $all_categorias = Categoria::where('tipo', 'categoria')
@@ -76,7 +76,7 @@ class ContasPagarController extends Controller
                                 ->where('moeda', 'G$')
                                 ->sum('valor');
         
-        $hoje = \Carbon\Carbon::today(); // data de hoje, sem hora
+        $hoje = \Carbon\Carbon::create($ano, $mes, 1); // data de hoje, sem hora
 
         $atrasadosUS = ContasPagar::whereDate('data_vencimento', '<=', $hoje)
                                 ->where('moeda', 'U$')
@@ -275,5 +275,43 @@ class ContasPagarController extends Controller
                 'title'   => 'Erro',
             ]);
         }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function calendar($ano)
+    {
+        $contas = ContasPagar::whereYear('data_vencimento', $ano)->get();
+
+        $eventos = $contas->map(function($conta) {
+            $valor = "";
+            if ($conta->moeda == "U$") {
+                $valor = "U$ ".number_format($conta->valor, 2, ',', '.');
+            } else if ($conta->moeda == "R$") {
+                $valor = "R$ ".number_format($conta->valor, 2, ',', '.');
+            } else if ($conta->moeda == "G$") {
+                $valor = "G$ ".number_format($conta->valor, 0, ',', '.');
+            }
+
+            $color = "red";
+            if ($conta->valor_pendente() <= 0) {
+                $color = "green";
+            } else {
+                if (\Carbon\Carbon::parse($conta->data_vencimento)->isPast() ) {
+                    $color = "red";
+                } else {
+                    $color = "gray";
+                }
+            }
+            return [
+                'id' => $conta->id,
+                'title' => $conta->descricao . ' (' .$valor.")",
+                'start' => $conta->data_vencimento,
+                'color' => $color,
+            ];
+        });
+
+        return response()->json($eventos);
     }
 }

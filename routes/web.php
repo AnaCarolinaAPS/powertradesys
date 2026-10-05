@@ -46,6 +46,8 @@ use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ScrapingController;
 use App\Http\Controllers\ContasFixasController;
 use App\Http\Controllers\ContasPagarController;
+
+use App\Models\ContasPagar;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -360,6 +362,8 @@ Route::middleware('auth')->group(function () {
             Route::get('carga/', [RelatorioController::class, 'indexCarga'])->name('relatorioCarga.index');
             Route::get('carga/{faturacarga}', [RelatorioController::class, 'showCargas'])->name('relatorioCarga.show');
             Route::get('categorias/', [RelatorioController::class, 'indexCategorias'])->name('relatorioCategorias.index');
+            Route::get('contaspagar/', [RelatorioController::class, 'indexContasPagar'])->name('relatorioContasPagar.index');
+            Route::get('clientes/', [RelatorioController::class, 'indexClientes'])->name('relatorioCliente.index');
         });
 
         // Pacotes Pendentes CRUD
@@ -397,6 +401,7 @@ Route::middleware('auth')->group(function () {
             Route::put('/{conta}', [ContasPagarController::class, 'update'])->name('contaspagar.update');
             Route::delete('/{conta}', [ContasPagarController::class, 'destroy'])->name('contaspagar.destroy');
             Route::post('/conta-fixa', [ContasPagarController::class, 'addContasFixas'])->name('contaspagar.addcontasfixas');
+            Route::get('/calendar/{ano}', [ContasPagarController::class, 'calendar'])->name('contaspagar.calendario');
         });
         
         Route::prefix('/admin/gerar-pdf')->group(function () {
@@ -447,6 +452,22 @@ Route::middleware('auth')->group(function () {
             Route::put('/{itemvenda}', [ItemVendaController::class, 'update'])->name('vendas_item.update');
             Route::delete('/{itemvenda}', [ItemVendaController::class, 'destroy'])->name('vendas_item.destroy');
         });
+
+
+        // Route::get('/calendar/contas', function () {
+        //     $contas = ContasPagar::select('id', 'descricao', 'data_vencimento', 'valor')->get();
+
+        //     $eventos = $contas->map(function($conta) {
+        //         return [
+        //             'id' => $conta->id,
+        //             'title' => $conta->descricao . ' - R$' . number_format($conta->valor, 2, ',', '.'),
+        //             'start' => $conta->data_vencimento,
+        //             'color' => 'green',
+        //         ];
+        //     });
+
+        //     return response()->json($eventos);
+        // });
 
     });
 

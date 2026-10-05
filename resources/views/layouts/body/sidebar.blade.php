@@ -140,10 +140,11 @@
                             <span>Relatórios</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="true">
-                            <li><a href="layouts-dark-sidebar.html">Clientes</a></li>
+                            <!-- <li><a href="{{ route('relatorioCliente.index'); }}">Clientes</a></li> -->
                             <li><a href="{{ route('relatorioCarga.index'); }}">Cargas</a></li>
                             <li><a href="{{ route('relatorioCategorias.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos</a></li>
                             <li><a href="{{ route('relatorioGastos.index', ['ano' => date('Y'), 'mes' => date('m')]) }}">Gastos Mensais</a></li>
+                            <li><a href="{{ route('relatorioContasPagar.index', ['ano' => date('Y'), 'mes' => date('m')]); }}">Contas a Pagar</a></li>
                         </ul>
                     </li>
                 @endrole

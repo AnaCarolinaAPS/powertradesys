@@ -11,6 +11,11 @@ use App\Models\FechamentoCaixa;
 use App\Models\Caixa;
 use App\Models\FluxoCaixa;
 use App\Models\Categoria;
+use App\Models\ContasPagar;
+use App\Models\ContasFixas;
+use App\Models\Invoice;
+use App\Models\Cliente;
+
 
 class RelatorioController extends Controller
 {
@@ -666,5 +671,139 @@ class RelatorioController extends Controller
         // dd($agrupados);
         return $agrupados;
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function indexContasPagar(Request $request)
+    {
+        if (!$request->has('ano')) {
+            $ano = date('Y');
+        } else {
+            $ano = $request->input('ano');
+        }
+
+        if (!$request->has('mes')) {
+            $mes = date('n');
+        } else {
+            $mes = $request->input('mes');
+        }
+        
+        $dataCorte = \Carbon\Carbon::create($ano, $mes, 1)->endOfMonth();
+
+        $contas_atrasadas = ContasPagar::whereDate('data_vencimento', '<', $dataCorte)
+                    ->get()
+                    ->filter(function ($conta) {
+                        return $conta->valor_pendente() > 0;
+                    });
+                    // ->pluck('id');
+
+        $all_items = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                // ->orWhereIn('id', $contas_atrasadas)
+                                ->get();
+
+        $all_categorias = Categoria::where('tipo', 'categoria')
+                            ->get();
+        $all_subcategorias = Categoria::where('tipo', 'subcategoria')
+                        ->get();
+
+        //Array com os ID's de todas as contas fixas que estão ativas!
+        $contas_fixas_ativas = ContasFixas::where('ativa', true)
+                                ->pluck('id');
+        
+        //Array de ID's de contas a pagar criadas a partir de contas fixas;
+        $fixas_criadas = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->whereNotNull('contas_fixa_id')
+                                ->pluck('contas_fixa_id');
+        
+        // IDs de contas fixas que ainda não têm contas_pagar criadas
+        $nao_criadas = $contas_fixas_ativas->diff($fixas_criadas);
+
+        $contasFixasNaoCriadas = ContasFixas::whereIn('id', $nao_criadas)->get();
+
+        $totalUS = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->where('moeda', 'U$')
+                                ->sum('valor');
+
+        $totalRS = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->where('moeda', 'R$')
+                                ->sum('valor');
+        
+        $totalGS = ContasPagar::whereMonth('data_vencimento', $mes)
+                                ->whereYear('data_vencimento', $ano)
+                                ->where('moeda', 'G$')
+                                ->sum('valor');
+        
+        $hoje = \Carbon\Carbon::create($ano, $mes, 1); // data de hoje, sem hora
+
+        $atrasadosUS = ContasPagar::whereDate('data_vencimento', '<=', $hoje)
+                                ->where('moeda', 'U$')
+                                ->get()
+                                ->sum(function ($conta) {
+                                    return $conta->valor_pendente();
+                                });
+
+        $atrasadosRS = ContasPagar::whereDate('data_vencimento', '<=', $hoje)
+                                ->where('moeda', 'R$')
+                                ->get()
+                                ->sum(function ($conta) {
+                                    return $conta->valor_pendente();
+                                });
+        
+        $atrasadosGS = ContasPagar::whereDate('data_vencimento', '<=', $hoje)
+                                ->where('moeda', 'G$')
+                                ->get()
+                                ->sum(function ($conta) {
+                                    return $conta->valor_pendente();
+                                });
+
+        $totais = ['totalUs' => $totalUS,
+                    'totalRs' => $totalRS,
+                    'totalGs' => $totalGS,
+                    'atrasadosUS' => $atrasadosUS,
+                    'atrasadosRS' => $atrasadosRS,
+                    'atrasadosGS' => $atrasadosGS,
+                ];
+
+        $all_caixas = Caixa::all();
+        
+        return view('admin.relatoriocontaspagar.index', compact('all_items', 'all_categorias', 'all_subcategorias', 'contasFixasNaoCriadas', 'all_caixas', 'totais'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    // public function indexClientes(Request $request)
+    // {
+    //     $inicio = Carbon::now()->subMonth(12)->startOfMonth();
+    //     $fim = Carbon::now()->endOfMonth();
+
+
+    //     $cargasFiltradas = Carga::whereBetween('data_recebida', [$inicio, $fim])->pluck('id');
+
+    //     $faturaFiltrada = FaturaCarga::whereIn('carga_id', $cargasFiltradas)->pluck('id');
+
+    //     $invoicesFiltradas = Invoice::whereIn('fatura_carga_id', $faturaFiltrada)->get();
+
+    //     $agrupados = [];
+
+    //     foreach ($invoicesFiltradas as $invoice) {
+    //         $key = $invoice->cliente_id;
+
+    //         $agrupados[$key] = ($agrupados[$key] ?? 0) + $invoice->peso_pacote_orig();
+    //     }    
+
+    //     $all_items = $agrupados; 
+
+    //     $clientes = Cliente::whereIn('id', array_keys($agrupados))
+    //                         ->pluck('apelido', 'id');
+    //     // var_dump($agrupados);        
+
+    //     return view('admin.relatorioclientes.index', compact('all_items', 'clientes'));
+    // }
 
 }

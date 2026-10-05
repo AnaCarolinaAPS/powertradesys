@@ -49,8 +49,8 @@ use App\Http\Controllers\ContasPagarController;
 use App\Http\Controllers\MotorController;
 use App\Http\Controllers\MotorProovedorController;
 use App\Http\Controllers\MotorProovedorServicoController;
-use App\Http\Controllers\MotorDespesaController;
 use App\Http\Controllers\OrdemController;
+use App\Http\Controllers\OrdemItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -479,15 +479,6 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{item}', [MotorProovedorServicoController::class, 'destroy'])->name('proovedor_servicos.destroy');
         });
 
-        // Motor Despesas CRUD
-        Route::prefix('/admin/motordespesas')->group(function () {
-            Route::get('/', [MotorDespesaController::class, 'index'])->name('motordespesas.index');
-            Route::post('/', [MotorDespesaController::class, 'store'])->name('motordespesas.store');
-            Route::get('/{motordespesa}', [MotorDespesaController::class, 'show'])->name('motordespesas.show');
-            Route::put('/{motordespesa}', [MotorDespesaController::class, 'update'])->name('motordespesas.update');
-            Route::delete('/{motordespesa}', [MotorDespesaController::class, 'destroy'])->name('motordespesas.destroy');
-        });
-
         // ORDEM CRUD
         Route::prefix('/admin/ordem')->group(function () {
             Route::get('/', [OrdemController::class, 'index'])->name('ordem.index');
@@ -495,6 +486,14 @@ Route::middleware('auth')->group(function () {
             Route::get('/{ordem}', [OrdemController::class, 'show'])->name('ordem.show');
             Route::put('/{ordem}', [OrdemController::class, 'update'])->name('ordem.update');
             Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');
+        });
+
+        // Motor Despesas CRUD
+        Route::prefix('/admin/ordemitem')->group(function () {
+            Route::post('/', [OrdemItemController::class, 'store'])->name('ordem_item.store');
+            Route::get('/{item}', [OrdemItemController::class, 'show'])->name('ordem_item.show');
+            Route::put('/{item}', [OrdemItemController::class, 'update'])->name('ordem_item.update');
+            Route::delete('/{item}', [OrdemItemController::class, 'destroy'])->name('ordem_item.destroy');
         });
     });
 

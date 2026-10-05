@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Ordem;
+use App\Models\Motor;
 
 class OrdemController extends Controller
 {
@@ -58,10 +59,11 @@ class OrdemController extends Controller
     public function show(string $id)
     {
         try {
-            $ordem = Ordem::findOrFail($id);
+            $item = Ordem::findOrFail($id);
+            $all_items = Motor::all();
 
             // Retornar a view com os detalhes do shipper
-            return view('admin.ordem.show', compact('ordem'));
+            return view('admin.ordem.show', compact('item', 'all_items'));
         } catch (\Exception $e) {
             // Exibir uma mensagem de erro ou redirecionar para uma página de erro
             return redirect()->back()->with('toastr', [

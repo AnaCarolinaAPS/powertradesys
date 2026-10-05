@@ -16,4 +16,15 @@ class Ordem extends Model
         'data_recebido',  
         'data_entrega',
     ];
+
+    public function itens() {
+        return $this->hasMany(OrdemItem::class);
+    }
+
+    public function valor_total()
+    {
+        return $this->itens->sum(function ($item) {
+            return $item->quantidade*$item->valor;
+        });
+    }
 }

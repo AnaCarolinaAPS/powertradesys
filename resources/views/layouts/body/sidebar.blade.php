@@ -135,7 +135,7 @@
                                 <a href="javascript: void(0);" class="has-arrow">Cadastros</a>
                                 <ul class="sub-menu" aria-expanded="true">
                                     <li><a href="{{ route('motores.index'); }}">Motores</a></li>
-                                    <li><a href="#">Despesas</a></li>
+                                    <li><a href="{{ route('motorproovedores.index'); }}">Proovedor</a></li>
                                 </ul>
                             </li>
                             <li><a href="{{ route('ordem.index'); }}">Venda de Motores</a></li>

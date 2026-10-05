@@ -47,6 +47,8 @@ use App\Http\Controllers\ScrapingController;
 use App\Http\Controllers\ContasFixasController;
 use App\Http\Controllers\ContasPagarController;
 use App\Http\Controllers\MotorController;
+use App\Http\Controllers\MotorProovedorController;
+use App\Http\Controllers\MotorDespesaController;
 use App\Http\Controllers\OrdemController;
 use Illuminate\Support\Facades\Route;
 
@@ -450,13 +452,31 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{itemvenda}', [ItemVendaController::class, 'destroy'])->name('vendas_item.destroy');
         });
 
-        // Produtos CRUD
+        // Motores CRUD
         Route::prefix('/admin/motores')->group(function () {
             Route::get('/', [MotorController::class, 'index'])->name('motores.index');
             Route::post('/', [MotorController::class, 'store'])->name('motores.store');
             Route::get('/{motor}', [MotorController::class, 'show'])->name('motores.show');
             Route::put('/{motor}', [MotorController::class, 'update'])->name('motores.update');
             Route::delete('/{motor}', [MotorController::class, 'destroy'])->name('motores.destroy');
+        });
+
+        // Motor Despesas CRUD
+        Route::prefix('/admin/motorproovedores')->group(function () {
+            Route::get('/', [MotorProovedorController::class, 'index'])->name('motorproovedores.index');
+            Route::post('/', [MotorProovedorController::class, 'store'])->name('motorproovedores.store');
+            Route::get('/{item}', [MotorProovedorController::class, 'show'])->name('motorproovedores.show');
+            Route::put('/{item}', [MotorProovedorController::class, 'update'])->name('motorproovedores.update');
+            Route::delete('/{item}', [MotorProovedorController::class, 'destroy'])->name('motorproovedores.destroy');
+        });
+
+        // Motor Despesas CRUD
+        Route::prefix('/admin/motordespesas')->group(function () {
+            Route::get('/', [MotorDespesaController::class, 'index'])->name('motordespesas.index');
+            Route::post('/', [MotorDespesaController::class, 'store'])->name('motordespesas.store');
+            Route::get('/{motordespesa}', [MotorDespesaController::class, 'show'])->name('motordespesas.show');
+            Route::put('/{motordespesa}', [MotorDespesaController::class, 'update'])->name('motordespesas.update');
+            Route::delete('/{motordespesa}', [MotorDespesaController::class, 'destroy'])->name('motordespesas.destroy');
         });
 
         // ORDEM CRUD

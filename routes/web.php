@@ -48,8 +48,9 @@ use App\Http\Controllers\ContasFixasController;
 use App\Http\Controllers\ContasPagarController;
 use App\Http\Controllers\MotorController;
 use App\Http\Controllers\MotorProovedorController;
-use App\Http\Controllers\MotorDespesaController;
+use App\Http\Controllers\MotorProovedorServicoController;
 use App\Http\Controllers\OrdemController;
+use App\Http\Controllers\OrdemItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -461,7 +462,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{motor}', [MotorController::class, 'destroy'])->name('motores.destroy');
         });
 
-        // Motor Despesas CRUD
+        // Motor Proovedores CRUD
         Route::prefix('/admin/motorproovedores')->group(function () {
             Route::get('/', [MotorProovedorController::class, 'index'])->name('motorproovedores.index');
             Route::post('/', [MotorProovedorController::class, 'store'])->name('motorproovedores.store');
@@ -470,13 +471,12 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{item}', [MotorProovedorController::class, 'destroy'])->name('motorproovedores.destroy');
         });
 
-        // Motor Despesas CRUD
-        Route::prefix('/admin/motordespesas')->group(function () {
-            Route::get('/', [MotorDespesaController::class, 'index'])->name('motordespesas.index');
-            Route::post('/', [MotorDespesaController::class, 'store'])->name('motordespesas.store');
-            Route::get('/{motordespesa}', [MotorDespesaController::class, 'show'])->name('motordespesas.show');
-            Route::put('/{motordespesa}', [MotorDespesaController::class, 'update'])->name('motordespesas.update');
-            Route::delete('/{motordespesa}', [MotorDespesaController::class, 'destroy'])->name('motordespesas.destroy');
+        // Serviços Proovedores CRUD
+        Route::prefix('/admin/motorproovedoresservicos')->group(function () {
+            Route::post('/', [MotorProovedorServicoController::class, 'store'])->name('proovedor_servicos.store');
+            Route::get('/{item}', [MotorProovedorServicoController::class, 'show'])->name('proovedor_servicos.show');
+            Route::put('/{item}', [MotorProovedorServicoController::class, 'update'])->name('proovedor_servicos.update');
+            Route::delete('/{item}', [MotorProovedorServicoController::class, 'destroy'])->name('proovedor_servicos.destroy');
         });
 
         // ORDEM CRUD
@@ -488,6 +488,13 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');
         });
 
+        // Motor Despesas CRUD
+        Route::prefix('/admin/ordemitem')->group(function () {
+            Route::post('/', [OrdemItemController::class, 'store'])->name('ordem_item.store');
+            Route::get('/{item}', [OrdemItemController::class, 'show'])->name('ordem_item.show');
+            Route::put('/{item}', [OrdemItemController::class, 'update'])->name('ordem_item.update');
+            Route::delete('/{item}', [OrdemItemController::class, 'destroy'])->name('ordem_item.destroy');
+        });
     });
 
     Route::middleware(['role:client'])->group(function () {

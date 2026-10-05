@@ -19,4 +19,9 @@ class MotorProovedor extends Model
         'descricao',
         'contato',
     ];
+
+    public function servicos()
+    {
+        return $this->hasMany(MotorProovedorServico::class);
+    }
 }

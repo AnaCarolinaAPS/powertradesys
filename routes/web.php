@@ -48,6 +48,7 @@ use App\Http\Controllers\ContasFixasController;
 use App\Http\Controllers\ContasPagarController;
 use App\Http\Controllers\MotorController;
 use App\Http\Controllers\MotorProovedorController;
+use App\Http\Controllers\MotorProovedorServicoController;
 use App\Http\Controllers\MotorDespesaController;
 use App\Http\Controllers\OrdemController;
 use Illuminate\Support\Facades\Route;
@@ -461,13 +462,21 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{motor}', [MotorController::class, 'destroy'])->name('motores.destroy');
         });
 
-        // Motor Despesas CRUD
+        // Motor Proovedores CRUD
         Route::prefix('/admin/motorproovedores')->group(function () {
             Route::get('/', [MotorProovedorController::class, 'index'])->name('motorproovedores.index');
             Route::post('/', [MotorProovedorController::class, 'store'])->name('motorproovedores.store');
             Route::get('/{item}', [MotorProovedorController::class, 'show'])->name('motorproovedores.show');
             Route::put('/{item}', [MotorProovedorController::class, 'update'])->name('motorproovedores.update');
             Route::delete('/{item}', [MotorProovedorController::class, 'destroy'])->name('motorproovedores.destroy');
+        });
+
+        // Serviços Proovedores CRUD
+        Route::prefix('/admin/proovedores/servicos')->group(function () {
+            Route::post('/', [MotorProovedorServicoController::class, 'store'])->name('proovedor_servicos.store');
+            Route::get('/{item}', [MotorProovedorServicoController::class, 'show'])->name('proovedor_servicos.show');
+            Route::put('/{item}', [MotorProovedorServicoController::class, 'update'])->name('proovedor_servicos.update');
+            Route::delete('/{item}', [MotorProovedorServicoController::class, 'destroy'])->name('proovedor_servicos.destroy');
         });
 
         // Motor Despesas CRUD
@@ -487,7 +496,6 @@ Route::middleware('auth')->group(function () {
             Route::put('/{ordem}', [OrdemController::class, 'update'])->name('ordem.update');
             Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');
         });
-
     });
 
     Route::middleware(['role:client'])->group(function () {

@@ -390,17 +390,7 @@
 
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var tableRows = document.querySelectorAll('tbody tr[data-href]');
-
-        tableRows.forEach(function(row) {
-            row.addEventListener('click', function() {
-                window.location.href = this.dataset.href;
-            });
-        });
-    });
-    
+<script>    
     // JavaScript para abrir o modal ao clicar na linha da tabela
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {
@@ -417,7 +407,7 @@
                     document.getElementById('dPreco').value = data.preco;
                     document.getElementById('dTipo_servico').value = data.tipo_servico;
                     document.getElementById('dTipo_moeda').value = data.tipo_moeda;
-                    document.getElementById('dMotor').value = data.motor_id;
+                    document.getElementById('dMotor_id').value = data.motor_id;
                     $('.selectpicker').selectpicker('refresh');
 
                     var formAtualiza = document.getElementById('formAtualizacao');

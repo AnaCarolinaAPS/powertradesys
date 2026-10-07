@@ -145,7 +145,7 @@ class PagamentoController extends Controller
                 ]);
 
                 $ordem = Ordem::findOrFail($request->input('ordem_id'));
-                $descricao = 'Pgto '.$ordem->cliente.' de '.$request->input('valor').' U$';
+                $descricao = 'Pgto '.$ordem->cliente.' de '.$request->input('valor').' U$ por Ordem Ref.: '.$ordem->referencia;
                 $tipo = 'entrada';           
 
                 $valor_pgto = $request->input('valor_pgto');
@@ -304,11 +304,12 @@ class PagamentoController extends Controller
                 $valorRestante = $valor;
 
                 $ordem->pagamentos()->attach($pagamentoO->id, ['valor_recebido' => $valorRestante]);
+                
                 //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
                 if ($valorRestante > 0) {
                     return redirect()->back()->with('toastr', [
                         'type'    => 'info',
-                        'message' => 'O Cliente GEROU UM CREDITO!',
+                        'message' => 'Registrado o pagamento do Cliente!',
                         'title'   => 'Sucesso',
                     ]);
                 }

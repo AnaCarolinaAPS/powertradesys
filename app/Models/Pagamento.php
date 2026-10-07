@@ -30,6 +30,11 @@ class Pagamento extends Model
         return $this->belongsToMany(Despesa::class, 'despesa_pagamentos')->withPivot('valor_recebido');
     }
 
+    public function ordems()
+    {
+        return $this->belongsToMany(Ordem::class, 'ordem_pagamentos')->withPivot('valor_recebido');
+    }
+
     public function folha_pagamentos()
     {
         return $this->belongsToMany(FolhaPagamento::class, 'folha_pagamento_pagamentos')->withPivot('valor_recebido');
@@ -57,7 +62,7 @@ class Pagamento extends Model
         }
     }
 
-    //Para resgatar os valores dos pagamentos de DETERMINADA INVOICE
+    //Para resgatar os valores dos pagamentos de DETERMINADA DESPESA
     public function getValorPagoForDespesa($despesaId)
     {
         // Procurar a invoice pelo ID e retornar o valor pago associado a ela
@@ -69,13 +74,25 @@ class Pagamento extends Model
         }
     }
 
-    //Para resgatar os valores dos pagamentos de DETERMINADA INVOICE
+    //Para resgatar os valores dos pagamentos de DETERMINADA FOLHA DE PAGAMENTO
     public function getValorPagoForFolha($folhaId)
     {
         // Procurar a invoice pelo ID e retornar o valor pago associado a ela
         $folha = $this->folha_pagamentos()->find($folhaId);
         if ($folha) {
             return $folha->pivot->valor_recebido;
+        } else {
+            return null; // Ou algum outro valor padrão, se preferir
+        }
+    }
+
+    //Para resgatar os valores dos pagamentos de DETERMINADA INVOICE
+    public function getValorPagoForOrdem($ordemId)
+    {
+        // Procurar a Ordem pelo ID e retornar o valor pago associado a ela
+        $ordem = $this->ordems()->find($ordemId);
+        if ($ordem) {
+            return $ordem->pivot->valor_recebido;
         } else {
             return null; // Ou algum outro valor padrão, se preferir
         }

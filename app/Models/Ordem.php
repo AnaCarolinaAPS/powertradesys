@@ -27,4 +27,21 @@ class Ordem extends Model
             return $item->quantidade*$item->valor;
         });
     }
+
+    public function pagamentos()
+    {
+        return $this->belongsToMany(Pagamento::class, 'ordem_pagamentos')->withPivot('valor_recebido');;
+    }   
+
+    //Para resgatar todos os pagamentos associados a invoice
+    public function valor_pago()
+    {
+        return $this->pagamentos->sum('pivot.valor_recebido');
+    }
+
+    //Para retirar o valor pendente
+    public function valor_pendente()
+    {
+        return $this->valor_total() - $this->valor_pago();
+    }
 }

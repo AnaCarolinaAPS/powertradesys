@@ -488,7 +488,7 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');
         });
 
-        // Motor Despesas CRUD
+        // Ordem Item CRUD
         Route::prefix('/admin/ordemitem')->group(function () {
             Route::post('/', [OrdemItemController::class, 'store'])->name('ordem_item.store');
             Route::get('/{item}', [OrdemItemController::class, 'show'])->name('ordem_item.show');

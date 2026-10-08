@@ -38,7 +38,7 @@ class OrdemDespesaController extends Controller
             ]);
 
             // Exibir toastr de sucesso
-            return redirect()->back()->with('toastr', [
+            return redirect()->route('ordem_despesa.show', ['item' => $despesa->id])->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Despesa criada com sucesso!',
                 'title'   => 'Sucesso',

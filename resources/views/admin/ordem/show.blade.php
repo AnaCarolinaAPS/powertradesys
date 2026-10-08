@@ -271,14 +271,7 @@
                             </thead><!-- end thead -->
                             <tbody>
                                 @foreach ($item->despesas as $despesa)
-                                {{-- 
-                                @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() == 0)
-                                    <tr class="table-success" data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
-                                @else
-                                    <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
-                                @endif
-                                --}}
-                                <tr>
+                                <tr data-href="{{ route('ordem_despesa.show', ['item' => $despesa->id]) }}">                            
                                     <td>{{ $despesa->proovedor->nome; }}</td>
                                     <td>{{-- number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') --}}</td>
                                     <td>{{-- number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') --}}</td>
@@ -544,6 +537,17 @@
 </div>
 
 <script>
+    // JavaScript para redirecionar ao clicar na linha da tabela
+    document.addEventListener("DOMContentLoaded", function() {
+        var tableRows = document.querySelectorAll('tbody tr[data-href]');
+
+        tableRows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+
     // JavaScript para abrir o modal ao clicar na linha da tabela
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {

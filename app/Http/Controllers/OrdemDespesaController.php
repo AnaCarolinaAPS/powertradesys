@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\OrdemDespesa;
+use App\Models\MotorProovedorServico;
+use App\Models\Caixa;
 use Illuminate\Http\Request;
 
 class OrdemDespesaController extends Controller
@@ -56,9 +58,24 @@ class OrdemDespesaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(OrdemDespesa $ordemDespesa)
+    public function show(string $id)
     {
-        //
+        try {
+            // Buscar o shipper pelo ID
+            $despesa = OrdemDespesa::findOrFail($id);
+            $all_servicos = MotorProovedorServico::where('motor_proovedor_id', $despesa->motor_proovedor_id)->get();
+            $all_items = "";//DespesaItem::where('despesa_id', $despesa->id)->get();
+            $all_caixas = Caixa::all();
+            // Retornar a view com os detalhes 
+            return view('admin.ordemdespesa.index', compact('despesa', 'all_servicos', 'all_items', 'all_caixas'));
+        } catch (\Exception $e) {
+            // Exibir uma mensagem de erro ou redirecionar para uma página de erro
+            return redirect()->back()->with('toastr', [
+                'type'    => 'error',
+                'message' => 'Ocorreu um erro ao exibir os detalhes da Despesa: <br>'. $e->getMessage(),
+                'title'   => 'Erro',
+            ]);
+        }
     }
 
 
@@ -76,12 +93,12 @@ class OrdemDespesaController extends Controller
     public function destroy(string $id)
     {
         try {
-            $despesa = OrdemDespesa::find($id);
+            $despesa = OrdemDespesa::findOrFail($id);
             $ordem = $despesa->ordem_id;
             $despesa->delete();
 
             // Redirecionar após a exclusão bem-sucedida
-            return redirect()->route('ordem.show', ['ordem' => $ordem->id])->with('toastr', [
+            return redirect()->route('ordem.show', ['ordem' => $ordem])->with('toastr', [
                 'type'    => 'success',
                 'message' => 'Despesa excluída com sucesso!',
                 'title'   => 'Sucesso',

@@ -139,6 +139,7 @@
             <!-- end col -->
         </div>
 
+        <!-- Pagamentos -->
         <div class="row">
             <div class="col-xl-12">
                 <div class="card">
@@ -230,6 +231,61 @@
                                 <b>Valor PENDENTE (desta ordem): {{ number_format($item->valor_pendente(), 2, ',', '.'); }} U$</b>
                             </div>
                         </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+
+        <!-- Despesas -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Despesas</h4>
+                                <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddDespesa">
+                                    <i class="fas fa-plus"></i> Add Despesa
+                                </button>
+                            </div>
+                            <div class="col">
+                                
+                            </div>
+                            {{-- 
+                            <div class="col">
+                                Valor Total: <b>{{number_format($faturacarga->despesas_total(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                Falta PAGAR : <b>{{number_format($faturacarga->despesas_total() - $faturacarga->despesas_pagas(), 2, ',', '.');}} U$</b>
+                            </div>
+                            --}}
+                        </div>
+                        <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Proovedor</th>
+                                    <th>Valor Total Despesa</th>
+                                    <th>Pendente</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                @foreach ($item->despesas as $despesa)
+                                {{-- 
+                                @if ($despesa->despesa_items->sum('valor')-$despesa->valor_pago() == 0)
+                                    <tr class="table-success" data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                @else
+                                    <tr data-href="{{ route('despesas.show', ['despesa' => $despesa->id]) }}">
+                                @endif
+                                --}}
+                                <tr>
+                                    <td>{{ $despesa->proovedor->nome; }}</td>
+                                    <td>{{-- number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') --}}</td>
+                                    <td>{{-- number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') --}}</td>
+                                </tr>
+                                @endforeach
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -443,6 +499,46 @@
             </div><!-- /.modal-dialog -->
         </div>
 
+        <!-- Adicionar Despesas -->
+    <div class="modal fade" tabindex="-1" aria-labelledby="ModalAddDespesa" aria-hidden="true" style="display: none;" id="ModalAddDespesa">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Adicionar Despesa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('ordem_despesa.store') }}" id="formNovaDespesa">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Campo hidden para armazenar o id da entidade pai -->
+                        <input type="hidden" name="ordem_id" value="{{ $item->id }}">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="motor_proovedors_id">Proovedor</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="motor_proovedors_id" name="motor_proovedors_id" required>
+                                        @foreach ($all_proovedores as $proovedor)
+                                            <option value="{{ $proovedor->id }}"> {{ $proovedor->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="data_recebida">Data</label>
+                                    <input class="form-control" type="date" value="{{  $item->data_compra; }}" id="data" name="data">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovaDespesa">Adicionar</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 
     </div>
 </div>

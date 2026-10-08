@@ -44,4 +44,9 @@ class Ordem extends Model
     {
         return $this->valor_total() - $this->valor_pago();
     }
+
+    public function despesas()
+    {
+        return $this->hasMany(OrdemDespesa::class);
+    }
 }

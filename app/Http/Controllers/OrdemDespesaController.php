@@ -98,6 +98,16 @@ class OrdemDespesaController extends Controller
     {
         try {
             $despesa = OrdemDespesa::findOrFail($id);
+
+            if ($despesa->valor_pago()>0) {
+                // Caso houveram pagamentos dessa despesa, não será possível fazer a exclusão.
+                return redirect()->back()->with('toastr', [
+                    'type'    => 'error',
+                    'message' => 'Não é possível excluir a despesa, pois ela possui pagamentos associados.',
+                    'title'   => 'Erro',
+                ]);
+            }
+
             $ordem = $despesa->ordem_id;
             $despesa->delete();
 

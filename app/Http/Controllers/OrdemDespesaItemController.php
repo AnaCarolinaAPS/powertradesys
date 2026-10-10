@@ -121,8 +121,31 @@ class OrdemDespesaItemController extends Controller
     public function destroy(string $id)
     {
         try {
-            $despesa = OrdemDespesaItem::find($id);
-            $despesa->delete();
+            // Encontra a entidade que vai ser excluída
+            $despesa_item = OrdemDespesaItem::findOrFail($id);
+            // Busca o valor total pago da despesa
+            $valor_total_pago = $despesa_item->despesa->valor_pago();
+            // Busca o valor total da despesa (todos os itens)
+            $valor_total_despesa = $despesa_item->despesa->valor_total();
+            // Verifica se existem pagamentos dessa despesa
+            if ($valor_total_pago > 0){
+                // Existem pagamentos associados
+                $valor_sem_despesa_excluida = $valor_total_despesa - $despesa_item->valor;
+                // Caso o valor fique Negativo (despesa a ser excluida é MAIOR do que os Pagamentos feitos)
+                if ($valor_sem_despesa_excluida <= 0) {
+                    // Redirecionar após a exclusão bem-sucedida
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'error',
+                        'message' => 'Não é possível excluir o item da despesa, pois ela possui pagamentos associados.',
+                        'title'   => 'Erro',
+                    ]);
+                }
+                // Caso a despesa possua mais itens que justifiquem os pagamentos recebidos
+                $despesa_item->delete();                
+            } else {
+                // Caso não tenham pagamentos atrelados a despesa, podemos excluir o item
+                $despesa_item->delete();
+            }             
 
             // Redirecionar após a exclusão bem-sucedida
             return redirect()->back()->with('toastr', [

@@ -66,13 +66,27 @@
                                 <h4 class="card-title mb-4">Serviços</h4>
                             </div>
                             <div class="col">
-                                
+                                @php
+                                    if ( count($despesa->despesa_items) > 0) { 
+                                        if ($despesa->despesa_items[0]->tipo_moeda == 'dolar') {
+                                            $moeda = "U$";
+                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'reais') {
+                                            $moeda = "R$";
+                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'guaranis') {
+                                            $moeda = "G$";
+                                        } else {
+                                            $moeda = "";
+                                        }
+                                    } else {
+                                        $moeda = "";
+                                    }
+                                @endphp
                             </div>
                             <div class="col">
-                                Valor Cobrado: <b> {{ number_format($despesa->valor_total(), 2, ',', '.'); }}</b>
+                                Valor Cobrado: <b> {{ number_format($despesa->valor_total(), 2, ',', '.')." ".$moeda; }}</b>
                             </div>
                             <div class="col">
-                                <b>Valor PAGO: {{-- number_format($despesa->valor_pago(), 2, ',', '.'); --}} U$</b>
+                                <b>Valor PAGO: {{ number_format($despesa->valor_pago(), 2, ',', '.')." ".$moeda; }} </b>
                             </div>
                         </div>
 
@@ -99,7 +113,7 @@
                                             @else
                                                 {{number_format($despesa_item->valor, 0, ',', '.');}} G$
                                             @endif
-                                        </td>
+                                        </td>                                        
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->
@@ -122,10 +136,10 @@
 
                             </div>
                             <div class="col">
-                                Valor Cobrado: <b>{{ number_format($despesa->valor_total(), 2, ',', '.'); }}</b>
+                                Valor Cobrado: <b>{{ number_format($despesa->valor_total(), 2, ',', '.')." ".$moeda; }}</b>
                             </div>
                             <div class="col">
-                                <b>Valor PENDENTE: {{-- number_format($despesa->valor_total()-$despesa->valor_pago(), 2, ',', '.'); --}} U$</b>
+                                <b>Valor PENDENTE: {{ number_format($despesa->valor_pendente(), 2, ',', '.')." ".$moeda; }}</b>
                             </div>
                         </div>
 
@@ -145,17 +159,15 @@
                                     @php
                                         $i = 0;
                                     @endphp
-                                    {{-- 
-                                    @foreach ($despesa->pagamentos as $pagamento)
+                                    @foreach ($despesa->pagamentos as $pagamento)                                    
                                     <tr class="abrirModalPgto" data-pgto-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalheModal">
                                         <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
-                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForDespesa($despesa->id), 2, ',', '.')." U$)" }}</td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." ".$moeda; }}</td>
                                         <td>
                                             <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
                                         </td>
-                                    </tr>
+                                    </tr>                                    
                                     @endforeach
-                                    --}}
                                      <!-- end -->
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
@@ -246,20 +258,22 @@
                                         <input type="text" class="form-control" id="dDescricao" maxlength="255" readonly>
                                     </div>
                                 </div>
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="status">Moeda</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="dTipo_moeda" name="tipo_moeda">
-                                            <option value="dolar"> U$ </option>
-                                            <option value="reais"> R$ </option>
-                                            <option value="guaranis"> G$ </option>
-                                        </select>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="status">Moeda</label>
+                                            <select class="selectpicker form-control" data-live-search="true" id="dTipo_moeda" name="tipo_moeda">
+                                                <option value="dolar"> U$ </option>
+                                                <option value="reais"> R$ </option>
+                                                <option value="guaranis"> G$ </option>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col">
-                                    <div class="form-group">
-                                        <label for="valor">Valor</label>
-                                        <input class="form-control" type="number" value="0" step="0.10" id="dValor" name="valor">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="valor">Valor</label>
+                                            <input class="form-control" type="number" value="0" step="0.10" id="dValor" name="valor">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -302,11 +316,11 @@
         </div>
 
         {{-- Criação do Pagamento --}}
-        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="ModalNovo" aria-hidden="true" style="display: none;" id="novoModal">
+        <div class="modal fade" tabindex="-1" aria-labelledby="ModalNovo" aria-hidden="true" style="display: none;" id="novoModal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="myLargeModalLabel">Novo Pagamento</h5>
+                        <h5 class="modal-title">Novo Pagamento</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form class="form-horizontal mt-3" method="POST" action="{{ route('pagamentos.store') }}">
@@ -314,8 +328,7 @@
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
                             <input type="hidden" name="ordem_despesa_id" value="{{ $despesa->id; }}" id="ordem_despesa_id">
-                            <input type="hidden" name="motor_proovedor_id" value="{{  $despesa->motor_proovedor_id; }}" id="motor_proovedor_id">
-                            <input type="hidden" name="tipo" value="Despesa" id="tipo">
+                            <input type="hidden" name="tipo" value="OrdemDespesa" id="tipo">
                             <div class="row">
                                 <div class="col">
                                     <div class="form-group">
@@ -326,8 +339,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Valor Pagamento</label>
-                                        {{-- <input class="form-control" type="number" value="" step="0.10" id="valor" name="valor" required> --}}
-                                        {{-- <input class="form-control" type="number" value="{{number_format($despesa->valor_total()-$despesa->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor" name="valor" required> --}}
+                                        <input class="form-control" type="number" value="{{ $despesa->valor_pendente(); }}" step="0.10" id="valor" name="valor" required>
                                     </div>
                                 </div>
                             <!-- </div>
@@ -345,8 +357,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Saída em Caixa</label>
-                                        {{-- <input class="form-control" type="number" value="" step="0.10" id="valor_pgto" name="valor_pgto" required> --}}
-                                        {{-- <input class="form-control" type="number" value="{{number_format($despesa->valor_total()-$despesa->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor_pgto" name="valor_pgto" required>--}}
+                                        <input class="form-control" type="number" value="{{ $despesa->valor_pendente(); }}" step="0.10" id="valor_pgto" name="valor_pgto" required>
                                     </div>
                                 </div>
                             </div>
@@ -389,6 +400,7 @@
                     document.getElementById('dDescricao').value = tipo_servico+" de "+data.servico.motor.nome;
                     document.getElementById('dTipo_moeda').value = data.tipo_moeda;
                     document.getElementById('dValor').value = data.valor;
+                    $('.selectpicker').selectpicker('refresh');
 
                     var formAtualiza = document.getElementById('formAtualizacaoServico');
                     var rotaUpdate = "{{ route('ordem_despesas_servicos.update', ['item' => ':id']) }}".replace(':id', data.id);

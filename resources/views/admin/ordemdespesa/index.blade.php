@@ -69,7 +69,7 @@
                                 
                             </div>
                             <div class="col">
-                                Valor Cobrado: <b>{{-- number_format($despesa->valor_total(), 2, ',', '.'); --}} U$</b>
+                                Valor Cobrado: <b> {{ number_format($despesa->valor_total(), 2, ',', '.'); }}</b>
                             </div>
                             <div class="col">
                                 <b>Valor PAGO: {{-- number_format($despesa->valor_pago(), 2, ',', '.'); --}} U$</b>
@@ -84,24 +84,24 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th>Descrição</th>
-                                        <th>Tipo Cobrança</th>
-                                        <th>Valor (U$)</th>
+                                        <th>Valor</th>
                                     </tr>
                                 </thead><!-- end thead -->
                                 <tbody>
-                                    {{-- 
-                                    @foreach ($all_items as $item)
-                                    <tr class="abrirModal" data-id="{{ $item->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesServico">
-                                        <td>{{ $item->servico_fornecedor->descricao}}</td>
-                                        @if($item->servico_fornecedor->tipo_preco == 'kgs guia')
-                                            <td>{{ $despesa->fatura_carga->carga->peso_guia.'kgs x '.number_format($item->servico_fornecedor->preco, 2, ',', '.').' U$ ('.$item->servico_fornecedor->tipo_preco.')'}}</td>
-                                        @else
-                                            <td>{{ $item->servico_fornecedor->tipo_preco}}</td>
-                                        @endif
-                                        <td>{{ number_format($item->valor, 2, ',', '.') }}</td>
+                                    @foreach ($all_items as $despesa_item)
+                                    <tr class="abrirModal" data-id="{{ $despesa_item->id; }}" data-bs-toggle="modal" data-bs-target="#detalhesDepesa">
+                                        <td>{{ ucfirst($despesa_item->servico->tipo_servico)." de ".$despesa_item->servico->motor->nome; }}</td>                                        
+                                        <td>
+                                            @if ($despesa_item->tipo_moeda == 'dolar')
+                                                {{number_format($despesa_item->valor, 2, ',', '.');}} U$
+                                            @elseif ($despesa_item->tipo_moeda == 'reais')
+                                                {{number_format($despesa_item->valor, 2, ',', '.');}} R$
+                                            @else
+                                                {{number_format($despesa_item->valor, 0, ',', '.');}} G$
+                                            @endif
+                                        </td>
                                     </tr>
                                     @endforeach
-                                    --}}
                                 </tbody><!-- end tbody -->
                             </table> <!-- end table -->
                         </div>
@@ -122,7 +122,7 @@
 
                             </div>
                             <div class="col">
-                                Valor Cobrado: <b>{{-- number_format($despesa->valor_total(), 2, ',', '.'); --}} U$</b>
+                                Valor Cobrado: <b>{{ number_format($despesa->valor_total(), 2, ',', '.'); }}</b>
                             </div>
                             <div class="col">
                                 <b>Valor PENDENTE: {{-- number_format($despesa->valor_total()-$despesa->valor_pago(), 2, ',', '.'); --}} U$</b>
@@ -195,22 +195,21 @@
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="myLargeModalLabel">Adicionar Pacotes</h5>
+                        <h5 class="modal-title" id="myLargeModalLabel">Adicionar Servicos</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form class="form-horizontal mt-3" method="POST" action="{{ route('despesas_servicos.store') }}" id="formNovoServico">
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('ordem_despesas_servicos.store') }}" id="formNovoServico">
                         @csrf
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id da Warehouse -->
-                            <input type="hidden" name="despesa_id" value="{{ $despesa->id }}">
-                            <input type="hidden" name="peso_guia" value="{{ $despesa->fatura_carga->carga->peso_guia ?? '0.0'; }}">
+                            <input type="hidden" name="ordem_despesa_id" value="{{ $despesa->id }}">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="servico_id">Serviços</label>
-                                        <select class="selectpicker form-control" multiple data-live-search="true" id="servico_fornecedor_id" name="servico_fornecedor_id[]" required>
+                                        <label for="motor_proovedor_servico_id">Serviços</label>
+                                        <select class="selectpicker form-control" multiple data-live-search="true" id="motor_proovedor_servico_id" name="motor_proovedor_servico_id[]" required>
                                             @foreach ($all_servicos as $servico)
-                                                <option value="{{ $servico->id }}"> {{ $servico->descricao }} </option>
+                                                <option value="{{ $servico->id }}"> {{ ucfirst($servico->tipo_servico)." de ".$servico->motor->nome; }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -227,18 +226,18 @@
         </div>
 
         <!-- Detalhes dos Servicos -->
-        <div class="modal fade" tabindex="-1" aria-labelledby="detalhesServico" aria-hidden="true" style="display: none;" id="detalhesServico">
+        <div class="modal fade" tabindex="-1" aria-labelledby="detalhesDepesa" aria-hidden="true" style="display: none;" id="detalhesDepesa">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="tituloModalPacote">Despesa</h5>
+                        <h5 class="modal-title" id="tituloModalServico">Despesa</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form class="form-horizontal" method="POST" id="formAtualizacaoPacote" action="">
+                    <form class="form-horizontal" method="POST" id="formAtualizacaoServico" action="">
                         @csrf
                         @method('PUT') <!-- Método HTTP para update -->
                         <div class="modal-body">
-                            <!-- Campo hidden para armazenar o id da Warehouse -->
+                            <!-- Campo hidden para armazenar o id do pai -->
                             <input type="hidden" name="id" value="" id="dId">
                             <div class="row mt-1">
                                 <div class="col">
@@ -249,11 +248,15 @@
                                 </div>
                                 <div class="col">
                                     <div class="form-group">
-                                        <label for="tipo">Tipo Cobrança</label>
-                                        <input type="text" class="form-control" id="dTipo" maxlength="255" readonly>
+                                        <label for="status">Moeda</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="dTipo_moeda" name="tipo_moeda">
+                                            <option value="dolar"> U$ </option>
+                                            <option value="reais"> R$ </option>
+                                            <option value="guaranis"> G$ </option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col">
                                     <div class="form-group">
                                         <label for="valor">Valor</label>
                                         <input class="form-control" type="number" value="0" step="0.10" id="dValor" name="valor">
@@ -263,23 +266,23 @@
                         </div>
                         <div class="modal-footer">
                             <!-- Botão de Exclusão -->
-                            <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDelPct">
+                            <button type="button" class="btn btn-danger ml-auto" data-bs-toggle="modal" data-bs-target="#confirmDeleteServico">
                                 Excluir
                             </button>
                             <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
-                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacaoPacote">Atualizar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light" form="formAtualizacaoServico">Atualizar</button>
                         </div>
                     </form>
                 </div><!-- /.modal-content -->
             </div><!-- /.modal-dialog -->
         </div>
 
-        <!-- Modal de Exclusao Pacotes -->
-        <div class="modal fade" id="confirmDelPct" tabindex="-1" role="dialog" aria-labelledby="confirmDelModal" aria-hidden="true">
+        <!-- Modal de Exclusao de Item de Despesa -->
+        <div class="modal fade" id="confirmDeleteServico" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteServico" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmação de Exclusão</h5>
+                        <h5 class="modal-title">Confirmação de Exclusão</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -288,10 +291,10 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
                         <!-- Adicionar o botão de exclusão no modal -->
-                        <form method="post" action="" id="formDeletePctModal">
+                        <form method="post" action="" id="formDeleteServicoModal">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger waves-effect waves-light" form="formDeletePctModal">Excluir</button>
+                            <button type="submit" class="btn btn-danger waves-effect waves-light" form="formDeleteServicoModal">Excluir</button>
                         </form>
                     </div>
                 </div>
@@ -310,8 +313,8 @@
                         @csrf
                         <div class="modal-body">
                             {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
-                            <input type="hidden" name="despesa_id" value="{{ $despesa->id; }}" id="despesa_id">
-                            <input type="hidden" name="fornecedor_id" value="{{  $despesa->motor_proovedor_id; }}" id="motor_proovedor_id">
+                            <input type="hidden" name="ordem_despesa_id" value="{{ $despesa->id; }}" id="ordem_despesa_id">
+                            <input type="hidden" name="motor_proovedor_id" value="{{  $despesa->motor_proovedor_id; }}" id="motor_proovedor_id">
                             <input type="hidden" name="tipo" value="Despesa" id="tipo">
                             <div class="row">
                                 <div class="col">
@@ -361,6 +364,7 @@
 </div>
 
 <script>
+    // JavaScript para redirecionar ao clicar na linha da tabela
     document.addEventListener("DOMContentLoaded", function() {
         var tableRows = document.querySelectorAll('tbody tr[data-href]');
 
@@ -375,24 +379,24 @@
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {
             const itemId = event.currentTarget.dataset.id;
-            const url = "{{ route('despesas_servicos.show', ':id') }}".replace(':id', itemId);
+            const url = "{{ route('ordem_despesas_servicos.show', ':id') }}".replace(':id', itemId);
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-
-                    document.getElementById('tituloModalPacote').innerText = data.servico_fornecedor.descricao;
+                    var tipo_servico = data.servico.tipo_servico.charAt(0).toUpperCase() + data.servico.tipo_servico.slice(1)
+                    document.getElementById('tituloModalServico').innerText = data.servico.tipo_servico+" de "+data.servico.motor.nome;
                     document.getElementById('dId').value = data.id;
-                    document.getElementById('dDescricao').value = data.servico_fornecedor.descricao;
-                    document.getElementById('dTipo').value = data.servico_fornecedor.tipo_preco;
+                    document.getElementById('dDescricao').value = tipo_servico+" de "+data.servico.motor.nome;
+                    document.getElementById('dTipo_moeda').value = data.tipo_moeda;
                     document.getElementById('dValor').value = data.valor;
 
-                    var form = document.getElementById('formAtualizacaoPacote');
-                    var novaAction = "{{ route('despesas_servicos.update', ['despesasservicos' => ':id']) }}".replace(':id', data.id);
-                    form.setAttribute('action', novaAction);
+                    var formAtualiza = document.getElementById('formAtualizacaoServico');
+                    var rotaUpdate = "{{ route('ordem_despesas_servicos.update', ['item' => ':id']) }}".replace(':id', data.id);
+                    formAtualiza.setAttribute('action', rotaUpdate);
 
-                    var form2 = document.getElementById('formDeletePctModal');
-                    var novaAction2 = "{{ route('despesas_servicos.destroy', ['despesasservicos' => ':id']) }}".replace(':id', data.id);
-                    form2.setAttribute('action', novaAction2);
+                    var formDeleta = document.getElementById('formDeleteServicoModal');
+                    var rotaDelete = "{{ route('ordem_despesas_servicos.destroy', ['item' => ':id']) }}".replace(':id', data.id);
+                    formDeleta.setAttribute('action', rotaDelete);
                 })
                 .catch(error => console.error('Erro:', error));
         });

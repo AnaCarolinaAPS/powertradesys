@@ -24,4 +24,14 @@ class OrdemDespesa extends Model
     {
         return $this->belongsTo(MotorProovedor::class, 'motor_proovedors_id');
     }
+
+    public function despesa_items()
+    {
+        return $this->hasMany(OrdemDespesaItem::class);
+    }
+
+    public function valor_total()
+    {
+        return $this->despesa_items->sum('valor');
+    }
 }

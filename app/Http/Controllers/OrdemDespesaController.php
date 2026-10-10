@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\OrdemDespesa;
+use App\Models\OrdemDespesaItem;
 use App\Models\MotorProovedorServico;
 use App\Models\Caixa;
 use Illuminate\Http\Request;
@@ -63,8 +64,11 @@ class OrdemDespesaController extends Controller
         try {
             // Buscar o shipper pelo ID
             $despesa = OrdemDespesa::findOrFail($id);
-            $all_servicos = MotorProovedorServico::where('motor_proovedor_id', $despesa->motor_proovedor_id)->get();
-            $all_items = "";//DespesaItem::where('despesa_id', $despesa->id)->get();
+            $produtos_ordem = $despesa->ordem->itens->pluck('motor_id');
+            $all_servicos = MotorProovedorServico::where('motor_proovedor_id', $despesa->proovedor->id)
+                            ->whereIn('motor_id', $produtos_ordem)
+                            ->get();
+            $all_items = OrdemDespesaItem::where('ordem_despesa_id', $despesa->id)->get();
             $all_caixas = Caixa::all();
             // Retornar a view com os detalhes 
             return view('admin.ordemdespesa.index', compact('despesa', 'all_servicos', 'all_items', 'all_caixas'));

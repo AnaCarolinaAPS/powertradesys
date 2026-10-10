@@ -34,4 +34,9 @@ class MotorProovedorServico extends Model
     {
         return $this->belongsTo(Motor::class);
     }
+
+    public function despesa_items()
+    {
+        return $this->hasMany(OrdemDespesaItem::class);
+    }
 }

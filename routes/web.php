@@ -52,6 +52,7 @@ use App\Http\Controllers\MotorProovedorServicoController;
 use App\Http\Controllers\OrdemController;
 use App\Http\Controllers\OrdemItemController;
 use App\Http\Controllers\OrdemDespesaController;
+use App\Http\Controllers\OrdemDespesaItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -502,6 +503,14 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [OrdemDespesaController::class, 'store'])->name('ordem_despesa.store');
             Route::get('/{item}', [OrdemDespesaController::class, 'show'])->name('ordem_despesa.show');
             Route::delete('/{item}', [OrdemDespesaController::class, 'destroy'])->name('ordem_despesa.destroy');
+        });
+
+        // Ordem DESPESA ITEM CRUD
+        Route::prefix('/admin/ordemdespesaitem')->group(function () {
+            Route::post('/', [OrdemDespesaItemController::class, 'store'])->name('ordem_despesas_servicos.store');
+            Route::get('/{item}', [OrdemDespesaItemController::class, 'show'])->name('ordem_despesas_servicos.show');
+            Route::put('/{item}', [OrdemDespesaItemController::class, 'update'])->name('ordem_despesas_servicos.update');
+            Route::delete('/{item}', [OrdemDespesaItemController::class, 'destroy'])->name('ordem_despesas_servicos.destroy');
         });
     });
 

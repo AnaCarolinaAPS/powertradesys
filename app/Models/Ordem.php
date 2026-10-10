@@ -33,7 +33,7 @@ class Ordem extends Model
         return $this->belongsToMany(Pagamento::class, 'ordem_pagamentos')->withPivot('valor_recebido');;
     }   
 
-    //Para resgatar todos os pagamentos associados a invoice
+    //Para resgatar todos os pagamentos associados a ordem
     public function valor_pago()
     {
         return $this->pagamentos->sum('pivot.valor_recebido');
@@ -48,5 +48,18 @@ class Ordem extends Model
     public function despesas()
     {
         return $this->hasMany(OrdemDespesa::class);
+    }
+
+    public function despesas_total(){
+        return $this->despesas->sum(function ($despesa) {
+            return $despesa->valor_total();
+        });
+    }
+
+    public function despesas_pagas()
+    {
+        return $this->despesas->sum(function ($despesa) {
+            return $despesa->valor_pago();
+        });
     }
 }

@@ -30,8 +30,25 @@ class OrdemDespesa extends Model
         return $this->hasMany(OrdemDespesaItem::class);
     }
 
+    public function pagamentos()
+    {
+        return $this->belongsToMany(Pagamento::class, 'ordem_despesas_pagamentos')->withPivot('valor_recebido');;
+    } 
+
     public function valor_total()
     {
         return $this->despesa_items->sum('valor');
+    }
+
+    //Para resgatar todos os pagamentos associados a despesa da ordem
+    public function valor_pago()
+    {
+        return $this->pagamentos->sum('pivot.valor_recebido');
+    }
+
+    //Para retirar o valor pendente
+    public function valor_pendente()
+    {
+        return $this->valor_total() - $this->valor_pago();
     }
 }

@@ -14,6 +14,7 @@ use App\Models\Fornecedor;
 use App\Models\Funcionario;
 use App\Models\ContasPagar;
 use App\Models\Ordem;
+use App\Models\OrdemDespesa;
 use Illuminate\Http\Request;
 
 class PagamentoController extends Controller
@@ -28,7 +29,7 @@ class PagamentoController extends Controller
 
             // Validação dos dados do formulário
             $request->validate([
-                'tipo' => 'required|in:Pagamento,Despesa,Salario,Contas,OrdemPgto',
+                'tipo' => 'required|in:Pagamento,Despesa,Salario,Contas,OrdemPgto,OrdemDespesa',
                 'data_pagamento' => 'required|date',
                 'valor' => 'required|numeric',
                 'observacoes' => 'nullable|string',
@@ -151,6 +152,29 @@ class PagamentoController extends Controller
                 $valor_pgto = $request->input('valor_pgto');
                 $valor = $request->input('valor');
 
+                // if ($request->input('valor_pgto') > 0) {
+                //     $valor_pgto = $request->input('valor_pgto')*-1;
+                // } else {
+                //     $valor_pgto = $request->input('valor_pgto');
+                // }
+                // if ($valor = $request->input('valor') > 0) {
+                //     $valor = $request->input('valor')*-1;
+                // } else {
+                //     $valor = $request->input('valor');
+                // }
+            } else if ($request->input('tipo') == "OrdemDespesa") {
+                // Validação dos dados do formulário
+                $request->validate([
+                    'ordem_despesa_id' => 'required|exists:ordem_despesas,id',
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+
+                $ordem_despesa = OrdemDespesa::findOrFail($request->input('ordem_despesa_id'));
+                $descricao = 'Pago '.$request->input('valor').' '.$ordem_despesa->despesa_items[0]->tipo_moeda.' para '.$ordem_despesa->proovedor->nome;
+                $tipo = 'despesa';
+
+                $valor_pgto = $request->input('valor_pgto')*-1;
+                $valor = $request->input('valor');
                 // if ($request->input('valor_pgto') > 0) {
                 //     $valor_pgto = $request->input('valor_pgto')*-1;
                 // } else {
@@ -310,6 +334,31 @@ class PagamentoController extends Controller
                     return redirect()->back()->with('toastr', [
                         'type'    => 'info',
                         'message' => 'Registrado o pagamento do Cliente!',
+                        'title'   => 'Sucesso',
+                    ]);
+                }
+            } else if ($request->input('tipo') == "OrdemDespesa") {
+                //Cria o Pagamento
+                $pagamentoDD = Pagamento::create([
+                    'data_pagamento' => $request->input('data_pagamento'),
+                    'valor' => $valor,
+                    'observacoes' => $request->input('observacoes'),
+                    'fluxo_caixa_id' => $fluxo->id,
+                    'tipo' => 'Despesa'
+                    // Adicione outros campos conforme necessário
+                ]);
+
+                $valorRestante = $valor;
+
+                //Faz o pagamento da DESPESA que foi inserido o pagamento
+                $despesa = OrdemDespesa::findOrFail($request->input('ordem_despesa_id'));                
+                $despesa->pagamentos()->attach($pagamentoDD->id, ['valor_recebido' => $valorRestante]);
+
+                //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
+                if ($valorRestante > 0) {
+                    return redirect()->back()->with('toastr', [
+                        'type'    => 'info',
+                        'message' => 'A EMPRESA GEROU UM CREDITO!',
                         'title'   => 'Sucesso',
                     ]);
                 }

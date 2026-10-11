@@ -324,13 +324,25 @@ class PagamentoController extends Controller
                     'fluxo_caixa_id' => $fluxo->id,
                     // Adicione outros campos conforme necessário
                 ]);
+
+                // Validação dos dados do formulário
+                $request->validate([                    
+                    'valor_cotacao' => 'nullable|numeric',
+                    // Adicione outras regras de validação conforme necessário
+                ]);
                 
+                $valor_cotacao = $request->input('valor_cotacao');
+
+                if ($valor_cotacao <= 0) {
+                    $valor_cotacao = $valor;
+                }
+
                 $valorRestante = $valor;
 
-                $ordem->pagamentos()->attach($pagamentoO->id, ['valor_recebido' => $valorRestante]);
+                $ordem->pagamentos()->attach($pagamentoO->id, ['valor_recebido' => $valorRestante, 'valor_cotacao' => $valor_cotacao]);
                 
                 //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
-                if ($valorRestante > 0) {
+                if ($valorRestante > $valor) {
                     return redirect()->back()->with('toastr', [
                         'type'    => 'info',
                         'message' => 'Registrado o pagamento do Cliente!',

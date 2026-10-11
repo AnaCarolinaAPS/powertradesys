@@ -30,13 +30,18 @@ class Ordem extends Model
 
     public function pagamentos()
     {
-        return $this->belongsToMany(Pagamento::class, 'ordem_pagamentos')->withPivot('valor_recebido');;
+        return $this->belongsToMany(Pagamento::class, 'ordem_pagamentos')->withPivot(['valor_recebido','valor_cotacao']);
     }   
 
     //Para resgatar todos os pagamentos associados a ordem
     public function valor_pago()
     {
         return $this->pagamentos->sum('pivot.valor_recebido');
+    }
+
+    public function valor_pago_usd()
+    {
+        return $this->pagamentos->sum('pivot.valor_cotacao');
     }
 
     //Para retirar o valor pendente
@@ -112,6 +117,13 @@ class Ordem extends Model
     {
         return $this->despesas->sum(function ($despesa) {
             return $despesa->valor_pago();
+        });
+    }
+
+    public function despesas_pagas_usd()
+    {   
+        return $this->despesas->sum(function ($despesa) {
+            return $despesa->valor_pago_usd();
         });
     }
 }

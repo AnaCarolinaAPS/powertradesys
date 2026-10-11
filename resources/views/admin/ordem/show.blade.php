@@ -85,15 +85,24 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
+                        @php 
+                            if ($item->itens[0]->tipo_moeda == 'dolar') {
+                                $moeda = "U$";
+                            } elseif ($item->itens[0]->tipo_moeda == 'reais') {
+                                $moeda = "R$";
+                            } elseif ($item->itens[0]->tipo_moeda == 'guaranis') {
+                                $moeda = "G$";
+                            }
+                        @endphp  
                         <div class="row">
                             <div class="col">
                                 <h4 class="card-title mb-4">Items</h4>
                             </div>
                             <div class="col">
-                                {{-- Lucro Previsto (até o momento): <b>{{number_format($item->valor_total() - $item->despesas_total(), 2, ',', '.');}}</b> --}}
+                                Lucro Atual (dólares): <b>{{ number_format($item->valor_pago_usd()-$item->despesas_pagas_usd(), 2, ',', '.');}} U$</b>
                             </div>
                             <div class="col">
-                                Falta COBRAR : <b>{{number_format($item->valor_total() - $item->valor_pago(), 2, ',', '.');}}</b>
+                                Falta COBRAR : <b>{{number_format($item->valor_total() - $item->valor_pago(), 2, ',', '.')." ".$moeda;}}</b>
                             </div>
                         </div>                        
 
@@ -152,8 +161,19 @@
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->
-                            </table> <!-- end table -->
-                        </div>                        
+                            </table> <!-- end table -->                            
+                        </div>   
+                        <div class="row">
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                Valor TOTAL: <b>{{ number_format($item->valor_total(), 2, ',', '.')." ".$moeda; }}</b>
+                            </div>
+                        </div>                     
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -170,12 +190,10 @@
                                 <h4 class="card-title mb-4">Pagamentos</h4>
                             </div>
                             <div class="col">
-                                {{-- <b>Valor CRÉDITO: U$</b> --}}
+
                             </div>
                             <div class="col">
-                                {{-- <b>TOTAL PENDENTE: {{number_format($item->cliente->invoices->sum(function($item) {
-                                                return $item->valor_pendente();
-                                            }), 2, ',', '.')}} U$</b>--}}
+                                <b>Valor PENDENTE: {{ number_format($item->valor_pendente(), 2, ',', '.')." ".$moeda; }}</b>
                             </div>
                         </div>
 
@@ -189,6 +207,7 @@
                                     <tr>
                                         <th>Data</th>
                                         <th>Valor Recebido</th>
+                                        <th>Valor em U$</th>
                                         <th></th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -198,8 +217,9 @@
                                     @endphp
                                     @foreach ($item->pagamentos as $pagamento)
                                     <tr> 
-                                        <td data-bs-toggle="collapse" data-bs-target="#r{{$i}}">{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
-                                        <td data-bs-toggle="collapse" data-bs-target="#r{{$i}}">{{ number_format($pagamento->valor, 2, ',', '.')." ".$moeda}}</td>                                        
+                                        <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." ".$moeda}}</td>                                        
+                                        <td>{{ number_format($pagamento->pivot->valor_cotacao, 2, ',', '.')." U$"; }}</td>
                                         <td>
                                             <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
                                         </td>
@@ -211,13 +231,15 @@
                         </div>
                         <div class="row">
                             <div class="col">
-
+                                @if ($moeda != "U$")
+                                    Valor Pago (dólares) {{ number_format($item->valor_pago_usd(), 2, ',', '.');}} U$
+                                @endif
+                            </div>                            
+                            <div class="col">
+                                
                             </div>
                             <div class="col">
-                                Valor PAGO (desta ordem): <b>{{ number_format($item->valor_pago(), 2, ',', '.')." ".$moeda; }}</b>
-                            </div>
-                            <div class="col">
-                                <b>Valor PENDENTE (desta ordem): {{ number_format($item->valor_pendente(), 2, ',', '.')." ".$moeda; }}</b>
+                                Valor Total PAGO: <b>{{ number_format($item->valor_pago(), 2, ',', '.')." ".$moeda; }}</b>
                             </div>
                         </div>
                     </div><!-- end card -->
@@ -238,20 +260,20 @@
                                     <i class="fas fa-plus"></i> Add Despesa
                                 </button>
                             </div>
-                            @foreach ($item->despesas_total() as $moeda_total_despesas => $total)
+                            @foreach ($item->despesas_pendentes() as $moeda_pendencia_despesas => $pendencia)
                                 <div class="col">
-                                    Valor 
-                                    @if ($moeda_total_despesas == 'dolar')
-                                        (dólares) {{number_format($total, 2, ',', '.');}} U$
-                                    @elseif ($moeda_total_despesas == 'reais')
-                                        (reais) {{number_format($total, 2, ',', '.');}} R$
-                                    @elseif ($moeda_total_despesas == 'guaranies')
-                                        (guaranies) {{number_format($total, 0, ',', '.');}} G$
+                                    Falta PAGAR 
+                                    @if ($moeda_pendencia_despesas == 'dolar')
+                                        (dólares) {{number_format($pendencia, 2, ',', '.');}} U$
+                                    @elseif ($moeda_pendencia_despesas == 'reais')
+                                        (reais) {{number_format($pendencia, 2, ',', '.');}} R$
+                                    @elseif ($moeda_pendencia_despesas == 'guaranies')
+                                        (guaranies) {{number_format($pendencia, 0, ',', '.');}} G$
                                     @else
                                         Aguardando Valor
                                     @endif
                                 </div>
-                            @endforeach
+                            @endforeach                            
                         </div>
                         <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead class="table-light">
@@ -284,21 +306,33 @@
                         </table> <!-- end table -->
                         <div class="row">
                             <div class="col">
+
                             </div>
-                            @foreach ($item->despesas_pendentes() as $moeda_pendencia_despesas => $pendencia)
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                <b>Total Pago (dólares) {{ number_format($item->despesas_pagas_usd(), 2, ',', '.');}} U$</b>
+                            </div>
+                            {{--
+                            @foreach ($item->despesas_total() as $moeda_total_despesas => $total)
                                 <div class="col">
-                                    Falta PAGAR 
-                                    @if ($moeda_pendencia_despesas == 'dolar')
-                                        (dólares) {{number_format($pendencia, 2, ',', '.');}} U$
-                                    @elseif ($moeda_pendencia_despesas == 'reais')
-                                        (reais) {{number_format($pendencia, 2, ',', '.');}} R$
-                                    @elseif ($moeda_pendencia_despesas == 'guaranies')
-                                        (guaranies) {{number_format($pendencia, 0, ',', '.');}} G$
+                                    Valor 
+                                    @if ($moeda_total_despesas == 'dolar')
+                                        (dólares) {{number_format($total, 2, ',', '.');}} U$
+                                    @elseif ($moeda_total_despesas == 'reais')
+                                        (reais) {{number_format($total, 2, ',', '.');}} R$
+                                    @elseif ($moeda_total_despesas == 'guaranies')
+                                        (guaranies) {{number_format($total, 0, ',', '.');}} G$
                                     @else
                                         Aguardando Valor
                                     @endif
                                 </div>
-                            @endforeach
+                            @endforeach 
+                            --}}
                         </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
@@ -481,11 +515,9 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Valor Pagamento</label>
-                                        <input class="form-control" type="number" value="{{number_format($item->valor_total()-$item->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor" name="valor" required>
+                                        <input class="form-control" type="number" value="{{ $item->valor_pendente(); }}" step="0.10" id="valor" name="valor" required>
                                     </div>
                                 </div>
-                            <!-- </div>
-                            <div class="row"> -->
                                 <div class="col" id="div_caixa_destino">
                                     <div class="form-group">
                                         <label for="caixa_origem_id">Onde foi Pago</label>
@@ -499,7 +531,21 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="contato">Entrada em Caixa</label>
-                                        <input class="form-control" type="number" value="{{number_format($item->valor_total()-$item->valor_pago(), 2, ',', '.');}}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                        <input class="form-control" type="number" value="{{ $item->valor_pendente(); }}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="moeda_cotacao">Moeda</label>
+                                        <input class="form-control" type="text" value="U$" id="moeda_cotacao" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="valor_cotacao">Valor Pagamento em U$</label>
+                                        <input class="form-control" type="number" value="{{ $item->valor_pendente(); }}" step="0.10" id="valor_cotacao" name="valor_cotacao" required>
                                     </div>
                                 </div>
                             </div>

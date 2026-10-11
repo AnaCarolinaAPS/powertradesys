@@ -32,7 +32,7 @@ class OrdemDespesa extends Model
 
     public function pagamentos()
     {
-        return $this->belongsToMany(Pagamento::class, 'ordem_despesas_pagamentos')->withPivot('valor_recebido');;
+        return $this->belongsToMany(Pagamento::class, 'ordem_despesas_pagamentos')->withPivot(['valor_recebido','valor_cotacao']);
     } 
 
     public function valor_total()
@@ -50,5 +50,11 @@ class OrdemDespesa extends Model
     public function valor_pendente()
     {
         return $this->valor_total() - $this->valor_pago();
+    }
+
+    //Para resgatar todos os pagamentos associados a despesa da ordem
+    public function valor_pago_usd()
+    {
+        return $this->pagamentos->sum('pivot.valor_cotacao');
     }
 }

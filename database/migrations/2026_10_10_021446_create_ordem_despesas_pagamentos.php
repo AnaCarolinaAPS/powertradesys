@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('pagamento_id');
             $table->foreign('pagamento_id')->references('id')->on('pagamentos')->onDelete('cascade');
             $table->decimal('valor_recebido', 10, 2); // Adicionando o campo para controlar o valor pago
+            $table->decimal('valor_cotacao', 10, 2); // Adicionando o campo para controlar o valor convertido para U$
             $table->timestamps();
         });
     }

@@ -152,6 +152,7 @@
                                     <tr>
                                         <th>Data</th>
                                         <th>Valor Recebido</th>
+                                        <th>Valor em U$</th>
                                         <th></th>
                                     </tr>
                                 </thead><!-- end thead -->
@@ -163,6 +164,7 @@
                                     <tr class="abrirModalPgto" data-pgto-id="{{ $pagamento->id; }}" data-bs-toggle="modal" data-bs-target="#detalheModal">
                                         <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
                                         <td>{{ number_format($pagamento->valor, 2, ',', '.')." ".$moeda; }}</td>
+                                        <td>{{ number_format($pagamento->pivot->valor_cotacao, 2, ',', '.')." U$"; }}</td>
                                         <td>
                                             <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
                                         </td>
@@ -342,8 +344,6 @@
                                         <input class="form-control" type="number" value="{{ $despesa->valor_pendente(); }}" step="0.10" id="valor" name="valor" required>
                                     </div>
                                 </div>
-                            <!-- </div>
-                            <div class="row"> -->
                                 <div class="col" id="div_caixa_destino">
                                     <div class="form-group">
                                         <label for="caixa_origem_id">Caixa</label>
@@ -358,6 +358,20 @@
                                     <div class="form-group">
                                         <label for="contato">Saída em Caixa</label>
                                         <input class="form-control" type="number" value="{{ $despesa->valor_pendente(); }}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="moeda_cotacao">Moeda</label>
+                                        <input class="form-control" type="text" value="U$" id="moeda_cotacao" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="valor_cotacao">Valor Pagamento em U$</label>
+                                        <input class="form-control" type="number" value="{{ $despesa->valor_pendente(); }}" step="0.10" id="valor_cotacao" name="valor_cotacao" required>
                                     </div>
                                 </div>
                             </div>

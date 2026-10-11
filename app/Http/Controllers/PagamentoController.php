@@ -338,6 +338,18 @@ class PagamentoController extends Controller
                     ]);
                 }
             } else if ($request->input('tipo') == "OrdemDespesa") {
+                // Validação dos dados do formulário
+                $request->validate([                    
+                    'valor_cotacao' => 'nullable|numeric',
+                    // Adicione outras regras de validação conforme necessário
+                ]);
+
+                $valor_cotacao = $request->input('valor_cotacao');
+
+                if ($valor_cotacao <= 0) {
+                    $valor_cotacao = $valor;
+                }
+
                 //Cria o Pagamento
                 $pagamentoDD = Pagamento::create([
                     'data_pagamento' => $request->input('data_pagamento'),
@@ -352,18 +364,17 @@ class PagamentoController extends Controller
 
                 //Faz o pagamento da DESPESA que foi inserido o pagamento
                 $despesa = OrdemDespesa::findOrFail($request->input('ordem_despesa_id'));                
-                $despesa->pagamentos()->attach($pagamentoDD->id, ['valor_recebido' => $valorRestante]);
+                $despesa->pagamentos()->attach($pagamentoDD->id, ['valor_recebido' => $valorRestante, 'valor_cotacao' => $valor_cotacao]);
 
                 //VERIFICA se o $valorRestante é MAIOR que 0, significa que o cliente ganhou um crédito
-                if ($valorRestante > 0) {
+                if ($valorRestante > $valor) {
                     return redirect()->back()->with('toastr', [
                         'type'    => 'info',
                         'message' => 'A EMPRESA GEROU UM CREDITO!',
                         'title'   => 'Sucesso',
                     ]);
-                }
+                } 
             }
-
 
             return redirect()->back()->with('toastr', [
                 'type'    => 'success',

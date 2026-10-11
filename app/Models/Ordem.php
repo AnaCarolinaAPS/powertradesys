@@ -51,9 +51,61 @@ class Ordem extends Model
     }
 
     public function despesas_total(){
-        return $this->despesas->sum(function ($despesa) {
-            return $despesa->valor_total();
-        });
+        $totais = [
+            'dolar' => 0,
+            'reais' => 0,
+            'guaranies' => 0,
+        ];
+
+        foreach ($this->despesas as $despesa) {
+            foreach ($despesa->despesa_items as $despesa_item) {
+                $moeda = $despesa_item->tipo_moeda;
+
+                if (array_key_exists($moeda, $totais)) {
+                    $totais[$moeda] += $despesa_item->valor;
+                }
+            }
+        }
+
+        return $totais;
+    }
+
+    public function despesas_pendentes(){
+        $totais = [
+            'dolar' => 0,
+            'reais' => 0,
+            'guaranies' => 0,
+        ];
+
+        $pagos = [
+            'dolar' => 0,
+            'reais' => 0,
+            'guaranies' => 0,
+        ];
+
+        foreach ($this->despesas as $despesa) {
+            foreach ($despesa->despesa_items as $despesa_item) {
+                $moeda = $despesa_item->tipo_moeda;
+
+                if (array_key_exists($moeda, $totais)) {
+                    $totais[$moeda] += $despesa_item->valor;
+                }
+            }
+
+            foreach ($despesa->pagamentos as $despesa_pgto) {
+                if (array_key_exists($moeda, $pagos)) {
+                    $pagos[$moeda] += $despesa_pgto->valor;
+                }
+            }
+        }
+
+        $pendencias = [
+            'dolar' => $totais['dolar'] - $pagos['dolar'],
+            'reais' => $totais['reais'] - $pagos['reais'],
+            'guaranies' => $totais['guaranies'] - $pagos['guaranies'],
+        ];
+
+        return $pendencias;
     }
 
     public function despesas_pagas()

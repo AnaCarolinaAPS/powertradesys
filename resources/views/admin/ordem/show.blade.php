@@ -85,10 +85,22 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Items</h4>
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Items</h4>
+                            </div>
+                            <div class="col">
+                                {{-- Lucro Previsto (até o momento): <b>{{number_format($item->valor_total() - $item->despesas_total(), 2, ',', '.');}}</b> --}}
+                            </div>
+                            <div class="col">
+                                Falta COBRAR : <b>{{number_format($item->valor_total() - $item->valor_pago(), 2, ',', '.');}}</b>
+                            </div>
+                        </div>                        
+
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddItem">
                             <i class="fas fa-plus"></i> Add Item
                         </button>
+                        
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -128,6 +140,15 @@
                                                 Aguardando Valor
                                             @endif
                                         </td>
+                                        @php 
+                                            if ($item_ordem->tipo_moeda == 'dolar') {
+                                                $moeda = "U$";
+                                            } elseif ($item_ordem->tipo_moeda == 'reais') {
+                                                $moeda = "R$";
+                                            } elseif ($item_ordem->tipo_moeda == 'guaranis') {
+                                                $moeda = "G$";
+                                            }
+                                        @endphp
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->
@@ -178,41 +199,9 @@
                                     @foreach ($item->pagamentos as $pagamento)
                                     <tr> 
                                         <td data-bs-toggle="collapse" data-bs-target="#r{{$i}}">{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
-                                        <td data-bs-toggle="collapse" data-bs-target="#r{{$i}}">{{ number_format($pagamento->valor, 2, ',', '.')." U$ (".number_format($pagamento->getValorPagoForOrdem($item->id), 2, ',', '.')." U$)" }}</td>                                        
+                                        <td data-bs-toggle="collapse" data-bs-target="#r{{$i}}">{{ number_format($pagamento->valor, 2, ',', '.')." ".$moeda}}</td>                                        
                                         <td>
                                             <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
-                                        </td>
-                                    </tr>
-                                    
-                                    <tr class="collapse accordion-collapse" id="r{{$i++}}" data-bs-parent=".table">
-                                        <td colspan="2">
-                                            @php
-                                                $total = 0
-                                            @endphp
-                                            @foreach ($pagamento->ordems as $inv)
-                                                <div class="row">
-                                                    <div class="col">
-                                                        Invoice de {{\Carbon\Carbon::parse($inv->data)->format('d/m/Y')}} - Pago {{$inv->pivot->valor_recebido}} U$
-                                                        @if ($inv->id == $item->id)
-                                                            <b>[ATUAL]</b>
-                                                        @endif
-                                                        @if ($inv->pivot->valor_recebido == 0)
-                                                            <b>[CRÉDITO]</b>
-                                                        @endif
-                                                        @php
-                                                            $total += $inv->pivot->valor_recebido;
-                                                        @endphp
-                                                    </div>
-                                                </div>
-                                            @endforeach
-                                            @if ($total < $pagamento->valor)
-                                                CRÉDITO para próxima INVOICE - <b> {{number_format($pagamento->valor-$total, 2, ',', '.');}} U$ [CRÉDITO]</b>
-                                            @endif
-                                            <div class="row">
-                                                <div class="col">
-                                                    <b>Total Pago: {{number_format($pagamento->valor, 2, ',', '.');}} U$</b>
-                                                </div>
-                                            </div>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -225,10 +214,10 @@
 
                             </div>
                             <div class="col">
-                                Valor PAGO (desta invoice): <b>{{ number_format($item->valor_pago(), 2, ',', '.'); }} U$</b>
+                                Valor PAGO (desta ordem): <b>{{ number_format($item->valor_pago(), 2, ',', '.')." ".$moeda; }}</b>
                             </div>
                             <div class="col">
-                                <b>Valor PENDENTE (desta ordem): {{ number_format($item->valor_pendente(), 2, ',', '.'); }} U$</b>
+                                <b>Valor PENDENTE (desta ordem): {{ number_format($item->valor_pendente(), 2, ',', '.')." ".$moeda; }}</b>
                             </div>
                         </div>
                     </div><!-- end card -->
@@ -249,17 +238,20 @@
                                     <i class="fas fa-plus"></i> Add Despesa
                                 </button>
                             </div>
-                            <div class="col">
-                                
-                            </div>
-                            {{-- 
-                            <div class="col">
-                                Valor Total: <b>{{number_format($faturacarga->despesas_total(), 2, ',', '.');}} U$</b>
-                            </div>
-                            <div class="col">
-                                Falta PAGAR : <b>{{number_format($faturacarga->despesas_total() - $faturacarga->despesas_pagas(), 2, ',', '.');}} U$</b>
-                            </div>
-                            --}}
+                            @foreach ($item->despesas_total() as $moeda_total_despesas => $total)
+                                <div class="col">
+                                    Valor 
+                                    @if ($moeda_total_despesas == 'dolar')
+                                        (dólares) {{number_format($total, 2, ',', '.');}} U$
+                                    @elseif ($moeda_total_despesas == 'reais')
+                                        (reais) {{number_format($total, 2, ',', '.');}} R$
+                                    @elseif ($moeda_total_despesas == 'guaranies')
+                                        (guaranies) {{number_format($total, 0, ',', '.');}} G$
+                                    @else
+                                        Aguardando Valor
+                                    @endif
+                                </div>
+                            @endforeach
                         </div>
                         <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                             <thead class="table-light">
@@ -267,18 +259,47 @@
                                     <th>Proovedor</th>
                                     <th>Valor Total Despesa</th>
                                     <th>Pendente</th>
+                                    <th>Total Pago em U$</th>
                                 </tr>
                             </thead><!-- end thead -->
                             <tbody>
                                 @foreach ($item->despesas as $despesa)
-                                <tr data-href="{{ route('ordem_despesa.show', ['item' => $despesa->id]) }}">                            
+                                <tr data-href="{{ route('ordem_despesa.show', ['item' => $despesa->id]) }}">
+                                    @php 
+                                        if ($despesa->despesa_items[0]->tipo_moeda == 'dolar') {
+                                            $moeda_despesa = "U$";
+                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'reais') {
+                                            $moeda_despesa = "R$";
+                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'guaranis') {
+                                            $moeda_despesa = "G$";
+                                        }
+                                    @endphp                          
                                     <td>{{ $despesa->proovedor->nome; }}</td>
-                                    <td>{{-- number_format($despesa->despesa_items->sum('valor'), 2, ',', '.') --}}</td>
-                                    <td>{{-- number_format($despesa->despesa_items->sum('valor')-$despesa->valor_pago(), 2, ',', '.') --}}</td>
+                                    <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.')." ".$moeda_despesa; }}</td>
+                                    <td>{{ number_format($despesa->valor_pendente(), 2, ',', '.')." ".$moeda_despesa; }}</td>
+                                    <td>{{ number_format($despesa->valor_pago_usd(), 2, ',', '.') }} U$</td>
                                 </tr>
                                 @endforeach
                             </tbody><!-- end tbody -->
                         </table> <!-- end table -->
+                        <div class="row">
+                            <div class="col">
+                            </div>
+                            @foreach ($item->despesas_pendentes() as $moeda_pendencia_despesas => $pendencia)
+                                <div class="col">
+                                    Falta PAGAR 
+                                    @if ($moeda_pendencia_despesas == 'dolar')
+                                        (dólares) {{number_format($pendencia, 2, ',', '.');}} U$
+                                    @elseif ($moeda_pendencia_despesas == 'reais')
+                                        (reais) {{number_format($pendencia, 2, ',', '.');}} R$
+                                    @elseif ($moeda_pendencia_despesas == 'guaranies')
+                                        (guaranies) {{number_format($pendencia, 0, ',', '.');}} G$
+                                    @else
+                                        Aguardando Valor
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>

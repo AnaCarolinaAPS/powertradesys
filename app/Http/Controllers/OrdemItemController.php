@@ -69,6 +69,7 @@ class OrdemItemController extends Controller
             $validatedData = $request->validate([
                 'valor' => 'nullable|numeric',
                 'tipo_moeda' => 'nullable|in:dolar,reais,guaranis',
+                'quantidade' => 'required|numeric',
                 // Adicione outras regras de validação conforme necessário
             ]);
 

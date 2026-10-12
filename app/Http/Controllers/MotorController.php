@@ -55,7 +55,7 @@ class MotorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(string $id)
     {
         $motor = Motor::findOrFail($id);
         return response()->json($motor);
@@ -64,7 +64,7 @@ class MotorController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Motor $motor)
+    public function update(Request $request, string $id)
     {
         try {
             // Validação dos dados do formulário
@@ -103,7 +103,7 @@ class MotorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $id)
     {
         try {
             // Encontra o item a ser atualizado

@@ -86,12 +86,18 @@
                 <div class="card">
                     <div class="card-body">
                         @php 
-                            if ($item->itens[0]->tipo_moeda == 'dolar') {
-                                $moeda = "U$";
-                            } elseif ($item->itens[0]->tipo_moeda == 'reais') {
-                                $moeda = "R$";
-                            } elseif ($item->itens[0]->tipo_moeda == 'guaranis') {
-                                $moeda = "G$";
+                            if (!$item->itens->isEmpty()) {
+                                if ($item->itens[0]->tipo_moeda == 'dolar') {
+                                    $moeda = "U$";
+                                } elseif ($item->itens[0]->tipo_moeda == 'reais') {
+                                    $moeda = "R$";
+                                } elseif ($item->itens[0]->tipo_moeda == 'guaranis') {
+                                    $moeda = "G$";
+                                } else {
+                                    $moeda = "";
+                                }
+                            } else {
+                                $moeda = "";
                             }
                         @endphp  
                         <div class="row">
@@ -288,12 +294,18 @@
                                 @foreach ($item->despesas as $despesa)
                                 <tr data-href="{{ route('ordem_despesa.show', ['item' => $despesa->id]) }}">
                                     @php 
-                                        if ($despesa->despesa_items[0]->tipo_moeda == 'dolar') {
-                                            $moeda_despesa = "U$";
-                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'reais') {
-                                            $moeda_despesa = "R$";
-                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'guaranis') {
-                                            $moeda_despesa = "G$";
+                                        if (!$despesa->despesa_items->isEmpty()) {
+                                            if ($despesa->despesa_items[0]->tipo_moeda == 'dolar') {
+                                                $moeda_despesa = "U$";
+                                            } elseif ($despesa->despesa_items[0]->tipo_moeda == 'reais') {
+                                                $moeda_despesa = "R$";
+                                            } elseif ($despesa->despesa_items[0]->tipo_moeda == 'guaranis') {
+                                                $moeda_despesa = "G$";
+                                            } else {
+                                                $moeda_despesa = "";
+                                            }
+                                        } else {
+                                            $moeda_despesa = "";
                                         }
                                     @endphp                          
                                     <td>{{ $despesa->proovedor->nome; }}</td>

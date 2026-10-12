@@ -67,14 +67,13 @@ class OrdemItemController extends Controller
         try {
             // Validação dos dados do formulário
             $validatedData = $request->validate([
-                'quantidade' => 'required|numeric',
                 'valor' => 'nullable|numeric',
                 'tipo_moeda' => 'nullable|in:dolar,reais,guaranis',
                 // Adicione outras regras de validação conforme necessário
             ]);
 
             // Encontra o item a ser atualizado
-            $item = OrdemItem::find($id);
+            $item = OrdemItem::findOrFail($id);
             // Atualiza o item com os valores validados
             $item->update($validatedData);
 

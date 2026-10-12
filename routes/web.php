@@ -51,6 +51,8 @@ use App\Http\Controllers\MotorProovedorController;
 use App\Http\Controllers\MotorProovedorServicoController;
 use App\Http\Controllers\OrdemController;
 use App\Http\Controllers\OrdemItemController;
+use App\Http\Controllers\OrdemDespesaController;
+use App\Http\Controllers\OrdemDespesaItemController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -488,12 +490,27 @@ Route::middleware('auth')->group(function () {
             Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');
         });
 
-        // Motor Despesas CRUD
+        // Ordem Item CRUD
         Route::prefix('/admin/ordemitem')->group(function () {
             Route::post('/', [OrdemItemController::class, 'store'])->name('ordem_item.store');
             Route::get('/{item}', [OrdemItemController::class, 'show'])->name('ordem_item.show');
             Route::put('/{item}', [OrdemItemController::class, 'update'])->name('ordem_item.update');
             Route::delete('/{item}', [OrdemItemController::class, 'destroy'])->name('ordem_item.destroy');
+        });
+
+        // Ordem DESPESA CRUD
+        Route::prefix('/admin/ordemdespesa')->group(function () {
+            Route::post('/', [OrdemDespesaController::class, 'store'])->name('ordem_despesa.store');
+            Route::get('/{item}', [OrdemDespesaController::class, 'show'])->name('ordem_despesa.show');
+            Route::delete('/{item}', [OrdemDespesaController::class, 'destroy'])->name('ordem_despesa.destroy');
+        });
+
+        // Ordem DESPESA ITEM CRUD
+        Route::prefix('/admin/ordemdespesaitem')->group(function () {
+            Route::post('/', [OrdemDespesaItemController::class, 'store'])->name('ordem_despesas_servicos.store');
+            Route::get('/{item}', [OrdemDespesaItemController::class, 'show'])->name('ordem_despesas_servicos.show');
+            Route::put('/{item}', [OrdemDespesaItemController::class, 'update'])->name('ordem_despesas_servicos.update');
+            Route::delete('/{item}', [OrdemDespesaItemController::class, 'destroy'])->name('ordem_despesas_servicos.destroy');
         });
     });
 

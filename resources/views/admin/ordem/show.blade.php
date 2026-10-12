@@ -85,10 +85,31 @@
             <div class="col-xl-12">
                 <div class="card">
                     <div class="card-body">
-                        <h4 class="card-title mb-4">Items</h4>
+                        @php 
+                            if ($item->itens[0]->tipo_moeda == 'dolar') {
+                                $moeda = "U$";
+                            } elseif ($item->itens[0]->tipo_moeda == 'reais') {
+                                $moeda = "R$";
+                            } elseif ($item->itens[0]->tipo_moeda == 'guaranis') {
+                                $moeda = "G$";
+                            }
+                        @endphp  
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Items</h4>
+                            </div>
+                            <div class="col">
+                                Lucro Atual (dólares): <b>{{ number_format($item->valor_pago_usd()-$item->despesas_pagas_usd(), 2, ',', '.');}} U$</b>
+                            </div>
+                            <div class="col">
+                                Falta COBRAR : <b>{{number_format($item->valor_total() - $item->valor_pago(), 2, ',', '.')." ".$moeda;}}</b>
+                            </div>
+                        </div>                        
+
                         <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#ModalAddItem">
                             <i class="fas fa-plus"></i> Add Item
                         </button>
+                        
                         <div class="table-responsive">
                             <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                                 <thead class="table-light">
@@ -128,11 +149,191 @@
                                                 Aguardando Valor
                                             @endif
                                         </td>
+                                        @php 
+                                            if ($item_ordem->tipo_moeda == 'dolar') {
+                                                $moeda = "U$";
+                                            } elseif ($item_ordem->tipo_moeda == 'reais') {
+                                                $moeda = "R$";
+                                            } elseif ($item_ordem->tipo_moeda == 'guaranis') {
+                                                $moeda = "G$";
+                                            }
+                                        @endphp
                                     </tr>
                                     @endforeach
                                 </tbody><!-- end tbody -->
+                            </table> <!-- end table -->                            
+                        </div>   
+                        <div class="row">
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                Valor TOTAL: <b>{{ number_format($item->valor_total(), 2, ',', '.')." ".$moeda; }}</b>
+                            </div>
+                        </div>                     
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+
+        <!-- Pagamentos -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Pagamentos</h4>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="col">
+                                <b>Valor PENDENTE: {{ number_format($item->valor_pendente(), 2, ',', '.')." ".$moeda; }}</b>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-success waves-effect waves-light mb-2" data-bs-toggle="modal" data-bs-target="#novoPagamento">
+                            <i class="fas fa-plus"></i> Add Pagamento
+                        </button>
+
+                        <div class="table-responsive table accordion">
+                            <table id="datatable-buttons" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Data</th>
+                                        <th>Valor Recebido</th>
+                                        <th>Valor em U$</th>
+                                        <th></th>
+                                    </tr>
+                                </thead><!-- end thead -->
+                                <tbody>
+                                    @php
+                                        $i = 0;
+                                    @endphp
+                                    @foreach ($item->pagamentos as $pagamento)
+                                    <tr> 
+                                        <td>{{ \Carbon\Carbon::parse($pagamento->data_pagamento)->format('d/m/Y') }} <i class="bi bi-chevron-down"></i></td>
+                                        <td>{{ number_format($pagamento->valor, 2, ',', '.')." ".$moeda}}</td>                                        
+                                        <td>{{ number_format($pagamento->pivot->valor_cotacao, 2, ',', '.')." U$"; }}</td>
+                                        <td>
+                                            <a href="{{ route('registro_caixa.show', ['fechamento' =>  $pagamento->fluxo_caixa->fechamentoOrigem->id]) }}" class="link-info">Ir p/ Caixa</a>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                     <!-- end -->
+                                </tbody><!-- end tbody -->
                             </table> <!-- end table -->
-                        </div>                        
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                @if ($moeda != "U$")
+                                    Valor Pago (dólares) {{ number_format($item->valor_pago_usd(), 2, ',', '.');}} U$
+                                @endif
+                            </div>                            
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                Valor Total PAGO: <b>{{ number_format($item->valor_pago(), 2, ',', '.')." ".$moeda; }}</b>
+                            </div>
+                        </div>
+                    </div><!-- end card -->
+                </div><!-- end card -->
+            </div>
+            <!-- end col -->
+        </div>
+
+        <!-- Despesas -->
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-title mb-4">Despesas</h4>
+                                <button type="button" class="btn btn-warning waves-effect waves-light mb-2 me-auto" data-bs-toggle="modal" data-bs-target="#ModalAddDespesa">
+                                    <i class="fas fa-plus"></i> Add Despesa
+                                </button>
+                            </div>
+                            @foreach ($item->despesas_pendentes() as $moeda_pendencia_despesas => $pendencia)
+                                <div class="col">
+                                    Falta PAGAR 
+                                    @if ($moeda_pendencia_despesas == 'dolar')
+                                        (dólares) {{number_format($pendencia, 2, ',', '.');}} U$
+                                    @elseif ($moeda_pendencia_despesas == 'reais')
+                                        (reais) {{number_format($pendencia, 2, ',', '.');}} R$
+                                    @elseif ($moeda_pendencia_despesas == 'guaranies')
+                                        (guaranies) {{number_format($pendencia, 0, ',', '.');}} G$
+                                    @else
+                                        Aguardando Valor
+                                    @endif
+                                </div>
+                            @endforeach                            
+                        </div>
+                        <table id="dtable" class="table table-striped table-bordered dt-responsive nowrap datatable-default-no-button" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Proovedor</th>
+                                    <th>Valor Total Despesa</th>
+                                    <th>Pendente</th>
+                                    <th>Total Pago em U$</th>
+                                </tr>
+                            </thead><!-- end thead -->
+                            <tbody>
+                                @foreach ($item->despesas as $despesa)
+                                <tr data-href="{{ route('ordem_despesa.show', ['item' => $despesa->id]) }}">
+                                    @php 
+                                        if ($despesa->despesa_items[0]->tipo_moeda == 'dolar') {
+                                            $moeda_despesa = "U$";
+                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'reais') {
+                                            $moeda_despesa = "R$";
+                                        } elseif ($despesa->despesa_items[0]->tipo_moeda == 'guaranis') {
+                                            $moeda_despesa = "G$";
+                                        }
+                                    @endphp                          
+                                    <td>{{ $despesa->proovedor->nome; }}</td>
+                                    <td>{{ number_format($despesa->despesa_items->sum('valor'), 2, ',', '.')." ".$moeda_despesa; }}</td>
+                                    <td>{{ number_format($despesa->valor_pendente(), 2, ',', '.')." ".$moeda_despesa; }}</td>
+                                    <td>{{ number_format($despesa->valor_pago_usd(), 2, ',', '.') }} U$</td>
+                                </tr>
+                                @endforeach
+                            </tbody><!-- end tbody -->
+                        </table> <!-- end table -->
+                        <div class="row">
+                            <div class="col">
+
+                            </div>
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                
+                            </div>
+                            <div class="col">
+                                <b>Total Pago (dólares) {{ number_format($item->despesas_pagas_usd(), 2, ',', '.');}} U$</b>
+                            </div>
+                            {{--
+                            @foreach ($item->despesas_total() as $moeda_total_despesas => $total)
+                                <div class="col">
+                                    Valor 
+                                    @if ($moeda_total_despesas == 'dolar')
+                                        (dólares) {{number_format($total, 2, ',', '.');}} U$
+                                    @elseif ($moeda_total_despesas == 'reais')
+                                        (reais) {{number_format($total, 2, ',', '.');}} R$
+                                    @elseif ($moeda_total_despesas == 'guaranies')
+                                        (guaranies) {{number_format($total, 0, ',', '.');}} G$
+                                    @else
+                                        Aguardando Valor
+                                    @endif
+                                </div>
+                            @endforeach 
+                            --}}
+                        </div>
                     </div><!-- end card -->
                 </div><!-- end card -->
             </div>
@@ -176,10 +377,11 @@
                         <div class="modal-body">
                             <!-- Campo hidden para armazenar o id do pai -->
                             <input type="hidden" name="ordem_id" value="{{ $item->id }}">
+                            <input type="hidden" name="observacoes" value="Pagamento de Ordem {{ $item->id }}" id="observacoes">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="cliente_id">Produto</label>
+                                        <label for="motor_id">Produto</label>
                                         <select class="selectpicker form-control" data-live-search="true" id="motor_id" name="motor_id" required>
                                             @foreach ($all_items as $produto)
                                                 <option value="{{ $produto->id }}"> {{ $produto->nome }} </option>
@@ -288,10 +490,131 @@
             </div>
         </div>
 
+        {{-- Criação dos Pagamentos --}}
+        <div class="modal fade bs-example-modal-lg" tabindex="-1" aria-labelledby="novoPagamento" aria-hidden="true" style="display: none;" id="novoPagamento">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="myLargeModalLabel">Novo Pagamento</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form class="form-horizontal mt-3" method="POST" action="{{ route('pagamentos.store') }}">
+                        @csrf
+                        <div class="modal-body">
+                            {{-- ADICIONAR MAIS TARDE OUTROS Atributos --}}
+                            <input type="hidden" name="ordem_id" value="{{  $item->id; }}" id="ordem_id">
+                            <input type="hidden" name="cliente" value="{{  $item->cliente; }}" id="cliente">
+                            <input type="hidden" name="tipo" value="OrdemPgto" id="tipo">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="nome">Data</label>
+                                        <input class="form-control" type="date" value="{{ \Carbon\Carbon::today()->format('Y-m-d') ; }}" id="data_pagamento" name="data_pagamento" required>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="contato">Valor Pagamento</label>
+                                        <input class="form-control" type="number" value="{{ $item->valor_pendente(); }}" step="0.10" id="valor" name="valor" required>
+                                    </div>
+                                </div>
+                                <div class="col" id="div_caixa_destino">
+                                    <div class="form-group">
+                                        <label for="caixa_origem_id">Onde foi Pago</label>
+                                        <select class="selectpicker form-control" data-live-search="true" id="caixa_origem_id" name="caixa_origem_id">
+                                            @foreach ($all_caixas as $caixa_destino)
+                                                <option value="{{ $caixa_destino->id }}"> {{ $caixa_destino->nome }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="contato">Entrada em Caixa</label>
+                                        <input class="form-control" type="number" value="{{ $item->valor_pendente(); }}" step="0.10" id="valor_pgto" name="valor_pgto" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="moeda_cotacao">Moeda</label>
+                                        <input class="form-control" type="text" value="U$" id="moeda_cotacao" readonly>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="valor_cotacao">Valor Pagamento em U$</label>
+                                        <input class="form-control" type="number" value="{{ $item->valor_pendente(); }}" step="0.10" id="valor_cotacao" name="valor_cotacao" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                            <button type="submit" class="btn btn-primary waves-effect waves-light">Adicionar</button>
+                        </div>
+                    </form>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <!-- Adicionar Despesas -->
+    <div class="modal fade" tabindex="-1" aria-labelledby="ModalAddDespesa" aria-hidden="true" style="display: none;" id="ModalAddDespesa">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="myLargeModalLabel">Adicionar Despesa</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="form-horizontal mt-3" method="POST" action="{{ route('ordem_despesa.store') }}" id="formNovaDespesa">
+                    @csrf
+                    <div class="modal-body">
+                        <!-- Campo hidden para armazenar o id da entidade pai -->
+                        <input type="hidden" name="ordem_id" value="{{ $item->id }}">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="motor_proovedors_id">Proovedor</label>
+                                    <select class="selectpicker form-control" data-live-search="true" id="motor_proovedors_id" name="motor_proovedors_id" required>
+                                        @foreach ($all_proovedores as $proovedor)
+                                            <option value="{{ $proovedor->id }}"> {{ $proovedor->nome }} </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="data_recebida">Data</label>
+                                    <input class="form-control" type="date" value="{{  $item->data_compra; }}" id="data" name="data">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-light waves-effect" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary waves-effect waves-light" form="formNovaDespesa">Adicionar</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
     </div>
 </div>
 
 <script>
+    // JavaScript para redirecionar ao clicar na linha da tabela
+    document.addEventListener("DOMContentLoaded", function() {
+        var tableRows = document.querySelectorAll('tbody tr[data-href]');
+
+        tableRows.forEach(function(row) {
+            row.addEventListener('click', function() {
+                window.location.href = this.dataset.href;
+            });
+        });
+    });
+
     // JavaScript para abrir o modal ao clicar na linha da tabela
     document.querySelectorAll('.abrirModal').forEach(item => {
         item.addEventListener('click', event => {

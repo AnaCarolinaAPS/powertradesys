@@ -430,7 +430,7 @@
                                 <div class="col">
                                     <div class="form-group">
                                         <label for="motor_id">Produto</label>
-                                        <select class="selectpicker form-control" data-live-search="true" id="dMotor_id" name="motor_id">
+                                        <select class="selectpicker form-control" data-live-search="true" id="dMotor_id" name="motor_id" disabled>
                                             @foreach ($all_items as $motor)
                                                 <option value="{{ $motor->id }}"> {{ $motor->nome }} </option>
                                             @endforeach

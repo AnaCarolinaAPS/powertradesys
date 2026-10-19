@@ -139,6 +139,7 @@
                                 </ul>
                             </li>
                             <li><a href="{{ route('ordem.index'); }}">Venda de Motores</a></li>
+                            <li><a href="{{ route('ordem.faltareceber'); }}">Motores a Receber</a></li>
                         </ul>
                     </li>
 

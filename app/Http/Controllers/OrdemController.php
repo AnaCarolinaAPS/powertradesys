@@ -142,4 +142,65 @@ class OrdemController extends Controller
             ]);
         }
     }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function ordensFaltaReceber()
+    {
+        // $all_items = Ordem::whereNotNull('cliente')->get();
+
+        // Todos os clientes disponíveis com ordens
+        $clientes = Ordem::whereNotNull('cliente')
+                    ->select('cliente')
+                    ->distinct()
+                    ->get();
+
+        // Cria um array que vai ser preenchido com clientes + pendencias em suas várias moedas
+        $all_items = [];
+        // Cria um array para TOTAL de todas as ordens
+        $totais = [
+                'dolar' => 0,
+                'reais' => 0,
+                'guaranies' => 0,
+            ];
+        // Para cada cliente, vamos fazer uma somatoria dos valores pendentes
+        foreach ($clientes as $ordemCliente) {
+            // Todas as ordens do cliente
+            $ordens = Ordem::where('cliente', $ordemCliente->cliente)->get();            
+            // Cria o Array dos valores Pendentes
+            $totais_cli = [
+                'dolar' => 0,
+                'reais' => 0,
+                'guaranies' => 0,
+            ];
+            foreach ($ordens as $ordem) {
+                // Em qual moeda foi cobrada a ordem
+                $moeda = $ordem->itens[0]->tipo_moeda;
+                // Acumula os valores pendentes 
+                if (array_key_exists($moeda, $totais_cli)) {
+                    $totais_cli[$moeda] += $ordem->valor_pendente();
+                }
+            }
+
+            $total_cliente = [
+                'cliente' => $ordemCliente->cliente,
+                'pendente_dolares' => $totais_cli['dolar'],
+                'pendente_reais' => $totais_cli['reais'],
+                'pendente_guaranies' => $totais_cli['guaranies'],
+            ];
+
+            if (array_key_exists("dolar", $totais)) {
+                $totais['dolar'] += $total_cliente['pendente_dolares'];
+                $totais['reais'] += $total_cliente['pendente_reais'];
+                $totais['guaranies'] += $total_cliente['pendente_guaranies'];
+            }
+            // Adiciona os dados no array; 
+            $all_items[] = $total_cliente;
+        }
+        
+        $totalPendente = 0;
+        
+        return view('admin.ordemareceber.index', compact('all_items', 'totalPendente', 'totais'));
+    }
 }

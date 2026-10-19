@@ -487,7 +487,10 @@ Route::middleware('auth')->group(function () {
             Route::post('/', [OrdemController::class, 'store'])->name('ordem.store');
             Route::get('/{ordem}', [OrdemController::class, 'show'])->name('ordem.show');
             Route::put('/{ordem}', [OrdemController::class, 'update'])->name('ordem.update');
-            Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');
+            Route::delete('/{ordem}', [OrdemController::class, 'destroy'])->name('ordem.destroy');            
+        });
+        Route::prefix('/admin/ordemreceber')->group(function () {
+            Route::get('/', [OrdemController::class, 'ordensFaltaReceber'])->name('ordem.faltareceber');
         });
 
         // Ordem Item CRUD
